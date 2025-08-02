@@ -64,16 +64,19 @@ Returns true if vanilla draw is enabled.
 ```cpp
 void setLineSmoothing(bool enabled)
 ```
+**Line smoothing is only supported on Windows and MacOS!**
 Sets all lines to smooth (useful for editor camera rotation)
 
 ```cpp
 bool hasLineSmoothing()
 ```
+**Line smoothing is only supported on Windows and MacOS!**
 Returns true of line smoothing is enabled
 
 ```cpp
 void setLineSmoothingLimit(float limit)
 ```
+**Line smoothing is only supported on Windows and MacOS!**
 Sets the editor zoom limit (if >= than this limit, the lines will not be made smooth) for line smoothing as having too many smoothed lines on screen at once is laggy. I recommend keeping it at default.
 
 ```cpp

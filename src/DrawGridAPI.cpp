@@ -262,12 +262,14 @@ void DrawGridAPI::batchDraw() {
     constexpr size_t kReserveLines = 4096;
     constexpr size_t kReserveRects = 2048;
 
+    #ifdef GEODE_IS_DESKTOP
     if (shouldSmooth) {
         glEnable(GL_LINE_SMOOTH);
         glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
         widthModifier += 0.2;
     }
-
+    #endif 
+    
     ccGLBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     
     if (!m_impl->m_lineVertsBuffer.empty()){
@@ -326,10 +328,12 @@ void DrawGridAPI::batchDraw() {
         glDrawArrays(GL_TRIANGLES, 0, m_impl->m_blendedRectOutlineVertsBuffer.size());
     }
 
+    #ifdef GEODE_IS_DESKTOP
     if (shouldSmooth) {
         glDisable(GL_LINE_SMOOTH);
     }
-    // Instead of clear(), use resize(0) to keep memory
+    #endif
+
     for (auto& [_, v] : m_impl->m_lineVertsBuffer) v.resize(0);
     for (auto& [_, v] : m_impl->m_blendedLineVertsBuffer) v.resize(0);
     m_impl->m_rectVertsBuffer.resize(0);
