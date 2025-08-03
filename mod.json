@@ -23,5 +23,13 @@
 	},
 	"tags": [
 		"developer", "utility", "api", "bugfix", "interface", "editor", "enhancement", "performance", "offline"
-	]
+	],
+	"settings": {
+		"extension-override": {
+			"type": "bool",
+			"name": "Extension Override",
+			"description": "Overrides the grid width for Editor Extension mods",
+			"default": false
+		}
+	}
 }

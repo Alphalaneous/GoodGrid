@@ -94,7 +94,7 @@ void DrawGridAPI::init(DrawGridLayer* drawGridLayer, cocos2d::CCGLProgram* shade
     m_impl->m_rectOutlineVertsBuffer.clear();
     m_impl->m_blendedRectOutlineVertsBuffer.clear();
 
-    if (Loader::get()->isModLoaded("raydeeux.grandeditorextension")) {
+    if (Loader::get()->isModLoaded("raydeeux.grandeditorextension") || Mod::get()->getSettingValue<bool>("extension-override")) {
         m_impl->m_gridWidthMax = FLT_MAX;
     }
 
@@ -460,7 +460,7 @@ Result<DrawNode&> DrawGridAPI::getNodeByID(const std::string& id) {
     for (const auto& drawNode : m_impl->m_drawNodes) {
         if (drawNode->getID() == id) return geode::Ok(*drawNode);
     }
-    return geode::Err("No DrawFuncData with that ID");
+    return geode::Err("Node not found with ID");
 }
 
 void DrawGridAPI::draw() {
