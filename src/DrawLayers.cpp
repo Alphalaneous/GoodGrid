@@ -277,6 +277,7 @@ void DurationLines::draw(DrawGridLayer* dgl, float minX, float maxX, float minY,
 
         DrawGridAPI::get().drawLine({currentPos.x, currentPos.y}, {endPos.x, endPos.y}, color, 2.0f, false);
     }
+    dgl->m_updateTimeMarkers = false;
 }
 
 void DurationLines::setColorForObject(std::function<void(LineColor& color, EffectGameObject* object)> colorForObject, int priority) {
