@@ -204,6 +204,12 @@ void DurationLines::draw(DrawGridLayer* dgl, float minX, float maxX, float minY,
             }
         }
 
+        CCPoint& endPos = obj->m_endPosition;
+
+        if (dgl->m_updateTimeMarkers) {
+            endPos = CCPoint{0, 0};
+        }
+
         float time = obj->m_duration;
 
         if (obj->m_objectID == 1006) {
@@ -214,9 +220,8 @@ void DurationLines::draw(DrawGridLayer* dgl, float minX, float maxX, float minY,
             time = sfxTrigger->m_soundDuration;
         }
 
-        if (time == 0) continue;
-
-        CCPoint& endPos = obj->m_endPosition;
+        if ((time <= 0)) continue;
+        
         const CCPoint& currentPos = obj->getPosition();
 
         if (!obj->m_isSpawnTriggered) {
