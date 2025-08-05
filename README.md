@@ -208,7 +208,7 @@ A virtual you can override that will draw what is within it to the DrawGridLayer
 
 ## DrawLayers.hpp
 
-Every method here has an optional priority param, it is used if you need to run your code after or before something else. (For static changes such `setColor` methods, the highest number is the only one that ends up getting set. `setColorFor` methods will be in order of prio and all will run).
+Every method here has an optional priority param, it is used if you need to run your code after or before something else. (For static changes such `setColor` methods, the highest number is the only one that ends up getting set. `setPropertiesFor` methods will be in order of prio and all will run).
 
 ### **`class Grid : public DrawNode`**
 
@@ -228,6 +228,21 @@ Returns the grid color.
 int getGridColorPriority() const
 ```
 Returns the grid color priority.
+
+```cpp
+void setLineWidth(float width, int priority = 0)
+```
+Sets the line width.
+
+```cpp
+float getLineWidth() const
+```
+Returns the line width.
+
+```cpp
+int getLineWidthPriority() const
+```
+Returns the line width priority.
 
 ### **`class Bounds : public DrawNode`**
 
@@ -277,7 +292,52 @@ Returns the vertical bound color.
 int getVerticalBoundColorPriority() const
 ```
 Returns the vertical bound priority.
+
+```cpp
+void seTopBoundtLineWidth(float width, int priority = 0)
+```
+Sets the top bound line width.
+
+```cpp
+float getTopBoundLineWidth() const
+```
+Returns the top bounc line width.
+
+```cpp
+int getTopBoundLineWidthPriority() const
+```
+Returns the top bound line width priority.
  
+```cpp
+void setBottomBoundLineWidth(float width, int priority = 0)
+```
+Sets the bottom bound line width.
+
+```cpp
+float getBottomBoundLineWidth() const
+```
+Returns the bottom bound line width.
+
+```cpp
+int getBottomBoundLineWidthPriority() const
+```
+Returns the bottom bound line width priority.
+
+```cpp
+void setVerticalBoundLineWidth(float width, int priority = 0)
+```
+Sets the vertical bound line width.
+
+```cpp
+float getVerticalBoundLineWidth() const
+```
+Returns the vertical bound line width.
+
+```cpp
+int getVerticalBoundLineWidthPriority() const
+```
+Returns the vertical bound line width priority.
+
 ### **`class Ground : public DrawNode`**
 
 The ground lines (when in a non cube/robot gamemode).
@@ -312,12 +372,42 @@ int getBottomGroundColorPriority() const
 ```
 Returns the bottom ground priority.
 
+```cpp
+void setTopGroundLineWidth(float width, int priority = 0)
+```
+Sets the top ground line width.
+
+```cpp
+float getTopGroundLineWidth() const
+```
+Returns the top ground line width.
+
+```cpp
+int getTopGroundLineWidthPriority() const
+```
+Returns the top ground line width priority.
+
+```cpp
+void setBottomGroundLineWidth(float width, int priority = 0)
+```
+Sets the bottom ground line width.
+
+```cpp
+float getBottomGroundLineWidth() const
+```
+Returns the bottom ground line width.
+
+```cpp
+int getBottomGroundLineWidthPriority() const
+```
+Returns the bottom ground line width priority.
+
 ### **`class GuideObjects : public DrawNode`**
 
 These are the objects that show portal bounds when preview is enabled.
 
 ```cpp
-void setColorForObject(std::function<void(LineColor& bottomColor, LineColor& topColor, EffectGameObject* object)> colorForObject, int priority = 0)
+void setPropertiesForObject(std::function<void(LineColor& bottomColor, LineColor& topColor, EffectGameObject* object, float& lineWidthBottom, float& lineWidthTop)> colorForObject, int priority = 0)
 ```
 Lets you pass in a method that allows for modifying the colors, as well as passing in the object. An example would be setting colors depending on an object.
 
@@ -326,7 +416,7 @@ Lets you pass in a method that allows for modifying the colors, as well as passi
 These are the lines triggers show when not spawn or touch triggered.
 
 ```cpp
-void setColorForObject(std::function<void(LineColor& color, EffectGameObject* object)> colorForObject, int priority = 0)
+void setPropertiesForObject(std::function<void(LineColor& color, EffectGameObject* object, float& lineWidth)> colorForObject, int priority = 0)
 ```
 Lets you pass in a method that allows for modifying the color, as well as passing in the object. An example would be setting colors depending on an object.
 
@@ -335,7 +425,7 @@ Lets you pass in a method that allows for modifying the color, as well as passin
 These are the duration lines triggers show.
 
 ```cpp
-void setColorForObject(std::function<void(LineColor& color, EffectGameObject* object)> colorForObject, int priority = 0)
+void setPropertiesForObject(std::function<void(LineColor& color, EffectGameObject* object, float& lineWidth)> colorForObject, int priority = 0)
 ```
 Lets you pass in a method that allows for modifying the color, as well as passing in the object. An example would be setting colors depending on an object.
 
@@ -344,7 +434,7 @@ Lets you pass in a method that allows for modifying the color, as well as passin
 These are the music guidelines you can set when choosing a song.
 
 ```cpp
-void setColorForValue(std::function<void(LineColor& color, float value)> colorForValue, int priority = 0)
+void setPropertiesForValue(std::function<void(LineColor& color, float value, float& lineWidth)> colorForValue, int priority = 0)
 ```
 Lets you pass in a method that allows for modifying the color, as well as passing in the numeric color value the guideline is set to (view https://wyliemaster.github.io/gddocs/#/resources/client/level-components/guideline-string for more info). An example would be setting colors depending on the value, expanding what color values already exist.
 
@@ -353,7 +443,7 @@ Lets you pass in a method that allows for modifying the color, as well as passin
 These are the bpm guidelines you can set with a BPM Trigger.
 
 ```cpp
-void setColorForBeats(std::function<void(LineColor& color, AudioLineGuideGameObject* object, int beat, int beatsPerBar)> colorForBeats, int priority = 0)
+void setPropertiesForBeats(std::function<void(LineColor& color, AudioLineGuideGameObject* object, int beat, int beatsPerBar, float& lineWidth)> colorForBeats, int priority = 0)
 ```
 Lets you pass in a method that allows for modifying the color, as well as passing in the object, what beat the line being modified is on, and how many beats per bar there are. An example would be changing the beat color depending on what beat it is in a bar.
 
@@ -362,7 +452,7 @@ Lets you pass in a method that allows for modifying the color, as well as passin
 This is the line that shows when you play music in the editor.
 
 ```cpp
-void setColorForTime(std::function<void(LineColor& color, bool playback, float time, const cocos2d::CCPoint& position)> colorForTime, int priority = 0);
+void setPropertiesForTime(std::function<void(LineColor& color, bool playback, float time, const cocos2d::CCPoint& position, float& lineWidth)> colorForTime, int priority = 0);
 ```
 Lets you pass in a method that allows for modifying the color, as well as passing in if playback is live, the song's time, and the position of the line. An example would be setting the line color hue based on the time. 
 
@@ -400,6 +490,36 @@ int getHorizontalLineColorPriority() const
 ```
 Returns the horizontal line priority.
 
+```cpp
+void setVerticalLineWidth(float width, int priority = 0)
+```
+Sets the vertical line width.
+
+```cpp
+float getVerticalLineWidth() const
+```
+Returns the vertical line width.
+
+```cpp
+int getVerticalLineWidthPriority() const
+```
+Returns the vertical line width priority.
+
+```cpp
+void setHorizontalLineWidth(float width, int priority = 0)
+```
+Sets the horizontal line width.
+
+```cpp
+float getHoritzontalLineWidth() const
+```
+Returns the horizontal line width.
+
+```cpp
+int getHorizontalLineWidthPriority() const
+```
+Returns the horizontal line width priority.
+
 ### **`class PreviewLockLine : public DrawNode`**
 
 The line that shows the position where preview is locked.
@@ -418,3 +538,18 @@ Returns the line color.
 int getLineColorPriority() const
 ```
 Returns the line color priority.
+
+```cpp
+void setLineWidth(float width, int priority = 0)
+```
+Sets the line width.
+
+```cpp
+float getLineWidth() const
+```
+Returns the line width.
+
+```cpp
+int getLineWidthPriority() const
+```
+Returns the line width priority.

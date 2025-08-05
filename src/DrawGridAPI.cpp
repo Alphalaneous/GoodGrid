@@ -4,7 +4,7 @@
 
 using namespace geode::prelude;
 
-const float MAX_HEIGHT = 2400.f;
+const float MAX_HEIGHT = 2490.f;
 const float GROUND_OFFSET = 90.f;
 const float PADDING = 500.f;
 
@@ -34,7 +34,7 @@ struct DrawGridAPIImpl {
     float m_gridWidthMin = -3000.f;
     float m_gridHeightMin = -3000.f;
     float m_gridWidthMax = 240000.f;
-    float m_gridHeightMax = 30000.f;
+    float m_gridHeightMax = 30090.f;
     bool m_vanillaDraw = false;
     bool m_hideInvisible = false;
     bool m_lineSmoothing = false;
@@ -483,7 +483,7 @@ void DrawGridAPI::draw() {
     const float scale = objectLayer->getScale();
     const CCPoint cameraPos = -objectLayer->getPosition() / scale;
     
-    const float height = (levelSettings->m_dynamicLevelHeight ? m_impl->m_gridHeightMax : MAX_HEIGHT) + GROUND_OFFSET;
+    const float height = (levelSettings->m_dynamicLevelHeight ? m_impl->m_gridHeightMax : MAX_HEIGHT);
     const float halfWorldWidth = m_impl->m_cachedWorldViewSize.width * 0.5f;
     const float halfWorldHeight = m_impl->m_cachedWorldViewSize.height * 0.5f;
     
