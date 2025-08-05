@@ -39,7 +39,7 @@ class GOOD_GRID_API_DLL Bounds : public DrawNode {
 
     float m_topBoundLineWidth = 2.0f;
     float m_bottomBoundLineWidth = 2.0f;
-    float m_verticalBoundLineWidth = 2.0f;
+    float m_verticalBoundLineWidth = 1.0f;
     int m_topBoundLineWidthPriority = 0;
     int m_bottomBoundLineWidthPriority = 0;
     int m_verticalBoundLineWidthPriority = 0;
