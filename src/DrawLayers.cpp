@@ -418,8 +418,6 @@ void BPMTriggers::draw(DrawGridLayer* dgl, float minX, float maxX, float minY, f
         const float startX = obj->getPositionX();
         const float duration = obj->m_duration * speed;
         const float endX = startX + duration;
-        
-        if (endX < minX || startX > maxX) continue;
         const int beatsPerBar = obj->m_beatsPerBar;
         
         if (obj->m_beatsPerMinute == 0 || beatsPerBar == 0) continue;
@@ -463,7 +461,16 @@ void AudioLine::draw(DrawGridLayer* dgl, float minX, float maxX, float minY, flo
 
     float width = 5.0f;
     if (dgl->m_editorLayer->m_playbackActive) {
-        CCPoint pos = dgl->posForTime(dgl->m_playbackTime);
+        CCPoint pos = LevelTools::posForTimeInternal(
+            dgl->m_playbackTime,
+            dgl->m_speedObjects,
+            (int)dgl->m_editorLayer->m_levelSettings->m_startSpeed,
+            dgl->m_editorLayer->m_isPlatformer,
+            true,
+            true,
+            dgl->m_editorLayer->m_gameState.m_rotateChannel,
+            false
+        );
         dgl->m_playbackX = 0;
         dgl->m_playbackY = 0;
 

@@ -1,3 +1,7 @@
+# 1.1.1
+- Fixed a culling bug
+- Fixed a bug where the audio line did not respect timewarp preview
+
 # 1.1.0
 - Add line widths to the API
 - Add x position reference for BPM Triggers
