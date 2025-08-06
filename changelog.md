@@ -1,3 +1,6 @@
+# 1.1.2
+- Minor fixes from hiimjasmine00
+
 # 1.1.1
 - Fixed a culling bug
 - Fixed a bug where the audio line did not respect timewarp preview
