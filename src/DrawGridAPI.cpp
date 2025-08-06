@@ -165,8 +165,8 @@ void DrawGridAPI::generateTimeMarkers() {
         float type = numFromString<float>(markers[i + 1]->getCString()).unwrapOrDefault();
         ccColor4B color;
 
-        if (type == 0.9f) color = ccColor4B{127, 255, 0, 255};
-        else if (type == 1.0f) color = ccColor4B{255, 255, 0, 255};
+        if (type == 0.9f) color = ccColor4B{255, 255, 0, 255};
+        else if (type == 1.0f) color = ccColor4B{127, 255, 0, 255};
         else if (type >= 0.8f || type == 0.0f) color = ccColor4B{255, 127, 0, 255};
         else color = ccColor4B{0, 0, 0, 0};
 
