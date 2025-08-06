@@ -1,5 +1,6 @@
 #include "../include/DrawLayers.hpp"
 #include "../include/DrawGridAPI.hpp"
+#include <Geode/Geode.hpp>
 
 using namespace geode::prelude;
 

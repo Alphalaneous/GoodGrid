@@ -1,6 +1,8 @@
 #pragma once
 
+#include <ccTypes.h>
 #include <Geode/cocos/shaders/CCGLProgram.h>
+#include <Geode/Result.hpp>
 #include "DrawNode.hpp"
 
 #ifdef GEODE_IS_WINDOWS

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Geode/cocos/shaders/CCGLProgram.h>
+#include <Geode/GeneratedPredeclare.hpp>
 
 #ifdef GEODE_IS_WINDOWS
     #ifdef GOOD_GRID_API_EXPORTING
