@@ -2,6 +2,8 @@
 #include <Geode/modify/EditorUI.hpp>
 #include "../include/DrawGridAPI.hpp"
 
+using namespace geode::prelude;
+
 class $modify(MyEditorUI, EditorUI) {
 	void updateZoom(float p0) {
 		EditorUI::updateZoom(p0);
