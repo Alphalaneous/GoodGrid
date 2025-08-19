@@ -165,7 +165,7 @@ float Bounds::getVerticalLineWidth() const {
 void Ground::draw(DrawGridLayer* dgl, float minX, float maxX, float minY, float maxY) {
     if (dgl->m_editorLayer->m_playbackMode != PlaybackMode::Playing) return;
 
-    if (dgl->m_editorLayer->m_player1->isFlying()) {
+    if (!dgl->m_editorLayer->m_player1->isInBasicMode() || dgl->m_editorLayer->m_gameState.m_isDualMode) {
         float minPortalY = dgl->m_editorLayer->getMinPortalY();
         float maxPortalY = dgl->m_editorLayer->getMaxPortalY();
 
@@ -256,6 +256,7 @@ void GuideObjects::draw(DrawGridLayer* dgl, float minX, float maxX, float minY, 
         if (y1 >= minY && y1 <= maxY) DrawGridAPI::get().drawLine({minX, y1}, {maxX, y1}, bottomColor, lineWidthBottom);
         if (y2 >= minY && y2 <= maxY) DrawGridAPI::get().drawLine({minX, y2}, {maxX, y2}, topColor, lineWidthTop);
     }
+
 }
 
 void GuideObjects::setPropertiesForObject(std::function<void(LineColor& bottomColor, LineColor& topColor, EffectGameObject* object, float& lineWidthBottom, float& lineWidthTop)> colorForObject, int priority) {
@@ -511,6 +512,10 @@ void AudioLine::setPropertiesForTime(std::function<void(LineColor& color, bool p
 void PositionLines::draw(DrawGridLayer* dgl, float minX, float maxX, float minY, float maxY) {
     if (dgl->m_editorLayer->m_playbackMode == PlaybackMode::Playing)
         return;
+
+    if (auto betterEdit = Loader::get()->getLoadedMod("hjfod.betteredit")) {
+        if (!betterEdit->getSavedValue<bool>("pos-line")) return;
+    }
 
     const CCSize& winSize = CCDirector::get()->getWinSize();
     float toolbarHeight = dgl->m_editorLayer->m_editorUI->m_toolbarHeight;
