@@ -119,6 +119,7 @@ public:
 
 class GOOD_GRID_API_DLL DurationLines : public DrawNode {
     std::map<int, std::vector<std::function<void(LineColor& color, EffectGameObject* object, float& lineWidth)>>> m_colorsForObject;
+    geode::Ref<GameObject> m_lastSnappedObject = nullptr;
     void draw(DrawGridLayer* dgl, float minX, float maxX, float minY, float maxY);
 public:
     void setPropertiesForObject(std::function<void(LineColor& color, EffectGameObject* object, float& lineWidth)> colorForObject, int priority = 0);

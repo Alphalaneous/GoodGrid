@@ -1,6 +1,8 @@
 # 1.1.3
-- Hide Position Lines when BetterEdit has them toggled.
+- Hide Position Lines when BetterEdit has them toggled
 - Fixed a bug where sometimes the ground line for certain gamemodes and dual wouldn't show
+- Fix a vanilla bug where duration lines broke when the object was moved and snapped
+- Fix a vanilla bug where ground lines showed even in free fly mode
 
 # 1.1.2
 - Minor fixes from hiimjasmine00

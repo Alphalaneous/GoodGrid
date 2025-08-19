@@ -164,8 +164,11 @@ float Bounds::getVerticalLineWidth() const {
 
 void Ground::draw(DrawGridLayer* dgl, float minX, float maxX, float minY, float maxY) {
     if (dgl->m_editorLayer->m_playbackMode != PlaybackMode::Playing) return;
+    auto& gamestate = dgl->m_editorLayer->m_gameState;
+    
+    if (gamestate.m_unkBool8) return;
 
-    if (!dgl->m_editorLayer->m_player1->isInBasicMode() || dgl->m_editorLayer->m_gameState.m_isDualMode) {
+    if (!dgl->m_editorLayer->m_player1->isInBasicMode() || gamestate.m_isDualMode) {
         float minPortalY = dgl->m_editorLayer->getMinPortalY();
         float maxPortalY = dgl->m_editorLayer->getMaxPortalY();
 
@@ -304,10 +307,14 @@ void DurationLines::draw(DrawGridLayer* dgl, float minX, float maxX, float minY,
         }
 
         CCPoint& endPos = obj->m_endPosition;
+        auto snapObject = dgl->m_editorLayer->m_editorUI->m_snapObject;
 
-        if (dgl->m_updateTimeMarkers) {
+        if (dgl->m_updateTimeMarkers || (obj == m_lastSnappedObject && !snapObject)) {
             endPos = CCPoint{0, 0};
+            snapObject = nullptr;
         }
+
+        m_lastSnappedObject = snapObject;
 
         float time = obj->m_duration;
 
