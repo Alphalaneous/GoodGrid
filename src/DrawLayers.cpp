@@ -616,7 +616,7 @@ bool PositionLines::posLinesEnabledBE() {
     static auto betterEdit = Loader::get()->getLoadedMod("hjfod.betteredit");
     if (!betterEdit) return true;
 
-    static bool enabled = true;
+    static bool enabled = betterEdit->getSettingValue<bool>("pos-line");
     static auto listener = listenForSettingChanges("pos-line", [](bool value) {
         enabled = value;
     }, betterEdit);
