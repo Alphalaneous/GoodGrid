@@ -1,6 +1,7 @@
 #pragma once
 #include "DrawNode.hpp"
 #include "DrawGridAPI.hpp"
+#include "PriorityCallbackList.hpp"
 
 #ifdef GEODE_IS_WINDOWS
     #ifdef GOOD_GRID_API_EXPORTING
@@ -104,46 +105,52 @@ public:
 };
 
 class GOOD_GRID_API_DLL GuideObjects : public DrawNode {
-    std::map<int, std::vector<std::function<void(LineColor& bottomColor, LineColor& topColor, EffectGameObject* object, float& lineWidthBottom, float& lineWidthTop)>>> m_colorsForObject;
+    using GuideObjectCallback = std::function<void(LineColor& bottomColor, LineColor& topColor, EffectGameObject* object, float& lineWidthBottom, float& lineWidthTop)>;
+    PriorityCallbackList<GuideObjectCallback> m_colorsForObject;
     void draw(DrawGridLayer* dgl, float minX, float maxX, float minY, float maxY);
 public:
-    void setPropertiesForObject(std::function<void(LineColor& bottomColor, LineColor& topColor, EffectGameObject* object, float& lineWidthBottom, float& lineWidthTop)> colorForObject, int priority = 0);
+    void setPropertiesForObject(GuideObjectCallback colorForObject, int priority = 0);
 };
 
 class GOOD_GRID_API_DLL EffectLines : public DrawNode {
-    std::map<int, std::vector<std::function<void(LineColor& color, float& x, EffectGameObject* object, float& lineWidth)>>> m_colorsForObject;
+    using EffectLineCallback = std::function<void(LineColor& color, float& x, EffectGameObject* object, float& lineWidth)>;
+    PriorityCallbackList<EffectLineCallback> m_colorsForObject;
     void draw(DrawGridLayer* dgl, float minX, float maxX, float minY, float maxY);
 public:
-    void setPropertiesForObject(std::function<void(LineColor& color, float& x, EffectGameObject* object, float& lineWidth)> colorForObject, int priority = 0);
+    void setPropertiesForObject(EffectLineCallback colorForObject, int priority = 0);
 };
 
 class GOOD_GRID_API_DLL DurationLines : public DrawNode {
-    std::map<int, std::vector<std::function<void(LineColor& color, EffectGameObject* object, float& lineWidth)>>> m_colorsForObject;
+    using DurationLineCallback = std::function<void(LineColor& color, EffectGameObject* object, float& lineWidth)>;
+    PriorityCallbackList<DurationLineCallback> m_colorsForObject;
     geode::Ref<GameObject> m_lastSnappedObject = nullptr;
     void draw(DrawGridLayer* dgl, float minX, float maxX, float minY, float maxY);
 public:
-    void setPropertiesForObject(std::function<void(LineColor& color, EffectGameObject* object, float& lineWidth)> colorForObject, int priority = 0);
+    void setPropertiesForObject(DurationLineCallback colorForObject, int priority = 0);
 };
 
 class GOOD_GRID_API_DLL Guidelines : public DrawNode {
-    std::map<int, std::vector<std::function<void(LineColor& color, float& value, float& lineWidth)>>> m_colorsForValue;
+    using GuidelineCallback = std::function<void(LineColor& color, float& value, float& lineWidth)>;
+    PriorityCallbackList<GuidelineCallback> m_colorsForValue;
     void draw(DrawGridLayer* dgl, float minX, float maxX, float minY, float maxY);
 public:
-    void setPropertiesForValue(std::function<void(LineColor& color, float& value, float& lineWidth)> colorForValue, int priority = 0);
+    void setPropertiesForValue(GuidelineCallback colorForValue, int priority = 0);
 };
 
 class GOOD_GRID_API_DLL BPMTriggers : public DrawNode {
-    std::map<int, std::vector<std::function<void(LineColor& color, AudioLineGuideGameObject* object, float& x, int beat, int beatsPerBar, float& lineWidth)>>> m_colorsForBeats;
+    using BPMTriggerCallback = std::function<void(LineColor& color, AudioLineGuideGameObject* object, float& x, int beat, int beatsPerBar, float& lineWidth)>;
+    PriorityCallbackList<BPMTriggerCallback> m_colorsForBeats;
     void draw(DrawGridLayer* dgl, float minX, float maxX, float minY, float maxY);
 public:
-    void setPropertiesForBeats(std::function<void(LineColor& color, AudioLineGuideGameObject* object, float& x, int beat, int beatsPerBar, float& lineWidth)> colorForBeats, int priority = 0);
+    void setPropertiesForBeats(BPMTriggerCallback colorForBeats, int priority = 0);
 };
 
 class GOOD_GRID_API_DLL AudioLine : public DrawNode {
-    std::map<int, std::vector<std::function<void(LineColor& color, bool playback, float time, const cocos2d::CCPoint& position, float& lineWidth)>>> m_colorsForTime;
+    using AudioLineCallback = std::function<void(LineColor& color, bool playback, float time, const cocos2d::CCPoint& position, float& lineWidth)>;
+    PriorityCallbackList<AudioLineCallback> m_colorsForTime;
     void draw(DrawGridLayer* dgl, float minX, float maxX, float minY, float maxY);
 public:
-    void setPropertiesForTime(std::function<void(LineColor& color, bool playback, float time, const cocos2d::CCPoint& position, float& lineWidth)> colorForTime, int priority = 0);
+    void setPropertiesForTime(AudioLineCallback colorForTime, int priority = 0);
 };
 
 class GOOD_GRID_API_DLL PositionLines : public DrawNode {
@@ -158,7 +165,14 @@ class GOOD_GRID_API_DLL PositionLines : public DrawNode {
     int m_verticalLineWidthPriority = 0;
     int m_horizontalLineWidthPriority = 0;
 
+    float m_cachedAngle = -1;
+    float m_cachedAngleRad = 0;
+    float m_cachedSin = 0;
+    float m_cachedCos = 0;
+
     void draw(DrawGridLayer* dgl, float minX, float maxX, float minY, float maxY);
+
+    bool posLinesEnabledBE();
 public:
     void setVerticalLineColor(const LineColor& color, int priority = 0);
     void setHorizontalLineColor(const LineColor& color, int priority = 0);

@@ -5,32 +5,39 @@
 using namespace geode::prelude;
 
 void Grid::draw(DrawGridLayer* dgl, float minX, float maxX, float minY, float maxY) {
-    if (!dgl->m_editorLayer->m_showGrid || (dgl->m_editorLayer->m_hideGridOnPlay && dgl->m_editorLayer->m_playbackMode == PlaybackMode::Playing)) return;
-    const CCSize size = DrawGridAPI::get().getGridBoundsSize();
-    const CCPoint origin = DrawGridAPI::get().getGridBoundsOrigin();
+    auto editorLayer = dgl->m_editorLayer;
 
-    const float scale = dgl->m_editorLayer->m_objectLayer->getScale();
-    const float xStart = std::max(minX - dgl->m_gridSize, origin.x);
-    const float xEnd   = std::min(maxX + dgl->m_gridSize, size.width);
+    if (!editorLayer->m_showGrid || (editorLayer->m_hideGridOnPlay && editorLayer->m_playbackMode == PlaybackMode::Playing)) return;
     
-    const int firstGridX = static_cast<int>(std::floor(xStart / dgl->m_gridSize));
-    const int lastGridX  = static_cast<int>(std::ceil(xEnd / dgl->m_gridSize));
+    auto& api = DrawGridAPI::get();
+    auto& gridSize = dgl->m_gridSize;
     
-    const float yStart = std::max(minY - dgl->m_gridSize, origin.y);
-    const float yEnd   = std::min(maxY + dgl->m_gridSize, (dgl->m_editorLayer->m_levelSettings->m_dynamicLevelHeight ? size.height : MAX_HEIGHT));
+    const CCSize size = api.getGridBoundsSize();
+    const CCPoint origin = api.getGridBoundsOrigin();
+
+    const float scale = editorLayer->m_objectLayer->getScale();
+    const float xStart = std::max(minX - gridSize, origin.x);
+    const float xEnd   = std::min(maxX + gridSize, size.width);
     
-    const int firstGridY = static_cast<int>(std::floor(yStart / dgl->m_gridSize));
-    const int lastGridY  = static_cast<int>(std::ceil(yEnd / dgl->m_gridSize));
+    const float invGridSize = 1.0f / gridSize;
+
+    const int firstGridX = static_cast<int>(std::floor(xStart  * invGridSize));
+    const int lastGridX  = static_cast<int>(std::ceil(xEnd * invGridSize));
     
-    for (int i = firstGridX; i <= lastGridX; ++i) {
-        float x = i * dgl->m_gridSize;
-        if (x < minX || x > maxX) continue;
-        DrawGridAPI::get().drawLine({x, minY}, {x, maxY}, m_gridColor, m_lineWidth);
+    const float yStart = std::max(minY - gridSize, origin.y);
+    const float yEnd   = std::min(maxY + gridSize, (editorLayer->m_levelSettings->m_dynamicLevelHeight ? size.height : MAX_HEIGHT));
+    
+    const int firstGridY = static_cast<int>(std::floor(yStart * invGridSize));
+    const int lastGridY  = static_cast<int>(std::ceil(yEnd * invGridSize));
+    
+    float x = firstGridX * gridSize;
+    for (int i = firstGridX; i <= lastGridX; ++i, x += gridSize) {
+        api.drawLine({x, minY}, {x, maxY}, m_gridColor, m_lineWidth);
     }
-    for (int i = firstGridY; i <= lastGridY; ++i) {
-        float y = i * dgl->m_gridSize;
-        if (y < minY || y > maxY) continue;
-        DrawGridAPI::get().drawLine({minX, y}, {maxX, y}, m_gridColor, m_lineWidth);
+
+    float y = firstGridY * gridSize;
+    for (int i = firstGridY; i <= lastGridY; ++i, y += gridSize) {
+        api.drawLine({minX, y}, {maxX, y}, m_gridColor, m_lineWidth);
     }
 }
 
@@ -65,11 +72,13 @@ float Grid::getLineWidth() const {
 }
 
 void Bounds::draw(DrawGridLayer* dgl, float minX, float maxX, float minY, float maxY) {
-    DrawGridAPI::get().drawLine({0, minY}, {0, maxY}, m_verticalBoundColor, m_verticalBoundLineWidth);
+    auto& api = DrawGridAPI::get();
+
+    api.drawLine({0, minY}, {0, maxY}, m_verticalBoundColor, m_verticalBoundLineWidth);
     if (!dgl->m_editorLayer->m_showGround) {
-        DrawGridAPI::get().drawLine({minX, GROUND_OFFSET}, {maxX, GROUND_OFFSET}, m_bottomBoundColor, m_bottomBoundLineWidth);
+        api.drawLine({minX, GROUND_OFFSET}, {maxX, GROUND_OFFSET}, m_bottomBoundColor, m_bottomBoundLineWidth);
     }
-    DrawGridAPI::get().drawLine({minX, maxY}, {maxX, maxY}, m_topBoundColor, m_topBoundLineWidth);
+    api.drawLine({minX, maxY}, {maxX, maxY}, m_topBoundColor, m_topBoundLineWidth);
 }
 
 void Bounds::setTopBoundColor(const LineColor& color, int priority) {
@@ -147,7 +156,7 @@ int Bounds::getBottomBoundLineWidthPriority() const {
 }
 
 int Bounds::getVerticalBoundLineWidthPriority() const {
-    return m_verticalBoundColorPriority;
+    return m_verticalBoundLineWidthPriority;
 }
 
 float Bounds::getTopBoundLineWidth() const {
@@ -163,17 +172,19 @@ float Bounds::getVerticalLineWidth() const {
 }
 
 void Ground::draw(DrawGridLayer* dgl, float minX, float maxX, float minY, float maxY) {
-    if (dgl->m_editorLayer->m_playbackMode != PlaybackMode::Playing) return;
-    auto& gamestate = dgl->m_editorLayer->m_gameState;
+    auto editorLayer = dgl->m_editorLayer;
+    if (editorLayer->m_playbackMode != PlaybackMode::Playing) return;
+    auto& gamestate = editorLayer->m_gameState;
+    auto& api = DrawGridAPI::get();
     
     if (gamestate.m_unkBool8) return;
 
-    if (!dgl->m_editorLayer->m_player1->isInBasicMode() || gamestate.m_isDualMode) {
-        float minPortalY = dgl->m_editorLayer->getMinPortalY();
-        float maxPortalY = dgl->m_editorLayer->getMaxPortalY();
+    if (!editorLayer->m_player1->isInBasicMode() || gamestate.m_isDualMode) {
+        float minPortalY = editorLayer->getMinPortalY();
+        float maxPortalY = editorLayer->getMaxPortalY();
 
-        DrawGridAPI::get().drawLine({minX, minPortalY}, {maxX, minPortalY}, m_bottomGroundColor, m_bottomGroundLineWidth);
-        DrawGridAPI::get().drawLine({minX, maxPortalY}, {maxX, maxPortalY}, m_topGroundColor, m_topGroundLineWidth);
+        api.drawLine({minX, minPortalY}, {maxX, minPortalY}, m_bottomGroundColor, m_bottomGroundLineWidth);
+        api.drawLine({minX, maxPortalY}, {maxX, maxPortalY}, m_topGroundColor, m_topGroundLineWidth);
     }
 }
 
@@ -239,82 +250,103 @@ float Ground::getBottomGroundLineWidth() const {
 
 void GuideObjects::draw(DrawGridLayer* dgl, float minX, float maxX, float minY, float maxY) {
     if (dgl->m_editorLayer->m_playbackMode == PlaybackMode::Playing) return;
+    auto& api = DrawGridAPI::get();
+
+    m_colorsForObject.rebuildIfNeeded();
 
     for (auto obj : CCArrayExt<EffectGameObject*>(dgl->m_guideObjects)) {
-        if (!DrawGridAPI::get().isObjectVisible(obj)) continue;
-        auto [y1, y2] = DrawGridAPI::get().getPortalMinMax(obj);
+        if (!api.isObjectVisible(obj)) continue;
+        auto [y1, y2] = api.getPortalMinMax(obj);
 
-        LineColor bottomColor = { 0, 255,255,255 };
-        LineColor topColor = { 0, 255,255,255 };
+        static const auto defaultLineColor = LineColor{0, 255, 255, 255};
+
+        LineColor bottomColor = defaultLineColor;
+        LineColor topColor = defaultLineColor;
 
         float lineWidthBottom = 2.0f;
         float lineWidthTop = 2.0f;
 
-        for (const auto& [_, vec] : m_colorsForObject) {
-            for (const auto& fn : vec) {
-                fn(bottomColor, topColor, obj, lineWidthBottom, lineWidthTop);
-            }
+        for (auto& fn : m_colorsForObject.flat) {
+            fn(bottomColor, topColor, obj, lineWidthBottom, lineWidthTop);
         }
 
-        if (y1 >= minY && y1 <= maxY) DrawGridAPI::get().drawLine({minX, y1}, {maxX, y1}, bottomColor, lineWidthBottom);
-        if (y2 >= minY && y2 <= maxY) DrawGridAPI::get().drawLine({minX, y2}, {maxX, y2}, topColor, lineWidthTop);
+        if (y1 >= minY && y1 <= maxY) api.drawLine({minX, y1}, {maxX, y1}, bottomColor, lineWidthBottom);
+        if (y2 >= minY && y2 <= maxY) api.drawLine({minX, y2}, {maxX, y2}, topColor, lineWidthTop);
     }
-
 }
 
-void GuideObjects::setPropertiesForObject(std::function<void(LineColor& bottomColor, LineColor& topColor, EffectGameObject* object, float& lineWidthBottom, float& lineWidthTop)> colorForObject, int priority) {
-    m_colorsForObject[priority].push_back(colorForObject);
+void GuideObjects::setPropertiesForObject(GuideObjectCallback colorForObject, int priority) {
+    m_colorsForObject.add(std::move(colorForObject), priority);
 }
 
 void EffectLines::draw(DrawGridLayer* dgl, float minX, float maxX, float minY, float maxY) {
-    if (!dgl->m_editorLayer->m_drawEffectLines || dgl->m_editorLayer->m_playbackMode == PlaybackMode::Playing) return;
+    auto editorLayer = dgl->m_editorLayer;
+
+    if (!editorLayer->m_drawEffectLines || editorLayer->m_playbackMode == PlaybackMode::Playing) return;
+    auto& api = DrawGridAPI::get();
+
+    m_colorsForObject.rebuildIfNeeded();
+
     for (auto obj : CCArrayExt<EffectGameObject*>(dgl->m_effectGameObjects)) {
-        if (obj->m_isSpawnTriggered || obj->m_isTouchTriggered || !DrawGridAPI::get().isObjectVisible(obj)) continue;
+        if (obj->m_isSpawnTriggered || obj->m_isTouchTriggered || !api.isObjectVisible(obj)) continue;
         float x = obj->getPositionX();
         if (x < minX || x > maxX || x < 0) continue;
 
-        LineColor color = { 0, 255,255,255 };
+        static const auto defaultLineColor = LineColor{0, 255, 255, 255};
+
+        LineColor color = defaultLineColor;
 
         float lineWidth = 1.0f;
 
-        for (const auto& [_, vec] : m_colorsForObject) {
-            for (const auto& fn : vec) {
-                fn(color, x, obj, lineWidth);
-            }
+        for (auto& fn : m_colorsForObject.flat) {
+            fn(color, x, obj, lineWidth);
         }
 
-        DrawGridAPI::get().drawLine({x, minY}, { x, maxY}, color, lineWidth);
+        api.drawLine({x, minY}, { x, maxY}, color, lineWidth);
     }
 }
 
-void EffectLines::setPropertiesForObject(std::function<void(LineColor& color, float& x, EffectGameObject* object, float& lineWidth)> colorForObject, int priority) {
-    m_colorsForObject[priority].push_back(colorForObject);
+void EffectLines::setPropertiesForObject(EffectLineCallback colorForObject, int priority) {
+    m_colorsForObject.add(std::move(colorForObject), priority);
 }
 
 void DurationLines::draw(DrawGridLayer* dgl, float minX, float maxX, float minY, float maxY) {
-    if (!dgl->m_editorLayer->m_showDurationLines || dgl->m_editorLayer->m_playbackMode == PlaybackMode::Playing) return;
-    for (auto obj : CCArrayExt<EffectGameObject*>(dgl->m_editorLayer->m_durationObjects)) {
-        if (!DrawGridAPI::get().isObjectVisible(obj)) continue;
+    auto editorLayer = dgl->m_editorLayer;
+
+    if (!editorLayer->m_showDurationLines || editorLayer->m_playbackMode == PlaybackMode::Playing) return;
+    auto& api = DrawGridAPI::get();
+
+    m_colorsForObject.rebuildIfNeeded();
+
+    const auto& startSpeed = editorLayer->m_levelSettings->m_startSpeed;
+    const auto& isPlatformer = editorLayer->m_isPlatformer;
+    auto& rotateChannel = editorLayer->m_gameState.m_rotateChannel;
+    const auto& updateTimeMarkers = dgl->m_updateTimeMarkers;
+    auto speedObjects = dgl->m_speedObjects;
+    auto snapObject = editorLayer->m_editorUI->m_snapObject;
+
+    for (auto obj : CCArrayExt<EffectGameObject*>(editorLayer->m_durationObjects)) {
+        if (!api.isObjectVisible(obj)) continue;
         
-        LineColor color = { 255, 255, 255, 115};
+        static const auto defaultLineColor = LineColor{255, 255, 255, 115};
+
+        LineColor color = defaultLineColor;
 
         float lineWidth = 2.0f;
 
-        for (const auto& [_, vec] : m_colorsForObject) {
-            for (const auto& fn : vec) {
-                fn(color, obj, lineWidth);
-            }
+        for (auto& fn : m_colorsForObject.flat) {
+            fn(color, obj, lineWidth);
         }
 
         CCPoint& endPos = obj->m_endPosition;
-        auto snapObject = dgl->m_editorLayer->m_editorUI->m_snapObject;
 
-        if (dgl->m_updateTimeMarkers || (obj == m_lastSnappedObject && !snapObject)) {
+        if (updateTimeMarkers || (obj == m_lastSnappedObject && !snapObject)) {
             endPos = CCPoint{0, 0};
-            snapObject = nullptr;
+            m_lastSnappedObject = nullptr;
         }
-
-        m_lastSnappedObject = snapObject;
+        else {
+            m_lastSnappedObject = snapObject;
+        }
 
         float time = obj->m_duration;
 
@@ -334,12 +366,12 @@ void DurationLines::draw(DrawGridLayer* dgl, float minX, float maxX, float minY,
             if (endPos == CCPointZero) {
                 float currentTime = LevelTools::timeForPos(
                     currentPos,
-                    dgl->m_speedObjects,
-                    (int)dgl->m_editorLayer->m_levelSettings->m_startSpeed,
+                    speedObjects,
+                    static_cast<int>(startSpeed),
                     obj->m_ordValue,
                     obj->m_channelValue,
                     false,
-                    dgl->m_editorLayer->m_isPlatformer,
+                    isPlatformer,
                     true,
                     false,
                     false
@@ -349,12 +381,12 @@ void DurationLines::draw(DrawGridLayer* dgl, float minX, float maxX, float minY,
 
                 CCPoint newPos = LevelTools::posForTimeInternal(
                     currentTime + time,
-                    dgl->m_speedObjects,
-                    (int)dgl->m_editorLayer->m_levelSettings->m_startSpeed,
-                    dgl->m_editorLayer->m_isPlatformer,
+                    speedObjects,
+                    static_cast<int>(startSpeed),
+                    isPlatformer,
                     false,
                     true,
-                    dgl->m_editorLayer->m_gameState.m_rotateChannel,
+                    rotateChannel,
                     false
                 );
 
@@ -381,39 +413,46 @@ void DurationLines::draw(DrawGridLayer* dgl, float minX, float maxX, float minY,
 
         if (endPos.x < minX || currentPos.x > maxX || endPos.y < minY || currentPos.y > maxY) continue;
 
-        DrawGridAPI::get().drawLine({currentPos.x, currentPos.y}, {endPos.x, endPos.y}, color, lineWidth, false);
+        api.drawLine({currentPos.x, currentPos.y}, {endPos.x, endPos.y}, color, lineWidth, false);
     }
     dgl->m_updateTimeMarkers = false;
 }
 
-void DurationLines::setPropertiesForObject(std::function<void(LineColor& color, EffectGameObject* object, float& lineWidth)> colorForObject, int priority) {
-    m_colorsForObject[priority].push_back(colorForObject);
+void DurationLines::setPropertiesForObject(DurationLineCallback colorForObject, int priority) {
+    m_colorsForObject.add(std::move(colorForObject), priority);
 }
 
 void Guidelines::draw(DrawGridLayer* dgl, float minX, float maxX, float minY, float maxY) {
     if (!GameManager::get()->m_showSongMarkers) return;
-    for (const auto& [k, v] : DrawGridAPI::get().getTimeMarkers()) {
+    auto& api = DrawGridAPI::get();
+
+    m_colorsForValue.rebuildIfNeeded();
+
+    for (const auto& [k, v] : api.getTimeMarkers()) {
         LineColor color = v;
         float x = k;
         float lineWidth = 1.0f;
-        for (const auto& [_, vec] : m_colorsForValue) {
-            for (const auto& fn : vec) {
-                fn(color, x, lineWidth);
-            }
+
+        for (auto& fn : m_colorsForValue.flat) {
+            fn(color, x, lineWidth);
         }
 
         if (x < minX || x > maxX) continue;
-        DrawGridAPI::get().drawLine({x, minY}, {x, maxY}, color, lineWidth);
+        api.drawLine({x, minY}, {x, maxY}, color, lineWidth);
     }
 }
 
-void Guidelines::setPropertiesForValue(std::function<void(LineColor& color, float& xValue, float& lineWidth)> colorForValue, int priority) {
-    m_colorsForValue[priority].push_back(colorForValue);
+void Guidelines::setPropertiesForValue(GuidelineCallback colorForValue, int priority) {
+    m_colorsForValue.add(std::move(colorForValue), priority);
 }
 
 void BPMTriggers::draw(DrawGridLayer* dgl, float minX, float maxX, float minY, float maxY) {
+    auto& api = DrawGridAPI::get();
+
+    m_colorsForBeats.rebuildIfNeeded();
+
     for (auto& [_, obj] : dgl->m_audioLineObjects) {
-        if (obj->m_disabled || !DrawGridAPI::get().isObjectVisible(obj)) continue;
+        if (obj->m_disabled || !api.isObjectVisible(obj)) continue;
         float speed = dgl->m_normalSpeed;
         
         switch (obj->m_speed) {
@@ -437,122 +476,152 @@ void BPMTriggers::draw(DrawGridLayer* dgl, float minX, float maxX, float minY, f
         for (int beat = beatStart; beat <= beatEnd; ++beat) {
             float x = startX + timeStep * beat;
 
+            static const auto defaultLineColorA = LineColor{255, 255, 0, 255};
+            static const auto defaultLineColorB = LineColor{255, 127, 0, 255};
+
             LineColor color;
             float lineWidth = 1.0f;
             if (beat % beatsPerBar == 0) {
-                color = {255,255,0,255};
+                color = defaultLineColorA;
             }
             else {
-                color = {255,127,0,255};
+                color = defaultLineColorB;
             }
 
-            for (const auto& [_, vec] : m_colorsForBeats) {
-                for (const auto& fn : vec) {
-                    fn(color, obj, x, beat, beatsPerBar, lineWidth);
-                }
+            for (auto& fn : m_colorsForBeats.flat) {
+                fn(color, obj, x, beat, beatsPerBar, lineWidth);
             }
 
             if (x < minX || x > maxX) continue;
             if (x > endX || beat > beatEnd) break;
 
-            DrawGridAPI::get().drawLine({x, minY}, {x, maxY}, color, lineWidth);
+            api.drawLine({x, minY}, {x, maxY}, color, lineWidth);
         }
     }
 }
 
-void BPMTriggers::setPropertiesForBeats(std::function<void(LineColor& color, AudioLineGuideGameObject* object, float& x, int beat, int beatsPerBar, float& lineWidth)> colorForBeats, int priority) {
-    m_colorsForBeats[priority].push_back(colorForBeats);
+void BPMTriggers::setPropertiesForBeats(BPMTriggerCallback colorForBeats, int priority) {
+    m_colorsForBeats.add(std::move(colorForBeats), priority);
 }
 
 void AudioLine::draw(DrawGridLayer* dgl, float minX, float maxX, float minY, float maxY) {
     LineColor color = {50, 255, 50, 255};
+    auto& api = DrawGridAPI::get();
+    auto editorLayer = dgl->m_editorLayer;
+
+    m_colorsForTime.rebuildIfNeeded();
+
+    const auto& startSpeed = editorLayer->m_levelSettings->m_startSpeed;
+    const auto& isPlatformer = editorLayer->m_isPlatformer;
+    const auto& playbackActive = editorLayer->m_playbackActive;
+    auto& rotateChannel = editorLayer->m_gameState.m_rotateChannel;
+    auto& playbackX = dgl->m_playbackX;
+    auto& playbackY = dgl->m_playbackY;
+    auto& playbackTime = dgl->m_playbackTime;
+
+    auto speedObjects = dgl->m_speedObjects;
 
     float width = 5.0f;
-    if (dgl->m_editorLayer->m_playbackActive) {
+    if (playbackActive) {
         CCPoint pos = LevelTools::posForTimeInternal(
-            dgl->m_playbackTime,
-            dgl->m_speedObjects,
-            (int)dgl->m_editorLayer->m_levelSettings->m_startSpeed,
-            dgl->m_editorLayer->m_isPlatformer,
+            playbackTime,
+            speedObjects,
+            static_cast<int>(startSpeed),
+            isPlatformer,
             true,
             true,
-            dgl->m_editorLayer->m_gameState.m_rotateChannel,
+            rotateChannel,
             false
         );
-        dgl->m_playbackX = 0;
-        dgl->m_playbackY = 0;
+        playbackX = 0;
+        playbackY = 0;
 
         if (LevelTools::getLastGameplayRotated()) {
-            dgl->m_playbackY = pos.y;
+            playbackY = pos.y;
         } else {
-            dgl->m_playbackX = pos.x;
+            playbackX = pos.x;
         }
     } else {
         color = {2, 255, 2, 100};
         width = 3.0f;
     }
 
-    if (dgl->m_editorLayer->m_playbackMode == PlaybackMode::Playing) {
-        dgl->m_playbackX = 0;
-        dgl->m_playbackY = 0;
-        dgl->m_playbackTime = 0;
+    if (editorLayer->m_playbackMode == PlaybackMode::Playing) {
+        playbackX = 0;
+        playbackY = 0;
+        playbackTime = 0;
     }
 
-    for (const auto& [_, vec] : m_colorsForTime) {
-        for (const auto& fn : vec) {
-            fn(color, dgl->m_editorLayer->m_playbackActive, dgl->m_playbackTime, {dgl->m_playbackX, dgl->m_playbackY}, width);
-        }
+    for (auto& fn : m_colorsForTime.flat) {
+        fn(color, playbackActive, playbackTime, {playbackX, playbackY}, width);
     }
 
-    if (dgl->m_playbackX != 0) {
-        DrawGridAPI::get().drawLine({dgl->m_playbackX, minY}, {dgl->m_playbackX, maxY}, color, width, !dgl->m_editorLayer->m_playbackActive);
+    if (playbackX != 0) {
+        api.drawLine({playbackX, minY}, {playbackX, maxY}, color, width, !playbackActive);
     }
-    if (dgl->m_playbackY != 0) {
-        DrawGridAPI::get().drawLine({minX, dgl->m_playbackY}, {maxX, dgl->m_playbackY}, color, width, !dgl->m_editorLayer->m_playbackActive);
+    if (playbackY != 0) {
+        api.drawLine({minX, playbackY}, {maxX, playbackY}, color, width, !playbackActive);
     }
 }
 
-void AudioLine::setPropertiesForTime(std::function<void(LineColor& color, bool playback, float time, const cocos2d::CCPoint& position, float& lineWidth)> colorForTime, int priority) {
-    m_colorsForTime[priority].push_back(colorForTime);
+void AudioLine::setPropertiesForTime(AudioLineCallback colorForTime, int priority) {
+    m_colorsForTime.add(std::move(colorForTime), priority);
 }
 
 void PositionLines::draw(DrawGridLayer* dgl, float minX, float maxX, float minY, float maxY) {
-    if (dgl->m_editorLayer->m_playbackMode == PlaybackMode::Playing)
+    auto editorLayer = dgl->m_editorLayer;
+
+    if (editorLayer->m_playbackMode == PlaybackMode::Playing)
         return;
 
-    if (auto betterEdit = Loader::get()->getLoadedMod("hjfod.betteredit")) {
-        if (!betterEdit->getSavedValue<bool>("pos-line")) return;
-    }
+    if (!posLinesEnabledBE()) return;
 
-    const CCSize& winSize = CCDirector::get()->getWinSize();
-    float toolbarHeight = dgl->m_editorLayer->m_editorUI->m_toolbarHeight;
+    auto& api = DrawGridAPI::get();
 
-    auto objectLayer = dgl->m_editorLayer->m_objectLayer;
+    const CCSize& winSize = dgl->getContentSize();
+    const float& toolbarHeight = editorLayer->m_editorUI->m_toolbarHeight;
 
-    CCPoint screenCenter = { winSize.width / 2, winSize.height / 2 };
+    auto objectLayer = editorLayer->m_objectLayer;
+
+    CCPoint screenCenter = { winSize.width * 0.5f, winSize.height * 0.5f };
     CCPoint pivotInObject = objectLayer->convertToNodeSpace(screenCenter);
-    CCPoint lineScreenPos = { winSize.width / 2, (winSize.height + toolbarHeight) / 2 };
+    CCPoint lineScreenPos = { winSize.width * 0.5f, (winSize.height + toolbarHeight) * 0.5f };
     CCPoint linePosInObject = objectLayer->convertToNodeSpace(lineScreenPos);
 
-    float angle = CC_DEGREES_TO_RADIANS(dgl->m_editorLayer->m_gameState.m_cameraAngle);
-    float s = std::sin(-angle);
-    float c = std::cos(-angle);
+    const auto& cameraAngle = editorLayer->m_gameState.m_cameraAngle;
+
+    if (m_cachedAngle != cameraAngle) {
+        m_cachedAngle = cameraAngle;
+        m_cachedAngleRad = -CC_DEGREES_TO_RADIANS(cameraAngle);
+        m_cachedSin = std::sin(m_cachedAngleRad);
+        m_cachedCos = std::cos(m_cachedAngleRad);
+    }
 
     float dx = linePosInObject.x - pivotInObject.x;
     float dy = linePosInObject.y - pivotInObject.y;
 
-    float rotatedX = c * dx - s * dy + pivotInObject.x;
-    float rotatedY = s * dx + c * dy + pivotInObject.y;
+    float rotatedX = m_cachedCos * dx - m_cachedSin * dy + pivotInObject.x;
+    float rotatedY = m_cachedSin * dx + m_cachedCos * dy + pivotInObject.y;
 
-    CCPoint finalPos = { rotatedX, rotatedY };
-
-    if (finalPos.x >= minX && finalPos.x <= maxX) {
-        DrawGridAPI::get().drawLine({finalPos.x, minY}, {finalPos.x, maxY}, m_verticalLineColor, m_verticalLineWidth);
+    if (rotatedX >= minX && rotatedX <= maxX) {
+        api.drawLine({rotatedX, minY}, {rotatedX, maxY}, m_verticalLineColor, m_verticalLineWidth);
     }
 
-    if (finalPos.y >= minY && finalPos.y <= maxY) {
-        DrawGridAPI::get().drawLine({minX, finalPos.y}, {maxX, finalPos.y}, m_horizontalLineColor, m_horizontalLineWidth);
+    if (rotatedY >= minY && rotatedY <= maxY) {
+        api.drawLine({minX, rotatedY}, {maxX, rotatedY}, m_horizontalLineColor, m_horizontalLineWidth);
     }
+}
+
+bool PositionLines::posLinesEnabledBE() {
+    static auto betterEdit = Loader::get()->getLoadedMod("hjfod.betteredit");
+    if (!betterEdit) return true;
+
+    static bool enabled = true;
+    static auto listener = listenForSettingChanges("pos-line", [](bool value) {
+        enabled = value;
+    }, betterEdit);
+
+    return enabled;
 }
 
 void PositionLines::setVerticalLineColor(const LineColor& color, int priority) {
@@ -616,9 +685,11 @@ float PositionLines::getHorizontalLineWidth() const {
 }
 
 void PreviewLockLine::draw(DrawGridLayer* dgl, float minX, float maxX, float minY, float maxY) {
-    if (dgl->m_editorLayer->m_playbackMode != PlaybackMode::Not) return;
-    if (dgl->m_editorLayer->m_previewPosition.x <= 0) return;
-    const CCPoint& pos = dgl->m_editorLayer->m_previewPosition;
+    auto editorLayer = dgl->m_editorLayer;
+
+    if (editorLayer->m_playbackMode != PlaybackMode::Not) return;
+    if (editorLayer->m_previewPosition.x <= 0) return;
+    const CCPoint& pos = editorLayer->m_previewPosition;
     DrawGridAPI::get().drawLine({pos.x, minY}, {pos.x, maxY}, m_lineColor, m_lineWidth);
 }
 

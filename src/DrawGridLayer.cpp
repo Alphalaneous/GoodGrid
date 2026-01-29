@@ -22,7 +22,6 @@ class $modify(MyDrawGridLayer, DrawGridLayer) {
 	}
 
     void draw() {
-		if (DrawGridAPI::get().isVanillaDraw()) return DrawGridLayer::draw();
 		DrawGridAPI::get().draw();
 	}
 };

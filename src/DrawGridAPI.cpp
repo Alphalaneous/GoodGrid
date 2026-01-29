@@ -1,6 +1,7 @@
 #include "../include/DrawGridAPI.hpp"
 #include "../include/DrawLayers.hpp"
 #include <Geode/Geode.hpp>
+#include <unordered_map>
 
 using namespace geode::prelude;
 
@@ -45,8 +46,8 @@ struct DrawGridAPIImpl {
     CCSize m_cachedWorldViewSize;
     CCGLProgram* m_shader = nullptr;
     std::unordered_map<float, ccColor4B> m_timeMarkers;
-    std::map<float, std::vector<Vertex>> m_lineVertsBuffer;
-    std::map<float, std::vector<Vertex>> m_blendedLineVertsBuffer;
+    std::unordered_map<float, std::vector<Vertex>> m_lineVertsBuffer;
+    std::unordered_map<float, std::vector<Vertex>> m_blendedLineVertsBuffer;
     std::vector<Vertex> m_rectVertsBuffer;
     std::vector<Vertex> m_blendedRectVertsBuffer;
     std::vector<Vertex> m_rectOutlineVertsBuffer;
@@ -165,10 +166,16 @@ void DrawGridAPI::generateTimeMarkers() {
         float type = numFromString<float>(markers[i + 1]->getCString()).unwrapOrDefault();
         ccColor4B color;
 
-        if (type == 0.9f) color = ccColor4B{255, 255, 0, 255};
-        else if (type == 1.0f) color = ccColor4B{127, 255, 0, 255};
-        else if (type >= 0.8f || type == 0.0f) color = ccColor4B{255, 127, 0, 255};
-        else color = ccColor4B{0, 0, 0, 0};
+        static const auto colorA = ccColor4B{255, 255, 0, 255};
+        static const auto colorB = ccColor4B{127, 255, 0, 255};
+        static const auto colorC = ccColor4B{255, 127, 0, 255};
+        static const auto colorD = ccColor4B{0, 0, 0, 0};
+
+
+        if (type == 0.9f) color = colorA;
+        else if (type == 1.0f) color = colorB;
+        else if (type >= 0.8f || type == 0.0f) color = colorC;
+        else color = colorD;
 
         m_impl->m_timeMarkers[pos] = color;
     }
@@ -420,11 +427,11 @@ std::array<Vertex, 24> DrawGridAPI::rectToBorderTriangles(const CCRect& rect, co
 
 void DrawGridAPI::drawRect(const CCRect& rect, const ccColor4B& color, bool blend) {
     if (blend) {
-        for (Vertex v : rectToTriangles(rect, color)) {
+        for (const auto& v : rectToTriangles(rect, color)) {
             m_impl->m_blendedRectVertsBuffer.push_back(v);
         }
     } else {
-        for (Vertex v : rectToTriangles(rect, color)) {
+        for (const auto& v : rectToTriangles(rect, color)) {
             m_impl->m_rectVertsBuffer.push_back(v);
         }
     }
@@ -432,11 +439,11 @@ void DrawGridAPI::drawRect(const CCRect& rect, const ccColor4B& color, bool blen
 
 void DrawGridAPI::drawRectOutline(const CCRect& rect, const ccColor4B& color, float width, bool blend) {
     if (blend) {
-        for (Vertex v : rectToBorderTriangles(rect, color, width)) {
+        for (const auto& v : rectToBorderTriangles(rect, color, width)) {
             m_impl->m_blendedRectOutlineVertsBuffer.push_back(v);
         }
     } else {
-        for (Vertex v : rectToBorderTriangles(rect, color, width)) {
+        for (const auto& v : rectToBorderTriangles(rect, color, width)) {
             m_impl->m_rectOutlineVertsBuffer.push_back(v);
         }
     }

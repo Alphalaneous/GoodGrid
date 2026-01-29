@@ -1,3 +1,7 @@
+# 1.1.4
+- 2.2081 Support
+- Performance Improvements
+
 # 1.1.3
 - Hide Position Lines when BetterEdit has them toggled
 - Fixed a bug where sometimes the ground line for certain gamemodes and dual wouldn't show
