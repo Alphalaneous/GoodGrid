@@ -617,7 +617,7 @@ bool PositionLines::posLinesEnabledBE() {
     if (!betterEdit) return true;
 
     static bool enabled = betterEdit->getSettingValue<bool>("pos-line");
-    static auto listener = listenForSettingChanges("pos-line", [](bool value) {
+    static auto listener = listenForSettingChanges<bool>("pos-line", [](bool value) {
         enabled = value;
     }, betterEdit);
 
