@@ -1,3 +1,8 @@
+# 1.1.4-beta.2
+- Geode Alpha 2 support
+- Fix ordering
+- Fix selection box width
+
 # 1.1.4-beta.1
 - 2.2081 Support
 - Performance Improvements

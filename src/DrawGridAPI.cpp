@@ -46,8 +46,8 @@ struct DrawGridAPIImpl {
     CCSize m_cachedWorldViewSize;
     CCGLProgram* m_shader = nullptr;
     std::unordered_map<float, ccColor4B> m_timeMarkers;
-    std::unordered_map<float, std::vector<Vertex>> m_lineVertsBuffer;
-    std::unordered_map<float, std::vector<Vertex>> m_blendedLineVertsBuffer;
+    std::map<float, std::vector<Vertex>> m_lineVertsBuffer;
+    std::map<float, std::vector<Vertex>> m_blendedLineVertsBuffer;
     std::vector<Vertex> m_rectVertsBuffer;
     std::vector<Vertex> m_blendedRectVertsBuffer;
     std::vector<Vertex> m_rectOutlineVertsBuffer;
@@ -347,6 +347,8 @@ void DrawGridAPI::batchDraw() {
     m_impl->m_blendedRectVertsBuffer.resize(0);
     m_impl->m_rectOutlineVertsBuffer.resize(0);
     m_impl->m_blendedRectOutlineVertsBuffer.resize(0);
+
+    glLineWidth(1);
 }
 
 void DrawGridAPI::drawLine(const cocos2d::ccVertex2F& a, const cocos2d::ccVertex2F& b, const LineColor& color, float width, bool blend) {
