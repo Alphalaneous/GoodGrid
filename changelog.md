@@ -1,3 +1,6 @@
+# 1.1.4
+- Move out of beta
+
 # 1.1.4-beta.2
 - Geode Alpha 2 support
 - Fix ordering
