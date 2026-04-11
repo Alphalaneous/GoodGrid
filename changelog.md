@@ -1,3 +1,7 @@
+# 1.1.5
+- Fix missing center lines
+- Fix extra lines at end of limited bounds
+
 # 1.1.4
 - Move out of beta
 

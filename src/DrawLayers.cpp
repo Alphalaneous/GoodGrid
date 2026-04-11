@@ -22,13 +22,13 @@ void Grid::draw(DrawGridLayer* dgl, float minX, float maxX, float minY, float ma
     const float invGridSize = 1.0f / gridSize;
 
     const int firstGridX = static_cast<int>(std::floor(xStart  * invGridSize));
-    const int lastGridX  = static_cast<int>(std::ceil(xEnd * invGridSize));
+    const int lastGridX  = static_cast<int>(std::floor(xEnd * invGridSize)) - 1;
     
     const float yStart = std::max(minY - gridSize, origin.y);
     const float yEnd   = std::min(maxY + gridSize, (editorLayer->m_levelSettings->m_dynamicLevelHeight ? size.height : MAX_HEIGHT));
     
     const int firstGridY = static_cast<int>(std::floor(yStart * invGridSize));
-    const int lastGridY  = static_cast<int>(std::ceil(yEnd * invGridSize));
+    const int lastGridY  = static_cast<int>(std::floor(yEnd * invGridSize)) - 1;
     
     float x = firstGridX * gridSize + gridSize;
     for (int i = firstGridX; i <= lastGridX; ++i, x += gridSize) {
@@ -616,12 +616,7 @@ bool PositionLines::posLinesEnabledBE() {
     static auto betterEdit = Loader::get()->getLoadedMod("hjfod.betteredit");
     if (!betterEdit) return true;
 
-    static bool enabled = betterEdit->getSettingValue<bool>("pos-line");
-    static auto listener = listenForSettingChanges<bool>("pos-line", [](bool value) {
-        enabled = value;
-    }, betterEdit);
-
-    return enabled;
+    return betterEdit->getSavedValue<bool>("pos-line");
 }
 
 void PositionLines::setVerticalLineColor(const LineColor& color, int priority) {
