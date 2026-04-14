@@ -515,5 +515,5 @@ void DrawGridAPI::draw() {
     
     batchDraw();
 
-    glBlendFunc(oldSrc, oldDst);
+    ccGLBlendFunc(oldSrc, oldDst);
 }

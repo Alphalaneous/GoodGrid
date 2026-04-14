@@ -1,3 +1,6 @@
+# 1.1.6
+- Fix improperly restoring blending state
+
 # 1.1.5
 - Fix missing center lines
 - Fix extra lines at end of limited bounds
