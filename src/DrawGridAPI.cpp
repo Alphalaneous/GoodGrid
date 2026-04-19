@@ -306,7 +306,7 @@ void DrawGridAPI::batchDraw() {
         glDrawArrays(GL_TRIANGLES, 0, m_impl->m_rectOutlineVertsBuffer.size());
     }
 
-    glBlendFunc(GL_ONE, GL_ONE);
+    ccGLBlendFunc(GL_ONE, GL_ONE);
 
     if (!m_impl->m_blendedLineVertsBuffer.empty()){
         for (auto& [k, v] : m_impl->m_blendedLineVertsBuffer) {

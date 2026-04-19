@@ -1,3 +1,6 @@
+# 1.1.7
+- Fix improperly restoring blending state 2
+
 # 1.1.6
 - Fix improperly restoring blending state
 
