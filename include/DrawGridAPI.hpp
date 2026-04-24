@@ -55,6 +55,14 @@ protected:
     void setHideInvisible(bool enabled);
 
 public:
+
+    enum class DrawMode {
+        NONE = -1,
+        NORMAL,
+        BLEND,
+        INVERT
+    };
+
     DrawGridAPI();
     ~DrawGridAPI();
     DrawGridAPI(const DrawGridAPI&) = delete;
@@ -78,6 +86,15 @@ public:
     void drawLine(const cocos2d::ccVertex2F& start, const cocos2d::ccVertex2F& end, const LineColor& color, float width, bool blend = false);
     void drawRect(const cocos2d::CCRect& rect, const cocos2d::ccColor4B& color, bool blend = false);
     void drawRectOutline(const cocos2d::CCRect& rect, const cocos2d::ccColor4B& color, float width, bool blend = false);
+
+    void drawLineV2(const cocos2d::ccVertex2F& start, const cocos2d::ccVertex2F& end, const LineColor& color, float width, DrawMode drawMode = DrawMode::NORMAL);
+    void drawRectV2(const cocos2d::CCRect& rect, const cocos2d::ccColor4B& color, DrawMode drawMode = DrawMode::NORMAL);
+    void drawRectOutlineV2(const cocos2d::CCRect& rect, const cocos2d::ccColor4B& color, float width, DrawMode drawMode = DrawMode::NORMAL);
+
+    void setNextDrawMode(DrawMode drawMode);
+
+    void setInvertGrid(bool invert);
+    bool invertGrid();
 
     cocos2d::CCSize getGridBoundsSize();
     cocos2d::CCPoint getGridBoundsOrigin();

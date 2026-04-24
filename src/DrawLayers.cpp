@@ -31,13 +31,26 @@ void Grid::draw(DrawGridLayer* dgl, float minX, float maxX, float minY, float ma
     const int lastGridY  = static_cast<int>(std::floor(yEnd * invGridSize)) - 1;
     
     float x = firstGridX * gridSize + gridSize;
-    for (int i = firstGridX; i <= lastGridX; ++i, x += gridSize) {
-        api.drawLine({x, minY}, {x, maxY}, m_gridColor, m_lineWidth);
-    }
 
-    float y = firstGridY * gridSize + gridSize;
-    for (int i = firstGridY; i <= lastGridY; ++i, y += gridSize) {
-        api.drawLine({minX, y}, {maxX, y}, m_gridColor, m_lineWidth);
+    if (api.invertGrid()) {
+        for (int i = firstGridX; i <= lastGridX; ++i, x += gridSize) {
+            api.drawLineV2({x, minY}, {x, maxY}, m_gridColor, m_lineWidth, DrawGridAPI::DrawMode::INVERT);
+        }
+
+        float y = firstGridY * gridSize + gridSize;
+        for (int i = firstGridY; i <= lastGridY; ++i, y += gridSize) {
+            api.drawLineV2({minX, y}, {maxX, y}, m_gridColor, m_lineWidth, DrawGridAPI::DrawMode::INVERT);
+        }
+    }
+    else {
+        for (int i = firstGridX; i <= lastGridX; ++i, x += gridSize) {
+            api.drawLine({x, minY}, {x, maxY}, m_gridColor, m_lineWidth);
+        }
+
+        float y = firstGridY * gridSize + gridSize;
+        for (int i = firstGridY; i <= lastGridY; ++i, y += gridSize) {
+            api.drawLine({minX, y}, {maxX, y}, m_gridColor, m_lineWidth);
+        }
     }
 }
 

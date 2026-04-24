@@ -42,16 +42,21 @@ struct DrawGridAPIImpl {
     float m_lineSmoothingLimit = 0.4f;
     bool m_dirtyViewTransform = true;
     bool m_shouldSort = true;
+    bool m_invertGrid = false;
     float m_cachedOverdrawFactor = 1.f;
+    DrawGridAPI::DrawMode m_nextDrawMode = DrawGridAPI::DrawMode::NONE;
     CCSize m_cachedWorldViewSize;
     CCGLProgram* m_shader = nullptr;
     std::unordered_map<float, ccColor4B> m_timeMarkers;
     std::map<float, std::vector<Vertex>> m_lineVertsBuffer;
     std::map<float, std::vector<Vertex>> m_blendedLineVertsBuffer;
+    std::map<float, std::vector<Vertex>> m_invertedLineVertsBuffer;
     std::vector<Vertex> m_rectVertsBuffer;
     std::vector<Vertex> m_blendedRectVertsBuffer;
+    std::vector<Vertex> m_invertedRectVertsBuffer;
     std::vector<Vertex> m_rectOutlineVertsBuffer;
     std::vector<Vertex> m_blendedRectOutlineVertsBuffer;
+    std::vector<Vertex> m_invertedRectOutlineVertsBuffer;
     DrawGridLayer* m_drawGridLayer = nullptr;
     std::vector<std::unique_ptr<DrawNode>> m_drawNodes;
 };
@@ -90,10 +95,13 @@ void DrawGridAPI::init(DrawGridLayer* drawGridLayer, cocos2d::CCGLProgram* shade
     m_impl->m_shouldSort = true;
     m_impl->m_lineVertsBuffer.clear();
     m_impl->m_blendedLineVertsBuffer.clear();
+    m_impl->m_invertedLineVertsBuffer.clear();
     m_impl->m_rectVertsBuffer.clear();
     m_impl->m_blendedRectVertsBuffer.clear();
+    m_impl->m_invertedRectVertsBuffer.clear();
     m_impl->m_rectOutlineVertsBuffer.clear();
     m_impl->m_blendedRectOutlineVertsBuffer.clear();
+    m_impl->m_invertedRectOutlineVertsBuffer.clear();
 
     if (Loader::get()->isModLoaded("raydeeux.grandeditorextension") || Mod::get()->getSettingValue<bool>("extension-override")) {
         m_impl->m_gridWidthMax = FLT_MAX;
@@ -146,6 +154,14 @@ void DrawGridAPI::overrideGridBoundsSize(cocos2d::CCSize size) {
 void DrawGridAPI::overrideGridBoundsOrigin(cocos2d::CCPoint point) { 
     m_impl->m_gridWidthMin = point.x; 
     m_impl->m_gridHeightMin = point.y; 
+}
+
+void DrawGridAPI::setInvertGrid(bool invert) {
+    m_impl->m_invertGrid = invert;
+}
+
+bool DrawGridAPI::invertGrid() {
+    return m_impl->m_invertGrid;
 }
 
 cocos2d::CCSize DrawGridAPI::getGridBoundsSize() { 
@@ -277,6 +293,35 @@ void DrawGridAPI::batchDraw() {
     }
     #endif 
     
+    ccGLBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_ZERO);
+
+    if (!m_impl->m_invertedLineVertsBuffer.empty()){
+        for (auto& [k, v] : m_impl->m_invertedLineVertsBuffer) {
+            reserveIfNeeded(v, kReserveLines);
+            if (!v.empty()) {
+                glVertexAttribPointer(kCCVertexAttrib_Position, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), &v[0].position);
+                glVertexAttribPointer(kCCVertexAttrib_Color, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(Vertex), &v[0].color);
+                float width = k + widthModifier;
+                glLineWidth(width);
+                glDrawArrays(GL_LINES, 0, v.size());
+            }
+        }
+    }
+
+    if (!m_impl->m_invertedRectVertsBuffer.empty()){
+        reserveIfNeeded(m_impl->m_invertedRectVertsBuffer, kReserveRects);
+        glVertexAttribPointer(kCCVertexAttrib_Position, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), &m_impl->m_blendedRectVertsBuffer[0].position);
+        glVertexAttribPointer(kCCVertexAttrib_Color, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(Vertex), &m_impl->m_blendedRectVertsBuffer[0].color);
+        glDrawArrays(GL_TRIANGLES, 0, m_impl->m_invertedRectVertsBuffer.size());
+    }
+    
+    if (!m_impl->m_invertedRectOutlineVertsBuffer.empty()){
+        reserveIfNeeded(m_impl->m_invertedRectOutlineVertsBuffer, kReserveRects);
+        glVertexAttribPointer(kCCVertexAttrib_Position, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), &m_impl->m_blendedRectOutlineVertsBuffer[0].position);
+        glVertexAttribPointer(kCCVertexAttrib_Color, 4, GL_UNSIGNED_BYTE, GL_TRUE, sizeof(Vertex), &m_impl->m_blendedRectOutlineVertsBuffer[0].color);
+        glDrawArrays(GL_TRIANGLES, 0, m_impl->m_invertedRectOutlineVertsBuffer.size());
+    }
+
     ccGLBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     
     if (!m_impl->m_lineVertsBuffer.empty()){
@@ -343,21 +388,58 @@ void DrawGridAPI::batchDraw() {
 
     for (auto& [_, v] : m_impl->m_lineVertsBuffer) v.resize(0);
     for (auto& [_, v] : m_impl->m_blendedLineVertsBuffer) v.resize(0);
+    for (auto& [_, v] : m_impl->m_invertedLineVertsBuffer) v.resize(0);
     m_impl->m_rectVertsBuffer.resize(0);
     m_impl->m_blendedRectVertsBuffer.resize(0);
+    m_impl->m_invertedRectVertsBuffer.resize(0);
     m_impl->m_rectOutlineVertsBuffer.resize(0);
     m_impl->m_blendedRectOutlineVertsBuffer.resize(0);
+    m_impl->m_invertedRectOutlineVertsBuffer.resize(0);
 
     glLineWidth(1);
 }
 
+void DrawGridAPI::setNextDrawMode(DrawMode drawMode) {
+    
+}
+
 void DrawGridAPI::drawLine(const cocos2d::ccVertex2F& a, const cocos2d::ccVertex2F& b, const LineColor& color, float width, bool blend) {
+    if (m_impl->m_nextDrawMode != DrawMode::NONE) {
+        drawLineV2(a, b, color, width, m_impl->m_nextDrawMode);
+        m_impl->m_nextDrawMode = DrawMode::NONE;
+        return;
+    }
     if (blend) {
         m_impl->m_blendedLineVertsBuffer[width].push_back({a, color.getColorA()});
         m_impl->m_blendedLineVertsBuffer[width].push_back({b, color.getColorB()});
     } else {
         m_impl->m_lineVertsBuffer[width].push_back({a, color.getColorA()});
         m_impl->m_lineVertsBuffer[width].push_back({b, color.getColorB()});
+    }
+}
+
+void DrawGridAPI::drawLineV2(const cocos2d::ccVertex2F& start, const cocos2d::ccVertex2F& end, const LineColor& color, float width, DrawMode drawMode) {
+    if (m_impl->m_nextDrawMode != DrawMode::NONE) {
+        drawMode = m_impl->m_nextDrawMode;
+        m_impl->m_nextDrawMode = DrawMode::NONE;
+    }
+    switch (drawMode) {
+        case DrawMode::NORMAL: {
+            m_impl->m_lineVertsBuffer[width].push_back({start, color.getColorA()});
+            m_impl->m_lineVertsBuffer[width].push_back({end, color.getColorB()});
+            break;
+        }
+        case DrawMode::BLEND: {
+            m_impl->m_blendedLineVertsBuffer[width].push_back({start, color.getColorA()});
+            m_impl->m_blendedLineVertsBuffer[width].push_back({end, color.getColorB()});
+            break;
+        }
+        case DrawMode::INVERT: {
+            m_impl->m_invertedLineVertsBuffer[width].push_back({start, color.getColorA()});
+            m_impl->m_invertedLineVertsBuffer[width].push_back({end, color.getColorB()});
+            break;
+        }
+        default: break;
     }
 }
 
@@ -428,6 +510,11 @@ std::array<Vertex, 24> DrawGridAPI::rectToBorderTriangles(const CCRect& rect, co
 }
 
 void DrawGridAPI::drawRect(const CCRect& rect, const ccColor4B& color, bool blend) {
+    if (m_impl->m_nextDrawMode != DrawMode::NONE) {
+        drawRectV2(rect, color, m_impl->m_nextDrawMode);
+        m_impl->m_nextDrawMode = DrawMode::NONE;
+        return;
+    }
     if (blend) {
         for (const auto& v : rectToTriangles(rect, color)) {
             m_impl->m_blendedRectVertsBuffer.push_back(v);
@@ -439,7 +526,40 @@ void DrawGridAPI::drawRect(const CCRect& rect, const ccColor4B& color, bool blen
     }
 }
 
+void DrawGridAPI::drawRectV2(const cocos2d::CCRect& rect, const cocos2d::ccColor4B& color, DrawMode drawMode) {
+    if (m_impl->m_nextDrawMode != DrawMode::NONE) {
+        drawMode = m_impl->m_nextDrawMode;
+        m_impl->m_nextDrawMode = DrawMode::NONE;
+    }
+    switch (drawMode) {
+        case DrawMode::NORMAL: {
+            for (const auto& v : rectToTriangles(rect, color)) {
+                m_impl->m_rectVertsBuffer.push_back(v);
+            }
+            break;
+        }
+        case DrawMode::BLEND: {
+            for (const auto& v : rectToTriangles(rect, color)) {
+                m_impl->m_blendedRectVertsBuffer.push_back(v);
+            }
+            break;
+        }
+        case DrawMode::INVERT: {
+            for (const auto& v : rectToTriangles(rect, color)) {
+                m_impl->m_invertedRectVertsBuffer.push_back(v);
+            }
+            break;
+        }
+        default: break;
+    }
+}
+
 void DrawGridAPI::drawRectOutline(const CCRect& rect, const ccColor4B& color, float width, bool blend) {
+    if (m_impl->m_nextDrawMode != DrawMode::NONE) {
+        drawRectOutlineV2(rect, color, width, m_impl->m_nextDrawMode);
+        m_impl->m_nextDrawMode = DrawMode::NONE;
+        return;
+    }
     if (blend) {
         for (const auto& v : rectToBorderTriangles(rect, color, width)) {
             m_impl->m_blendedRectOutlineVertsBuffer.push_back(v);
@@ -448,6 +568,34 @@ void DrawGridAPI::drawRectOutline(const CCRect& rect, const ccColor4B& color, fl
         for (const auto& v : rectToBorderTriangles(rect, color, width)) {
             m_impl->m_rectOutlineVertsBuffer.push_back(v);
         }
+    }
+}
+
+void DrawGridAPI::drawRectOutlineV2(const cocos2d::CCRect& rect, const cocos2d::ccColor4B& color, float width, DrawMode drawMode) {
+    if (m_impl->m_nextDrawMode != DrawMode::NONE) {
+        drawMode = m_impl->m_nextDrawMode;
+        m_impl->m_nextDrawMode = DrawMode::NONE;
+    }
+    switch (drawMode) {
+        case DrawMode::NORMAL: {
+            for (const auto& v : rectToBorderTriangles(rect, color, width)) {
+                m_impl->m_rectOutlineVertsBuffer.push_back(v);
+            }
+            break;
+        }
+        case DrawMode::BLEND: {
+            for (const auto& v : rectToBorderTriangles(rect, color, width)) {
+                m_impl->m_blendedRectOutlineVertsBuffer.push_back(v);
+            }
+            break;
+        }
+        case DrawMode::INVERT: {
+            for (const auto& v : rectToBorderTriangles(rect, color, width)) {
+                m_impl->m_invertedRectOutlineVertsBuffer.push_back(v);
+            }
+            break;
+        }
+        default: break;
     }
 }
 

@@ -1,3 +1,6 @@
+# 1.2.0
+- Add invert blending
+
 # 1.1.7
 - Fix improperly restoring blending state 2
 
