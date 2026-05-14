@@ -293,7 +293,7 @@ void DrawGridAPI::batchDraw() {
     }
     #endif 
     
-    ccGLBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_ZERO);
+    ccGLBlendFunc(GL_ONE_MINUS_DST_COLOR, GL_ONE_MINUS_SRC_ALPHA);
 
     if (!m_impl->m_invertedLineVertsBuffer.empty()){
         for (auto& [k, v] : m_impl->m_invertedLineVertsBuffer) {
