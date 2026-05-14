@@ -1,5 +1,6 @@
 # 1.2.1
 - Invert blending fixes
+- Fix culling not updating when camera zooms during playtest
 
 # 1.2.0
 - Add invert blending

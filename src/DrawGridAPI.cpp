@@ -1,7 +1,6 @@
 #include "../include/DrawGridAPI.hpp"
 #include "../include/DrawLayers.hpp"
 #include <Geode/Geode.hpp>
-#include <unordered_map>
 
 using namespace geode::prelude;
 
@@ -226,7 +225,7 @@ float DrawGridAPI::getLineSmoothingLimit() {
 }
 
 void DrawGridAPI::ensureViewTransformValid() {
-    if (!m_impl->m_dirtyViewTransform) return;
+    if (!m_impl->m_dirtyViewTransform && m_impl->m_drawGridLayer->m_editorLayer->m_playbackMode != PlaybackMode::Playing) return;
     
     const CCSize winSize = CCDirector::get()->getWinSize();
     const float scale = m_impl->m_drawGridLayer->m_editorLayer->m_objectLayer->getScale();
