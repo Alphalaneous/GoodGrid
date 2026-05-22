@@ -43,6 +43,9 @@ struct DrawGridAPIImpl {
     bool m_shouldSort = true;
     bool m_invertGrid = false;
     float m_cachedOverdrawFactor = 1.f;
+    float m_minPortalY = 0;
+    float m_maxPortalY = 0;
+
     DrawGridAPI::DrawMode m_nextDrawMode = DrawGridAPI::DrawMode::NONE;
     CCSize m_cachedWorldViewSize;
     CCGLProgram* m_shader = nullptr;
@@ -663,4 +666,26 @@ void DrawGridAPI::draw() {
     batchDraw();
 
     ccGLBlendFunc(oldSrc, oldDst);
+}
+
+float DrawGridAPI::getMinPortalY() {
+    auto editor = LevelEditorLayer::get();
+    if (!editor) return 0;
+
+    if (editor->m_playbackMode == PlaybackMode::Playing) {
+        m_impl->m_minPortalY = editor->getMinPortalY();
+    }
+
+    return m_impl->m_minPortalY;
+}
+
+float DrawGridAPI::getMaxPortalY() {
+    auto editor = LevelEditorLayer::get();
+    if (!editor) return 0;
+
+    if (editor->m_playbackMode == PlaybackMode::Playing) {
+        m_impl->m_maxPortalY = editor->getMaxPortalY();
+    }
+
+    return m_impl->m_maxPortalY;
 }

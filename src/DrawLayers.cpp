@@ -186,15 +186,15 @@ float Bounds::getVerticalLineWidth() const {
 
 void Ground::draw(DrawGridLayer* dgl, float minX, float maxX, float minY, float maxY) {
     auto editorLayer = dgl->m_editorLayer;
-    if (editorLayer->m_playbackMode != PlaybackMode::Playing) return;
+    if (editorLayer->m_playbackMode == PlaybackMode::Not) return;
     auto& gamestate = editorLayer->m_gameState;
     auto& api = DrawGridAPI::get();
     
     if (gamestate.m_unkBool8) return;
 
     if (!editorLayer->m_player1->isInBasicMode() || gamestate.m_isDualMode) {
-        float minPortalY = editorLayer->getMinPortalY();
-        float maxPortalY = editorLayer->getMaxPortalY();
+        float minPortalY = api.getMinPortalY();
+        float maxPortalY = api.getMaxPortalY();
 
         api.drawLine({minX, minPortalY}, {maxX, minPortalY}, m_bottomGroundColor, m_bottomGroundLineWidth);
         api.drawLine({minX, maxPortalY}, {maxX, maxPortalY}, m_topGroundColor, m_topGroundLineWidth);

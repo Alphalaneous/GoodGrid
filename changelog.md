@@ -1,3 +1,7 @@
+# 1.2.2
+- Fix playtest ground lines not showing when playtest is paused
+- Fix vanilla bug where playtest ground lines are affected by editor zoom when paused
+
 # 1.2.1
 - Invert blending fixes
 - Fix culling not updating when camera zooms during playtest

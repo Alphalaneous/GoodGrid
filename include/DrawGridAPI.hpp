@@ -96,6 +96,9 @@ public:
     void setInvertGrid(bool invert);
     bool invertGrid();
 
+    float getMinPortalY();
+    float getMaxPortalY();
+
     cocos2d::CCSize getGridBoundsSize();
     cocos2d::CCPoint getGridBoundsOrigin();
     cocos2d::CCPoint getPortalMinMax(GameObject* obj);
