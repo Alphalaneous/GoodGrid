@@ -43,9 +43,9 @@ public:
 protected:
     void ensureViewTransformValid();
 
-    std::vector<good_grid::Vertex> m_lineBatches;
-    std::vector<good_grid::Vertex> m_blendedLineBatches;
-    std::vector<good_grid::Vertex> m_invertedLineBatches;
+    std::vector<good_grid::Vertex> m_additiveBatch;
+    std::vector<good_grid::Vertex> m_multiplyBatch;
+    std::vector<good_grid::Vertex> m_invertBatch;
 
     DrawGridLayer* m_drawGridLayer = nullptr;
     CCGLProgram* m_shader = nullptr;
