@@ -58,12 +58,12 @@ void Grid::draw(float minX, float maxX, float minY, float maxY) {
     float x = firstGridX * gridSize + gridSize;
 
     for (int i = firstGridX; i <= lastGridX; ++i, x += gridSize) {
-        drawLine({x, minY}, {x, maxY}, m_impl->m_gridColor, m_impl->m_lineWidth, m_impl->m_invert ? DrawMode::INVERT : DrawMode::ADDITIVE);
+        drawLine({x, minY}, {x, maxY}, m_impl->m_gridColor, m_impl->m_lineWidth, m_impl->m_invert ? BlendMode::INVERT : BlendMode::ADDITIVE);
     }
 
     float y = firstGridY * gridSize + gridSize;
     for (int i = firstGridY; i <= lastGridY; ++i, y += gridSize) {
-        drawLine({minX, y}, {maxX, y}, m_impl->m_gridColor, m_impl->m_lineWidth, m_impl->m_invert ? DrawMode::INVERT : DrawMode::ADDITIVE);
+        drawLine({minX, y}, {maxX, y}, m_impl->m_gridColor, m_impl->m_lineWidth, m_impl->m_invert ? BlendMode::INVERT : BlendMode::ADDITIVE);
     }
 }
 

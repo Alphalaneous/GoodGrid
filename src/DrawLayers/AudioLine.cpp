@@ -80,10 +80,10 @@ void AudioLine::draw(float minX, float maxX, float minY, float maxY) {
     }
 
     if (playbackX != 0) {
-        drawLine({playbackX, minY}, {playbackX, maxY}, color, width, playbackActive ? DrawMode::ADDITIVE : DrawMode::MULTIPLY);
+        drawLine({playbackX, minY}, {playbackX, maxY}, color, width, playbackActive ? BlendMode::ADDITIVE : BlendMode::MULTIPLY);
     }
     if (playbackY != 0) {
-        drawLine({minX, playbackY}, {maxX, playbackY}, color, width, playbackActive ? DrawMode::ADDITIVE : DrawMode::MULTIPLY);
+        drawLine({minX, playbackY}, {maxX, playbackY}, color, width, playbackActive ? BlendMode::ADDITIVE : BlendMode::MULTIPLY);
     }
 }
 
