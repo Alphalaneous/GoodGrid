@@ -22,11 +22,11 @@ DrawGridBase* DrawGridBase::create() {
     return nullptr;
 }
 
-void DrawGridBase::drawLine(const cocos2d::ccVertex2F& start, const cocos2d::ccVertex2F& end, const cocos2d::ccColor4B& color, float width, DrawMode mode) {
+void DrawGridBase::drawLine(const cocos2d::ccVertex2F& start, const cocos2d::ccVertex2F& end, const cocos2d::ccColor4B& color, float width, BlendMode mode) {
     drawLine(start, end, color, color, width, mode);
 }
 
-void DrawGridBase::drawLine(const cocos2d::ccVertex2F& start, const cocos2d::ccVertex2F& end, const cocos2d::ccColor4B& colorA, const cocos2d::ccColor4B& colorB, float width, DrawMode mode) {
+void DrawGridBase::drawLine(const cocos2d::ccVertex2F& start, const cocos2d::ccVertex2F& end, const cocos2d::ccColor4B& colorA, const cocos2d::ccColor4B& colorB, float width, BlendMode mode) {
     if (!m_impl->m_drawGridLayer) return;
 
     auto custom = m_impl->m_drawGridLayer->getCustom();
@@ -76,7 +76,7 @@ void DrawGridBase::drawLine(const cocos2d::ccVertex2F& start, const cocos2d::ccV
     batch.push_back({v3, colorB});
 }
 
-void DrawGridBase::drawRect(const cocos2d::CCRect& rect, const cocos2d::ccColor4B& color, DrawGridBase::DrawMode mode) {
+void DrawGridBase::drawRect(const cocos2d::CCRect& rect, const cocos2d::ccColor4B& color, DrawGridBase::BlendMode mode) {
     if (!m_impl->m_drawGridLayer) return;
 
     auto verts = good_grid::utils::rectToTriangles(rect, color);
@@ -89,7 +89,7 @@ void DrawGridBase::drawRect(const cocos2d::CCRect& rect, const cocos2d::ccColor4
     }
 }
 
-void DrawGridBase::drawRectOutline(const cocos2d::CCRect& rect, const cocos2d::ccColor4B& color, float width, DrawGridBase::DrawMode mode) {
+void DrawGridBase::drawRectOutline(const cocos2d::CCRect& rect, const cocos2d::ccColor4B& color, float width, DrawGridBase::BlendMode mode) {
     if (!m_impl->m_drawGridLayer) return;
 
     auto custom = m_impl->m_drawGridLayer->getCustom();

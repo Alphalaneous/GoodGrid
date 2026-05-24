@@ -12,36 +12,7 @@
 
 Here's what you can do with the API as a Developer:
 
-## LineColor
-
-This is a class that contains up to 2 colors for solid or gradient lines. When passing one into the constructor, both color A and B equal the same value. If you pass two colors, the line will be a gradient between the two. 
-
-```cpp
-LineColor(GLubyte r, GLubyte g, GLubyte b, GLubyte a);
-```
-Constructor with rgba bytes.
-
-```cpp
-LineColor(const cocos2d::ccColor4B& colorA);
-```
-Constructor with one color, will make the line solid.
-
-```cpp
-LineColor(const cocos2d::ccColor4B& colorA, const cocos2d::ccColor4B& colorB);
-```
-Constructor with two colors, will make the line a gradient between the two colors.
-
-```cpp
-cocos2d::ccColor4B getColorA() const
-```
-Returns the first color.
-
-```cpp
-cocos2d::ccColor4B getColorB() const
-```
-Returns the second color if it is set, else returns the first color.
-
-## DrawGridAPI.hpp
+## GoodGrid.hpp
 
 ```cpp
 void markDirty()
@@ -62,29 +33,6 @@ Sets the grid rendering to Vanilla's implementation (used mostly for debugging, 
 bool isVanillaDraw()
 ```
 Returns true if vanilla draw is enabled.
-
-```cpp
-void setLineSmoothing(bool enabled)
-```
-**Line smoothing is only supported on Windows and MacOS!**
-Sets all lines to smooth (useful for editor camera rotation)
-
-```cpp
-bool hasLineSmoothing()
-```
-**Line smoothing is only supported on Windows and MacOS!**
-Returns true of line smoothing is enabled
-
-```cpp
-void setLineSmoothingLimit(float limit)
-```
-**Line smoothing is only supported on Windows and MacOS!**
-Sets the editor zoom limit (if >= than this limit, the lines will not be made smooth) for line smoothing as having too many smoothed lines on screen at once is laggy. I recommend keeping it at default.
-
-```cpp
-float getLineSmoothingLimit()
-```
-Returns the line smoothing limit
 
 ```cpp
 void overrideGridBoundsSize(cocos2d::CCSize size)
@@ -117,120 +65,56 @@ float getOverdrawFactor()
 Returns the overdraw factor for the rotated editor view.
 
 ```cpp
-void drawLine(const cocos2d::ccVertex2F& start, const cocos2d::ccVertex2F& end, const LineColor& color, float width, bool blend = false)
-```
-Draws a line to the screen with two coordinates where it starts and ends. Takes in a LineColor param which allows for a solid or gradient color. The width is the line width, for the purpose of optimization, this also determines Z ordering for that specific width. Blending is an optional param that will make the line blend with additive blending.
-
-```cpp
-void drawRect(const cocos2d::CCRect& rect, const cocos2d::ccColor4B& color, bool blend = false)
-```
-Draws a rectangle to the screen with a CCRect param dictating the bounds and a color param to set its color. Blending is an optional param that will make the rectangle blend with additive blending.
-
-```cpp
-void drawRectOutline(const cocos2d::CCRect& rect, const cocos2d::ccColor4B& color, float width, bool blend = false)
-```
-Draws a rectangle outline to the screen with a CCRect param dictating the bounds, a color param to set its color, and the width of the outline. Blending is an optional param that will make the rectangle outline blend with additive blending.
-
-```cpp
 bool isObjectVisible(GameObject* object)
 ```
 Util to check if an object is visible (accounting for selecting, group and hide options).
 
+## DrawGridBase.hpp
+
+This class is what makes up every part of the new DrawGridLayer, it is a CCNode and thus can have its visibility and z order set. Every child on the DrawGridLayer inherits this class. It provides a few methods as well as some virtuals you can override that will be called when added to the DrawGridLayer as a child. This also contains a few of the API methods seen above for convenience.
+
 ```cpp
-geode::Result<DrawNode&> getNodeByID(const std::string& id)
+void drawLine(const cocos2d::ccVertex2F& start, const cocos2d::ccVertex2F& end, const ccColor4B& color, float width, BlendMode mode = BlendMode::ADDITIVE)
+void drawLine(const cocos2d::ccVertex2F& start, const cocos2d::ccVertex2F& end, const ccColor4B& colorA, const ccColor4B& colorB, float width, BlendMode mode = BlendMode::ADDITIVE) // gradient with 2 colors
+
 ```
-Returns a result of a DrawNode if one by the passed in ID exists.
+Draws a line to the screen with two coordinates where it starts and ends. The width is the line width, for the purpose of optimization. BlendMode is an optional param that will let you change the blending between Additive, Multiply, and Invert.
 
 ```cpp
-template <typename T>
-requires std::is_base_of_v<DrawNode, T>
-geode::Result<T&> getNode(const std::string& id)
+void drawRect(const cocos2d::CCRect& rect, const cocos2d::ccColor4B& color, BlendMode mode = BlendMode::ADDITIVE)
 ```
-Returns a result of a DrawNode if one passed by the type and ID exists.
+Draws a rectangle to the screen with a CCRect param dictating the bounds and a color param to set its color. BlendMode is an optional param that will let you change the blending between Additive, Multiply, and Invert.
 
 ```cpp
-template <typename T>
-requires std::is_base_of_v<DrawNode, T>
-geode::Result<T&> getNode()
+void drawRectOutline(const cocos2d::CCRect& rect, const cocos2d::ccColor4B& color, float width, BlendMode mode = BlendMode::ADDITIVE)
 ```
-Returns a result of a DrawNode if one passed by the type. Will always be first of a type if multiple exist.
+Draws a rectangle outline to the screen with a CCRect param dictating the bounds, a color param to set its color, and the width of the outline. BlendMode is an optional param that will let you change the blending between Additive, Multiply, and Invert.
 
 ```cpp
-template <typename T, typename... Args>
-requires std::is_base_of_v<DrawNode, T>
-T& addDraw(const std::string& id, Args&&... args)
-```
-Returns a reference of and adds a custom DrawNode to the DrawGridLayer with an ID.
-
-## DrawNode.hpp
-
-This class is what makes up every part of the new DrawGridLayer. Every layer on it inherits this class. It provides a few methods as well as some virtuals you can override that will be called when added via the DrawGridAPI. You usually do not need to manually construct this yourself, as DrawGridAPI::addDraw will construct one for you and return it.
-
-```cpp
-void setID(const std::string& id)
-```
-Sets the ID of the DrawNode.
-
-```cpp
-std::string getID() const
-```
-Returns the ID of the DrawNode.
-
-```cpp
-void setEnabled(bool enabled)
-```
-Sets if the DrawNode is enabled (should draw to the DrawGridLayer).
-
-```cpp
-bool isEnabled() const
-```
-Returns true if the DrawNode is enabled (will draw to the DrawGridLayer).
-
-```cpp
-void setZOrder(int order)
-```
-Sets the Z order of the DrawNode, note that this is width exclusive, it will draw in this order per line width, then rectangles, then rectangle outlines. 
-
-```cpp
-int getZOrder() const
-```
-Returns the Z order of the DrawNode.
-
-```cpp
-virtual void init(DrawGridLayer* drawGridLayer)
-```
-A virtual you can override that will be called whenever the DrawGridLayer is created.
-
-```cpp
-virtual void draw(DrawGridLayer* drawGridLayer, float minX, float maxX, float minY, float maxY);
+virtual void draw(float minX, float maxX, float minY, float maxY);
 ```
 A virtual you can override that will draw what is within it to the DrawGridLayer, The minX, maxX, minY, and maxY params are the culling bounds, these respect scale and rotation, please use these for the best performance.
 
-## DrawLayers.hpp
+## DrawLayers
 
-Every method here has an optional priority param, it is used if you need to run your code after or before something else. (For static changes such `setColor` methods, the highest number is the only one that ends up getting set. `setPropertiesFor` methods will be in order of prio and all will run).
+`setPropertiesFor` methods will be in order of priority set and all will run.
 
-### **`class Grid : public DrawNode`**
+### **`class Grid : public DrawGridBase`**
 
 The editor grid.
 
 ```cpp
-void setGridColor(const LineColor& color, int priority = 0)
+void setGridColor(const ccColor4B& color)
 ```
 Sets the grid color.
 
 ```cpp
-const LineColor& getGridColor() const
+const ccColor4B& getGridColor() const
 ```
 Returns the grid color.
 
 ```cpp
-int getGridColorPriority() const
-```
-Returns the grid color priority.
-
-```cpp
-void setLineWidth(float width, int priority = 0)
+void setLineWidth(float width)
 ```
 Sets the line width.
 
@@ -240,61 +124,51 @@ float getLineWidth() const
 Returns the line width.
 
 ```cpp
-int getLineWidthPriority() const
+void setInverted(bool inverted)
 ```
-Returns the line width priority.
+Sets the grid to be inverted or not.
 
-### **`class Bounds : public DrawNode`**
+```cpp
+bool isInverted() const
+```
+Returns whether the grid is inverted or not.
+
+### **`class Bounds : public DrawGridBase`**
 
 The bounds of the editor (white vertical line at X: 0 and the max and minimum height).
 
 ```cpp
-void setTopBoundColor(const LineColor& color, int priority = 0)
+void setTopBoundColor(const ccColor4B& color)
 ```
 Sets the top bound color.
 
 ```cpp
-const LineColor& getTopBoundColor() const
+const ccColor4B& getTopBoundColor() const
 ```
 Returns the top bound color.
 
 ```cpp
-int getTopBoundColorPriority() const
-```
-Returns the top bound priority.
-
-```cpp
-void setBottomBoundColor(const LineColor& color, int priority = 0)
+void setBottomBoundColor(const ccColor4B& color)
 ```
 Sets the bottom bound color.
 
 ```cpp
-const LineColor& getBottomBoundColor() const
+const ccColor4B& getBottomBoundColor() const
 ```
 Returns the bottom bound color.
 
 ```cpp
-int getBottomBoundColorPriority() const
-```
-Returns the bottom bound priority.
-
-```cpp
-void setVerticalBoundColor(const LineColor& color, int priority = 0)
+void setVerticalBoundColor(const ccColor4B& color)
 ```
 Sets the vertical bound color.
 
 ```cpp
-const LineColor& getVerticalBoundColor() const
+const ccColor4B& getVerticalBoundColor() const
 ```
 Returns the vertical bound color.
 
 ```cpp
-int getVerticalBoundColorPriority() const
-```
-Returns the vertical bound priority.
-
-```cpp
-void seTopBoundtLineWidth(float width, int priority = 0)
+void seTopBoundtLineWidth(float width)
 ```
 Sets the top bound line width.
 
@@ -304,12 +178,7 @@ float getTopBoundLineWidth() const
 Returns the top bounc line width.
 
 ```cpp
-int getTopBoundLineWidthPriority() const
-```
-Returns the top bound line width priority.
- 
-```cpp
-void setBottomBoundLineWidth(float width, int priority = 0)
+void setBottomBoundLineWidth(float width)
 ```
 Sets the bottom bound line width.
 
@@ -319,12 +188,7 @@ float getBottomBoundLineWidth() const
 Returns the bottom bound line width.
 
 ```cpp
-int getBottomBoundLineWidthPriority() const
-```
-Returns the bottom bound line width priority.
-
-```cpp
-void setVerticalBoundLineWidth(float width, int priority = 0)
+void setVerticalBoundLineWidth(float width)
 ```
 Sets the vertical bound line width.
 
@@ -333,47 +197,32 @@ float getVerticalBoundLineWidth() const
 ```
 Returns the vertical bound line width.
 
-```cpp
-int getVerticalBoundLineWidthPriority() const
-```
-Returns the vertical bound line width priority.
-
-### **`class Ground : public DrawNode`**
+### **`class Ground : public DrawGridBase`**
 
 The ground lines (when in a non cube/robot gamemode).
 
 ```cpp
-void setTopGroundColor(const LineColor& color, int priority = 0)
+void setTopGroundColor(const ccColor4B& color)
 ```
 Sets the top ground color.
 
 ```cpp
-const LineColor& getTopGroundColor() const
+const ccColor4B& getTopGroundColor() const
 ```
 Returns the top ground color.
 
 ```cpp
-int getTopGroundColorPriority() const
-```
-Returns the top ground priority.
-
-```cpp
-void setBottomGroundColor(const LineColor& color, int priority = 0)
+void setBottomGroundColor(const ccColor4B& color)
 ```
 Sets the bottom ground color.
 
 ```cpp
-const LineColor& getBottomGroundColor() const
+const ccColor4B& getBottomGroundColor() const
 ```
 Returns the bottom ground color.
 
 ```cpp
-int getBottomGroundColorPriority() const
-```
-Returns the bottom ground priority.
-
-```cpp
-void setTopGroundLineWidth(float width, int priority = 0)
+void setTopGroundLineWidth(float width)
 ```
 Sets the top ground line width.
 
@@ -383,12 +232,7 @@ float getTopGroundLineWidth() const
 Returns the top ground line width.
 
 ```cpp
-int getTopGroundLineWidthPriority() const
-```
-Returns the top ground line width priority.
-
-```cpp
-void setBottomGroundLineWidth(float width, int priority = 0)
+void setBottomGroundLineWidth(float width)
 ```
 Sets the bottom ground line width.
 
@@ -397,101 +241,86 @@ float getBottomGroundLineWidth() const
 ```
 Returns the bottom ground line width.
 
-```cpp
-int getBottomGroundLineWidthPriority() const
-```
-Returns the bottom ground line width priority.
-
-### **`class GuideObjects : public DrawNode`**
+### **`class GuideObjects : public DrawGridBase`**
 
 These are the objects that show portal bounds when preview is enabled.
 
 ```cpp
-void setPropertiesForObject(std::function<void(LineColor& bottomColor, LineColor& topColor, EffectGameObject* object, float& lineWidthBottom, float& lineWidthTop)> colorForObject, int priority = 0)
+void setPropertiesForObject(std::function<void(ccColor4B& bottomColor, ccColor4B& topColor, EffectGameObject* object, float& lineWidthBottom, float& lineWidthTop)> colorForObject, int priority = 0)
 ```
 Lets you pass in a method that allows for modifying the colors, as well as passing in the object. An example would be setting colors depending on an object.
 
-### **`class EffectLines : public DrawNode`**
+### **`class EffectLines : public DrawGridBase`**
 
 These are the lines triggers show when not spawn or touch triggered.
 
 ```cpp
-void setPropertiesForObject(std::function<void(LineColor& color, EffectGameObject* object, float& lineWidth)> colorForObject, int priority = 0)
+void setPropertiesForObject(std::function<void(ccColor4B& color, EffectGameObject* object, float& lineWidth)> colorForObject, int priority = 0)
 ```
 Lets you pass in a method that allows for modifying the color, as well as passing in the object. An example would be setting colors depending on an object.
 
-### **`class DurationLines : public DrawNode`**
+### **`class DurationLines : public DrawGridBase`**
 
 These are the duration lines triggers show.
 
 ```cpp
-void setPropertiesForObject(std::function<void(LineColor& color, EffectGameObject* object, float& lineWidth)> colorForObject, int priority = 0)
+void setPropertiesForObject(std::function<void(ccColor4B& color, EffectGameObject* object, float& lineWidth)> colorForObject, int priority = 0)
 ```
 Lets you pass in a method that allows for modifying the color, as well as passing in the object. An example would be setting colors depending on an object.
 
-### **`class Guidelines : public DrawNode`**
+### **`class Guidelines : public DrawGridBase`**
 
 These are the music guidelines you can set when choosing a song.
 
 ```cpp
-void setPropertiesForValue(std::function<void(LineColor& color, float value, float& lineWidth)> colorForValue, int priority = 0)
+void setPropertiesForValue(std::function<void(ccColor4B& color, float value, float& lineWidth)> colorForValue, int priority = 0)
 ```
 Lets you pass in a method that allows for modifying the color, as well as passing in the numeric color value the guideline is set to (view https://wyliemaster.github.io/gddocs/#/resources/client/level-components/guideline-string for more info). An example would be setting colors depending on the value, expanding what color values already exist.
 
-### **`class BPMTriggers : public DrawNode`**
+### **`class BPMTriggers : public DrawGridBase`**
 
 These are the bpm guidelines you can set with a BPM Trigger.
 
 ```cpp
-void setPropertiesForBeats(std::function<void(LineColor& color, AudioLineGuideGameObject* object, int beat, int beatsPerBar, float& lineWidth)> colorForBeats, int priority = 0)
+void setPropertiesForBeats(std::function<void(ccColor4B& color, AudioLineGuideGameObject* object, int beat, int beatsPerBar, float& lineWidth)> colorForBeats, int priority = 0)
 ```
 Lets you pass in a method that allows for modifying the color, as well as passing in the object, what beat the line being modified is on, and how many beats per bar there are. An example would be changing the beat color depending on what beat it is in a bar.
 
-### **`class AudioLine : public DrawNode`**
+### **`class AudioLine : public DrawGridBase`**
 
 This is the line that shows when you play music in the editor.
 
 ```cpp
-void setPropertiesForTime(std::function<void(LineColor& color, bool playback, float time, const cocos2d::CCPoint& position, float& lineWidth)> colorForTime, int priority = 0);
+void setPropertiesForTime(std::function<void(ccColor4B& color, bool playback, float time, const cocos2d::CCPoint& position, float& lineWidth)> colorForTime, int priority = 0);
 ```
 Lets you pass in a method that allows for modifying the color, as well as passing in if playback is live, the song's time, and the position of the line. An example would be setting the line color hue based on the time. 
 
-### **`class PositionLines : public DrawNode`**
+### **`class PositionLines : public DrawGridBase`**
 
 The center vertical and horizontal lines that mark before and after a trigger activates.
 
 ```cpp
-void setVerticalLineColor(const LineColor& color, int priority = 0)
+void setVerticalLineColor(const ccColor4B& color)
 ```
 Sets the vertical line color.
 
 ```cpp
-const LineColor& getVerticalLineColor() const
+const ccColor4B& getVerticalLineColor() const
 ```
 Returns the vertical line color.
 
 ```cpp
-int getVerticalLineColorPriority() const
-```
-Returns the vertical line priority.
-
-```cpp
-void setHorizontalLineColor(const LineColor& color, int priority = 0)
+void setHorizontalLineColor(const ccColor4B& color)
 ```
 Sets the horizontal line color.
 
 ```cpp
-const LineColor& getVerticalLineColor() const
+const ccColor4B& getVerticalLineColor() const
 ```
 Returns the horizontal line color.
 
 ```cpp
-int getHorizontalLineColorPriority() const
-```
-Returns the horizontal line priority.
-
-```cpp
-void setVerticalLineWidth(float width, int priority = 0)
+void setVerticalLineWidth(float width)
 ```
 Sets the vertical line width.
 
@@ -501,12 +330,7 @@ float getVerticalLineWidth() const
 Returns the vertical line width.
 
 ```cpp
-int getVerticalLineWidthPriority() const
-```
-Returns the vertical line width priority.
-
-```cpp
-void setHorizontalLineWidth(float width, int priority = 0)
+void setHorizontalLineWidth(float width)
 ```
 Sets the horizontal line width.
 
@@ -515,32 +339,22 @@ float getHoritzontalLineWidth() const
 ```
 Returns the horizontal line width.
 
-```cpp
-int getHorizontalLineWidthPriority() const
-```
-Returns the horizontal line width priority.
-
-### **`class PreviewLockLine : public DrawNode`**
+### **`class PreviewLockLine : public DrawGridBase`**
 
 The line that shows the position where preview is locked.
 
 ```cpp
-void setLineColor(const LineColor& color, int priority = 0)
+void setLineColor(const ccColor4B& color)
 ```
 Sets the line color.
 
 ```cpp
-const LineColor& getLineColor() const
+const ccColor4B& getLineColor() const
 ```
 Returns the line color.
 
 ```cpp
-int getLineColorPriority() const
-```
-Returns the line color priority.
-
-```cpp
-void setLineWidth(float width, int priority = 0)
+void setLineWidth(float width)
 ```
 Sets the line width.
 
@@ -548,8 +362,3 @@ Sets the line width.
 float getLineWidth() const
 ```
 Returns the line width.
-
-```cpp
-int getLineWidthPriority() const
-```
-Returns the line width priority.

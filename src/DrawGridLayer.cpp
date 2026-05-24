@@ -112,13 +112,13 @@ void DrawHandler::draw() {
     ccGLBlendFunc(oldSrc, oldDst);
 }
 
-std::vector<good_grid::Vertex>& DrawHandler::batchForMode(DrawGridBase::DrawMode mode) {
+std::vector<good_grid::Vertex>& DrawHandler::batchForMode(DrawGridBase::BlendMode mode) {
     switch (mode) {
-        case DrawGridBase::DrawMode::ADDITIVE:
+        case DrawGridBase::BlendMode::ADDITIVE:
             return m_lineBatches;
-        case DrawGridBase::DrawMode::MULTIPLY:
+        case DrawGridBase::BlendMode::MULTIPLY:
             return m_blendedLineBatches;
-        case DrawGridBase::DrawMode::INVERT:
+        case DrawGridBase::BlendMode::INVERT:
             return m_invertedLineBatches;
     }
 }

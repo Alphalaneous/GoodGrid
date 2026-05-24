@@ -15,7 +15,7 @@ public:
 
     void draw();
 
-    std::vector<good_grid::Vertex>& batchForMode(DrawGridBase::DrawMode mode);
+    std::vector<good_grid::Vertex>& batchForMode(DrawGridBase::BlendMode mode);
     
     void generateTimeMarkers();
     const std::unordered_map<float, cocos2d::ccColor4B>& getTimeMarkers();
