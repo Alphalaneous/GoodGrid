@@ -2,7 +2,6 @@
 
 ## <cb>The ultimate DrawGridLayer rewrite and API!</c>
 
-- <cg>Better Performance!</c>
 - <cg>Rotation Support!</c>
 - <cg>Extensive API</c>
 - <cg>Bug Fixes</c>
