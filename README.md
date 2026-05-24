@@ -6,7 +6,7 @@
 - <cg>Rotation Support!</c>
 - <cg>Extensive API</c>
 - <cg>Bug Fixes</c>
-- <cg>Exactly Like Vanilla (by default)</c>
+- <cg>Exactly Like Vanilla</c>
 
 <cr>Editor Extension in MegaHack cannot be detected, thus the grid size will too small unless you enable extension override in this mod's settings.</c>
 
