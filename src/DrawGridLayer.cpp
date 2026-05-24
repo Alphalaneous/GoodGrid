@@ -95,15 +95,11 @@ void DrawHandler::draw() {
     glEnableVertexAttribArray(kCCVertexAttrib_Position);
     glEnableVertexAttribArray(kCCVertexAttrib_Color);
     m_shader->use();
-
-    kmGLPushMatrix();
-    kmGLLoadIdentity();
+    m_shader->setUniformsForBuiltins();
 
     drawBatch(m_lineBatches, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     drawBatch(m_blendedLineBatches, GL_ONE, GL_ONE);
     drawBatch(m_invertedLineBatches, GL_ONE_MINUS_DST_COLOR, GL_ONE_MINUS_SRC_ALPHA);
-
-    kmGLPopMatrix();
 
     m_lineBatches.clear();
     m_blendedLineBatches.clear();
@@ -220,8 +216,8 @@ DrawGridLayer* MyDrawGridLayer::create(cocos2d::CCNode* p0, LevelEditorLayer* p1
     addChild<DurationLines>(ret, 60);
     addChild<Guidelines>(ret, 70);
     addChild<BPMTriggers>(ret, 80);
-    addChild<AudioLine>(ret, 90);
     addChild<PositionLines>(ret, 100);
+    addChild<AudioLine>(ret, 90);
 
 	return ret;
 }

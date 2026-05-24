@@ -28,17 +28,16 @@ void DrawGridBase::drawLine(const cocos2d::ccVertex2F& start, const cocos2d::ccV
     auto custom = m_impl->m_drawGridLayer->getCustom();
     auto& batch = custom->batchForMode(mode);
 
-    width /= CCEGLView::get()->m_fScaleX;
-
     const float scale = m_impl->m_drawGridLayer->m_editorLayer->m_objectLayer->getScale();
 
-    const auto pos = m_impl->m_drawGridLayer->m_editorLayer->m_objectLayer->getPosition();
+    width /= scale;
+    width /= CCEGLView::get()->m_fScaleX;
 
-    float ax = pos.x + start.x * scale;
-    float ay = pos.y + start.y * scale;
+    float ax = start.x;
+    float ay = start.y;
 
-    float bx = pos.x + end.x * scale;
-    float by = pos.y + end.y * scale;
+    float bx = end.x;
+    float by = end.y;
 
     float dx = bx - ax;
     float dy = by - ay;
