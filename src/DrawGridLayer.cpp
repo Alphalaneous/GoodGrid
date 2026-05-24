@@ -3,7 +3,48 @@
 
 DrawHandler::DrawHandler(DrawGridLayer* drawGridLayer) {
     m_drawGridLayer = drawGridLayer;
-    m_shader = CCShaderCache::sharedShaderCache()->programForKey(kCCShader_PositionColor);
+
+    auto vert = R"(
+        attribute vec4 a_position;
+        attribute vec4 a_color;
+        attribute vec2 a_uv;
+
+        varying vec4 v_color;
+        varying vec2 v_uv;
+
+        void main() {
+            gl_Position = CC_MVPMatrix * a_position;
+            v_color = a_color;
+            v_uv = a_uv;
+        }
+    )";
+
+    auto frag = R"(
+        #ifdef GL_ES
+        precision mediump float;
+        #endif
+
+        varying vec4 v_color;
+        varying vec2 v_uv;
+
+        void main() {
+            float d = abs(v_uv.y - 2);
+
+            float w = fwidth(d) * 4;
+            float alpha = 1.0 - smoothstep(2 - w, 2 + w, d);
+
+            gl_FragColor = vec4(v_color.rgb, v_color.a * alpha);
+        }
+    )";
+
+    m_shader = new CCGLProgram();
+    m_shader->autorelease();
+    m_shader->initWithVertexShaderByteArray(vert, frag);
+    m_shader->addAttribute("a_position", kCCVertexAttrib_Position);
+    m_shader->addAttribute("a_color", kCCVertexAttrib_Color);
+    m_shader->addAttribute("a_uv", 2);
+    m_shader->link();
+    m_shader->updateUniforms();
     
     if (Loader::get()->isModLoaded("raydeeux.grandeditorextension") || Mod::get()->getSettingValue<bool>("extension-override")) {
         m_gridWidthMax = FLT_MAX;
@@ -87,6 +128,15 @@ void DrawHandler::draw() {
             GL_TRUE,
             sizeof(good_grid::Vertex),
             &batch[0].color
+        );
+
+        glVertexAttribPointer(
+            2,
+            2,
+            GL_FLOAT,
+            GL_FALSE,
+            sizeof(good_grid::Vertex),
+            &batch[0].uv
         );
 
         glDrawArrays(GL_TRIANGLES, 0, batch.size());

@@ -1,6 +1,5 @@
 #include "../include/DrawGridBase.hpp"
 #include "DrawGridLayer.hpp"
-#include "Utils.hpp"
 
 using namespace good_grid;
 
@@ -25,17 +24,15 @@ DrawGridBase* DrawGridBase::create() {
 void DrawGridBase::drawLine(const cocos2d::ccVertex2F& start, const cocos2d::ccVertex2F& end, const GradientColor& color, float width, BlendMode mode) {
     if (!m_impl->m_drawGridLayer) return;
 
-    auto custom = m_impl->m_drawGridLayer->getCustom();
-    auto& batch = custom->batchForMode(mode);
-
     const float scale = m_impl->m_drawGridLayer->m_editorLayer->m_objectLayer->getScale();
+
+    width += 1.f;
 
     width /= scale;
     width /= CCEGLView::get()->m_fScaleX;
 
     float ax = start.x;
     float ay = start.y;
-
     float bx = end.x;
     float by = end.y;
 
@@ -57,49 +54,60 @@ void DrawGridBase::drawLine(const cocos2d::ccVertex2F& start, const cocos2d::ccV
     nx *= width * 0.5f;
     ny *= width * 0.5f;
 
-    ccVertex2F v0{ax + nx, ay + ny};
-    ccVertex2F v1{ax - nx, ay - ny};
-    ccVertex2F v2{bx + nx, by + ny};
-    ccVertex2F v3{bx - nx, by - ny};
+    ccVertex2F v0{ ax + nx, ay + ny };
+    ccVertex2F v1{ ax - nx, ay - ny };
+    ccVertex2F v2{ bx + nx, by + ny };
+    ccVertex2F v3{ bx - nx, by - ny };
 
-    batch.push_back({v0, color.getColorA()});
-    batch.push_back({v1, color.getColorA()});
-    batch.push_back({v2, color.getColorB()});
-
-    batch.push_back({v2, color.getColorB()});
-    batch.push_back({v1, color.getColorA()});
-    batch.push_back({v3, color.getColorB()});
+    drawQuad(v0, v1, v2, v3, color, mode);
 }
 
 void DrawGridBase::drawRect(const cocos2d::CCRect& rect, const GradientColor& color, DrawGridBase::BlendMode mode) {
+    float x = rect.getMinX();
+    float y = rect.getMinY();
+    float w = rect.size.width;
+    float h = rect.size.height;
+
+    ccVertex2F v0{ x, y };
+    ccVertex2F v1{ x + w, y };
+    ccVertex2F v2{ x + w, y + h };
+    ccVertex2F v3{ x, y + h };
+
+    drawQuad(v0, v1, v2, v3, color, mode);
+}
+
+void DrawGridBase::drawQuad(const ccVertex2F& v0, const ccVertex2F& v1, const ccVertex2F& v2, const ccVertex2F& v3, const GradientColor& color, BlendMode mode) {
     if (!m_impl->m_drawGridLayer) return;
 
-    auto verts = good_grid::utils::rectToTriangles(rect, color);
     auto custom = m_impl->m_drawGridLayer->getCustom();
-
     auto& batch = custom->batchForMode(mode);
 
-    for (auto& v : verts) {
-        batch.push_back(v);
-    }
+    batch.push_back({v0, color.getColorA(), {0, 1}});
+    batch.push_back({v1, color.getColorA(), {0, 0}});
+    batch.push_back({v2, color.getColorB(), {1, 1}});
+
+    batch.push_back({v2, color.getColorB(), {1, 1}});
+    batch.push_back({v1, color.getColorA(), {0, 0}});
+    batch.push_back({v3, color.getColorB(), {1, 0}});
 }
 
 void DrawGridBase::drawRectOutline(const cocos2d::CCRect& rect, const GradientColor& color, float width, DrawGridBase::BlendMode mode) {
     if (!m_impl->m_drawGridLayer) return;
 
     auto custom = m_impl->m_drawGridLayer->getCustom();
-
     auto& batch = custom->batchForMode(mode);
 
+    const float scale = m_impl->m_drawGridLayer->m_editorLayer->m_objectLayer->getScale();
+
+    width += 1.f;
+
+    width /= scale;
     width /= CCEGLView::get()->m_fScaleX;
 
-    const float scale = m_impl->m_drawGridLayer->m_editorLayer->m_objectLayer->getScale();
-    const auto pos = m_impl->m_drawGridLayer->m_editorLayer->m_objectLayer->getPosition();
-
-    float x = pos.x + rect.getMinX() * scale;
-    float y = pos.y + rect.getMinY() * scale;
-    float w = rect.size.width * scale;
-    float h = rect.size.height * scale;
+    float x = rect.getMinX();
+    float y = rect.getMinY();
+    float w = rect.size.width;
+    float h = rect.size.height;
 
     float t = width * 0.5f;
 
@@ -114,13 +122,13 @@ void DrawGridBase::drawRectOutline(const cocos2d::CCRect& rect, const GradientCo
     float iy1 = y + h;
 
     auto push = [&](float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4) {
-        batch.push_back({{x1, y1}, color.getColorA()});
-        batch.push_back({{x2, y2}, color.getColorA()});
-        batch.push_back({{x3, y3}, color.getColorB()});
+        batch.push_back({{x1, y1}, color.getColorA(), {0, 1}});
+        batch.push_back({{x2, y2}, color.getColorA(), {0, 0}});
+        batch.push_back({{x3, y3}, color.getColorB(), {1, 1}});
 
-        batch.push_back({{x1, y1}, color.getColorB()});
-        batch.push_back({{x3, y3}, color.getColorA()});
-        batch.push_back({{x4, y4}, color.getColorB()});
+        batch.push_back({{x1, y1}, color.getColorB(), {1, 1}});
+        batch.push_back({{x3, y3}, color.getColorA(), {0, 0}});
+        batch.push_back({{x4, y4}, color.getColorB(), {1, 0}});
     };
 
     push(ox0, oy0, ox1, oy0, ix1, iy0, ix0, iy0);

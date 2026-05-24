@@ -48,7 +48,7 @@ protected:
     std::vector<good_grid::Vertex> m_invertBatch;
 
     DrawGridLayer* m_drawGridLayer = nullptr;
-    CCGLProgram* m_shader = nullptr;
+    Ref<CCGLProgram> m_shader = nullptr;
 
     bool m_vanillaDraw = false;
     bool m_dirtyViewTransform = true;

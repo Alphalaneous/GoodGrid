@@ -20,6 +20,8 @@ namespace good_grid {
 
         virtual void draw(float minX, float maxX, float minY, float maxY);
 
+        void drawQuad(const cocos2d::ccVertex2F& v0, const cocos2d::ccVertex2F& v1, const cocos2d::ccVertex2F& v2, const cocos2d::ccVertex2F& v3, const GradientColor& color, BlendMode mode);
+
         void drawLine(const cocos2d::ccVertex2F& start, const cocos2d::ccVertex2F& end, const GradientColor& color, float width, BlendMode mode = BlendMode::ADDITIVE);
         void drawRect(const cocos2d::CCRect& rect, const GradientColor& color, BlendMode mode = BlendMode::ADDITIVE);
         void drawRectOutline(const cocos2d::CCRect& rect, const GradientColor& color, float width, BlendMode mode = BlendMode::ADDITIVE);
