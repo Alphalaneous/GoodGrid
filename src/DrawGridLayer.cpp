@@ -216,8 +216,8 @@ DrawGridLayer* MyDrawGridLayer::create(cocos2d::CCNode* p0, LevelEditorLayer* p1
     addChild<DurationLines>(ret, 60);
     addChild<Guidelines>(ret, 70);
     addChild<BPMTriggers>(ret, 80);
-    addChild<PositionLines>(ret, 100);
-    addChild<AudioLine>(ret, 90);
+    addChild<PositionLines>(ret, 90);
+    addChild<AudioLine>(ret, 100);
 
 	return ret;
 }
