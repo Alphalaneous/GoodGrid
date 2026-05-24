@@ -13,7 +13,8 @@
 	"description": "Rewrites the drawing of DrawGridLayer",
 	"api": {
 		"include": [
-			"include/*.hpp"
+			"include/*.hpp",
+			"include/DrawLayers/*.hpp"
 		]
 	},
 	"links": {

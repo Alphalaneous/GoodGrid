@@ -76,7 +76,7 @@ void DrawHandler::draw() {
             2,
             GL_FLOAT,
             GL_FALSE,
-            sizeof(good_grid::utils::Vertex),
+            sizeof(good_grid::Vertex),
             &batch[0].position
         );
 
@@ -85,7 +85,7 @@ void DrawHandler::draw() {
             4,
             GL_UNSIGNED_BYTE,
             GL_TRUE,
-            sizeof(good_grid::utils::Vertex),
+            sizeof(good_grid::Vertex),
             &batch[0].color
         );
 
@@ -112,7 +112,7 @@ void DrawHandler::draw() {
     ccGLBlendFunc(oldSrc, oldDst);
 }
 
-std::vector<good_grid::utils::Vertex>& DrawHandler::batchForMode(DrawGridBase::DrawMode mode) {
+std::vector<good_grid::Vertex>& DrawHandler::batchForMode(DrawGridBase::DrawMode mode) {
     switch (mode) {
         case DrawGridBase::DrawMode::ADDITIVE:
             return m_lineBatches;

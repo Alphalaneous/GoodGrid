@@ -1,14 +1,11 @@
 #pragma once
 
+#include "DrawGridLayer.hpp"
+#include <Geode/binding/LevelEditorLayer.hpp>
 #include <Geode/cocos/cocoa/CCGeometry.h>
-#include <ccTypes.h>
+#include "Vertex.hpp"
 
 namespace good_grid::utils {
-
-    struct Vertex {
-        cocos2d::ccVertex2F position;
-        cocos2d::ccColor4B color;
-    };
 
     inline std::array<Vertex, 6> rectToTriangles(const cocos2d::CCRect& rect, const cocos2d::ccColor4B& color) {
         float x = rect.getMinX();
@@ -51,4 +48,11 @@ namespace good_grid::utils {
             return byPriority.empty();
         }
     };
+
+    inline MyDrawGridLayer* getDrawGridLayer() {
+        auto editor = LevelEditorLayer::get();
+        if (!editor) return nullptr;
+
+        return static_cast<MyDrawGridLayer*>(editor->m_drawGridLayer);
+    }
 }

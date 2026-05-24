@@ -2,9 +2,9 @@
 
 #include <Geode/Geode.hpp>
 #include "../include/DrawGridBase.hpp"
-#include "Utils.hpp"
 #include <Geode/modify/EditorUI.hpp>
 #include <Geode/modify/DrawGridLayer.hpp>
+#include "Vertex.hpp"
 
 using namespace geode::prelude;
 using namespace good_grid;
@@ -15,7 +15,7 @@ public:
 
     void draw();
 
-    std::vector<good_grid::utils::Vertex>& batchForMode(DrawGridBase::DrawMode mode);
+    std::vector<good_grid::Vertex>& batchForMode(DrawGridBase::DrawMode mode);
     
     void generateTimeMarkers();
     const std::unordered_map<float, cocos2d::ccColor4B>& getTimeMarkers();
@@ -28,7 +28,6 @@ public:
 
     cocos2d::CCSize getGridBoundsSize();
     cocos2d::CCPoint getGridBoundsOrigin();
-
 
     cocos2d::CCSize getWorldViewSize();
     float getOverdrawFactor();
@@ -44,9 +43,9 @@ public:
 protected:
     void ensureViewTransformValid();
 
-    std::vector<good_grid::utils::Vertex> m_lineBatches;
-    std::vector<good_grid::utils::Vertex> m_blendedLineBatches;
-    std::vector<good_grid::utils::Vertex> m_invertedLineBatches;
+    std::vector<good_grid::Vertex> m_lineBatches;
+    std::vector<good_grid::Vertex> m_blendedLineBatches;
+    std::vector<good_grid::Vertex> m_invertedLineBatches;
 
     DrawGridLayer* m_drawGridLayer = nullptr;
     CCGLProgram* m_shader = nullptr;
