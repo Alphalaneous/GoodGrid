@@ -56,10 +56,10 @@ void BPMTriggers::draw(float minX, float maxX, float minY, float maxY) {
         for (int beat = beatStart; beat <= beatEnd; ++beat) {
             float x = startX + timeStep * beat;
 
-            static const auto defaultLineColorA = cocos2d::ccColor4B{255, 255, 0, 255};
-            static const auto defaultLineColorB = cocos2d::ccColor4B{255, 127, 0, 255};
+            static const auto defaultLineColorA = GradientColor{255, 255, 0, 255};
+            static const auto defaultLineColorB = GradientColor{255, 127, 0, 255};
 
-            cocos2d::ccColor4B color;
+            GradientColor color;
             float lineWidth = 1.0f;
             if (beat % beatsPerBar == 0) {
                 color = defaultLineColorA;

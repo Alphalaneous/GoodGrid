@@ -4,8 +4,8 @@ using namespace good_grid;
 
 class Ground::Impl final {
 public:
-    cocos2d::ccColor4B m_topGroundColor = { 255, 175, 50, 255 };
-    cocos2d::ccColor4B m_bottomGroundColor = { 255, 175, 50, 255 };
+    GradientColor m_topGroundColor = { 255, 175, 50, 255 };
+    GradientColor m_bottomGroundColor = { 255, 175, 50, 255 };
 
     float m_topGroundLineWidth = 2.0f;
     float m_bottomGroundLineWidth = 2.0f;
@@ -51,19 +51,19 @@ void Ground::draw(float minX, float maxX, float minY, float maxY) {
     }
 }
 
-void Ground::setTopGroundColor(const cocos2d::ccColor4B& color) {
+void Ground::setTopGroundColor(const GradientColor& color) {
     m_impl->m_topGroundColor = color;
 }
 
-void Ground::setBottomGroundColor(const cocos2d::ccColor4B& color) {
+void Ground::setBottomGroundColor(const GradientColor& color) {
     m_impl->m_bottomGroundColor = color;
 }
 
-const cocos2d::ccColor4B& Ground::getTopGroundColor() const {
+const GradientColor& Ground::getTopGroundColor() const {
     return m_impl->m_topGroundColor;
 }
 
-const cocos2d::ccColor4B& Ground::getBottomGroundColor() const {
+const GradientColor& Ground::getBottomGroundColor() const {
     return m_impl->m_bottomGroundColor;
 }
 

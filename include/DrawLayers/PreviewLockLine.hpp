@@ -2,6 +2,7 @@
 
 #include "../DrawGridBase.hpp"
 #include "../Export.hpp"
+#include "../GradientColor.hpp"
 
 namespace good_grid {
     
@@ -10,8 +11,8 @@ namespace good_grid {
         static PreviewLockLine* create();
         void draw(float minX, float maxX, float minY, float maxY) override;
 
-        void setLineColor(const cocos2d::ccColor4B& color);
-        const cocos2d::ccColor4B& getLineColor() const;
+        void setLineColor(const GradientColor& color);
+        const GradientColor& getLineColor() const;
         void setLineWidth(float width);
         float getLineWidth() const;
 

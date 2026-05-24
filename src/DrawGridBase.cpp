@@ -22,11 +22,7 @@ DrawGridBase* DrawGridBase::create() {
     return nullptr;
 }
 
-void DrawGridBase::drawLine(const cocos2d::ccVertex2F& start, const cocos2d::ccVertex2F& end, const cocos2d::ccColor4B& color, float width, BlendMode mode) {
-    drawLine(start, end, color, color, width, mode);
-}
-
-void DrawGridBase::drawLine(const cocos2d::ccVertex2F& start, const cocos2d::ccVertex2F& end, const cocos2d::ccColor4B& colorA, const cocos2d::ccColor4B& colorB, float width, BlendMode mode) {
+void DrawGridBase::drawLine(const cocos2d::ccVertex2F& start, const cocos2d::ccVertex2F& end, const GradientColor& color, float width, BlendMode mode) {
     if (!m_impl->m_drawGridLayer) return;
 
     auto custom = m_impl->m_drawGridLayer->getCustom();
@@ -67,16 +63,16 @@ void DrawGridBase::drawLine(const cocos2d::ccVertex2F& start, const cocos2d::ccV
     ccVertex2F v2{bx + nx, by + ny};
     ccVertex2F v3{bx - nx, by - ny};
 
-    batch.push_back({v0, colorA});
-    batch.push_back({v1, colorA});
-    batch.push_back({v2, colorB});
+    batch.push_back({v0, color.getColorA()});
+    batch.push_back({v1, color.getColorA()});
+    batch.push_back({v2, color.getColorB()});
 
-    batch.push_back({v2, colorB});
-    batch.push_back({v1, colorA});
-    batch.push_back({v3, colorB});
+    batch.push_back({v2, color.getColorB()});
+    batch.push_back({v1, color.getColorA()});
+    batch.push_back({v3, color.getColorB()});
 }
 
-void DrawGridBase::drawRect(const cocos2d::CCRect& rect, const cocos2d::ccColor4B& color, DrawGridBase::BlendMode mode) {
+void DrawGridBase::drawRect(const cocos2d::CCRect& rect, const GradientColor& color, DrawGridBase::BlendMode mode) {
     if (!m_impl->m_drawGridLayer) return;
 
     auto verts = good_grid::utils::rectToTriangles(rect, color);
@@ -89,7 +85,7 @@ void DrawGridBase::drawRect(const cocos2d::CCRect& rect, const cocos2d::ccColor4
     }
 }
 
-void DrawGridBase::drawRectOutline(const cocos2d::CCRect& rect, const cocos2d::ccColor4B& color, float width, DrawGridBase::BlendMode mode) {
+void DrawGridBase::drawRectOutline(const cocos2d::CCRect& rect, const GradientColor& color, float width, DrawGridBase::BlendMode mode) {
     if (!m_impl->m_drawGridLayer) return;
 
     auto custom = m_impl->m_drawGridLayer->getCustom();
@@ -119,13 +115,13 @@ void DrawGridBase::drawRectOutline(const cocos2d::CCRect& rect, const cocos2d::c
     float iy1 = y + h;
 
     auto push = [&](float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4) {
-        batch.push_back({{x1, y1}, color});
-        batch.push_back({{x2, y2}, color});
-        batch.push_back({{x3, y3}, color});
+        batch.push_back({{x1, y1}, color.getColorA()});
+        batch.push_back({{x2, y2}, color.getColorA()});
+        batch.push_back({{x3, y3}, color.getColorB()});
 
-        batch.push_back({{x1, y1}, color});
-        batch.push_back({{x3, y3}, color});
-        batch.push_back({{x4, y4}, color});
+        batch.push_back({{x1, y1}, color.getColorB()});
+        batch.push_back({{x3, y3}, color.getColorA()});
+        batch.push_back({{x4, y4}, color.getColorB()});
     };
 
     push(ox0, oy0, ox1, oy0, ix1, iy0, ix0, iy0);

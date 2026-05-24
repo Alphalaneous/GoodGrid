@@ -1,11 +1,10 @@
 #include "../../include/DrawLayers/PreviewLockLine.hpp"
-#include "ccTypes.h"
 
 using namespace good_grid;
 
 class PreviewLockLine::Impl final {
 public:
-    cocos2d::ccColor4B m_lineColor = { 255, 150, 0, 255 };
+    GradientColor m_lineColor = { 255, 150, 0, 255 };
     int m_lineColorPriority = 0;
 
     float m_lineWidth = 2.0f;
@@ -41,11 +40,11 @@ void PreviewLockLine::draw(float minX, float maxX, float minY, float maxY) {
     drawLine({pos.x, minY}, {pos.x, maxY}, m_impl->m_lineColor, m_impl->m_lineWidth);
 }
 
-void PreviewLockLine::setLineColor(const cocos2d::ccColor4B& color) {
+void PreviewLockLine::setLineColor(const GradientColor& color) {
     m_impl->m_lineColor = color;
 }
 
-const cocos2d::ccColor4B& PreviewLockLine::getLineColor() const {
+const GradientColor& PreviewLockLine::getLineColor() const {
     return m_impl->m_lineColor;
 }
 

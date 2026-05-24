@@ -41,9 +41,9 @@ void EffectLines::draw(float minX, float maxX, float minY, float maxY) {
         float x = obj->getPositionX();
         if (x < minX || x > maxX || x < 0) continue;
 
-        static const auto defaultLineColor = cocos2d::ccColor4B{0, 255, 255, 255};
+        static const auto defaultLineColor = GradientColor{0, 255, 255, 255};
 
-        cocos2d::ccColor4B color = defaultLineColor;
+        GradientColor color = defaultLineColor;
 
         float lineWidth = 1.0f;
 

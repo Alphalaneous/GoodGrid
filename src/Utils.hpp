@@ -4,23 +4,24 @@
 #include <Geode/binding/LevelEditorLayer.hpp>
 #include <Geode/cocos/cocoa/CCGeometry.h>
 #include "Vertex.hpp"
+#include "../include/GradientColor.hpp"
 
 namespace good_grid::utils {
 
-    inline std::array<Vertex, 6> rectToTriangles(const cocos2d::CCRect& rect, const cocos2d::ccColor4B& color) {
+    inline std::array<Vertex, 6> rectToTriangles(const cocos2d::CCRect& rect, const GradientColor& color) {
         float x = rect.getMinX();
         float y = rect.getMinY();
         float w = rect.size.width;
         float h = rect.size.height;
 
         return {
-            Vertex{x,     y, color},
-            Vertex{x + w, y, color},
-            Vertex{x + w, y + h, color},
+            Vertex{x,     y, color.getColorA()},
+            Vertex{x + w, y, color.getColorA()},
+            Vertex{x + w, y + h, color.getColorB()},
 
-            Vertex{x,     y, color},
-            Vertex{x + w, y + h, color},
-            Vertex{x,     y + h, color}
+            Vertex{x,     y, color.getColorB()},
+            Vertex{x + w, y + h, color.getColorA()},
+            Vertex{x,     y + h, color.getColorB()}
         };
     }
 

@@ -38,10 +38,10 @@ void GuideObjects::draw(float minX, float maxX, float minY, float maxY) {
         if (!isObjectVisible(obj)) continue;
         auto [y1, y2] = getPortalMinMax(obj);
 
-        static const auto defaultLineColor = cocos2d::ccColor4B{0, 255, 255, 255};
+        static const auto defaultLineColor = GradientColor{0, 255, 255, 255};
 
-        cocos2d::ccColor4B bottomColor = defaultLineColor;
-        cocos2d::ccColor4B topColor = defaultLineColor;
+        GradientColor bottomColor = defaultLineColor;
+        GradientColor topColor = defaultLineColor;
 
         float lineWidthBottom = 2.0f;
         float lineWidthTop = 2.0f;

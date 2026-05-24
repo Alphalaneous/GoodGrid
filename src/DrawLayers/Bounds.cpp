@@ -5,9 +5,9 @@ using namespace good_grid;
 
 class Bounds::Impl final {
 public:
-    ccColor4B m_topBoundColor = { 255, 255, 255, 255 };
-    ccColor4B m_bottomBoundColor = { 255, 255, 255, 255 };
-    ccColor4B m_verticalBoundColor = { 255, 255, 255, 255 };
+    GradientColor m_topBoundColor = { 255, 255, 255, 255 };
+    GradientColor m_bottomBoundColor = { 255, 255, 255, 255 };
+    GradientColor m_verticalBoundColor = { 255, 255, 255, 255 };
 
     float m_topBoundLineWidth = 2.0f;
     float m_bottomBoundLineWidth = 2.0f;
@@ -42,27 +42,27 @@ void Bounds::draw(float minX, float maxX, float minY, float maxY) {
     drawLine({minX, maxY}, {maxX, maxY}, m_impl->m_topBoundColor, m_impl->m_topBoundLineWidth);
 }
 
-void Bounds::setTopBoundColor(const ccColor4B& color) {
+void Bounds::setTopBoundColor(const GradientColor& color) {
     m_impl->m_topBoundColor = color;
 }
 
-void Bounds::setBottomBoundColor(const ccColor4B& color) {
+void Bounds::setBottomBoundColor(const GradientColor& color) {
     m_impl->m_bottomBoundColor = color;
 }
 
-void Bounds::setVerticalBoundColor(const ccColor4B& color) {
+void Bounds::setVerticalBoundColor(const GradientColor& color) {
     m_impl->m_verticalBoundColor = color;
 }
 
-const ccColor4B& Bounds::getTopBoundColor() const {
+const GradientColor& Bounds::getTopBoundColor() const {
     return m_impl->m_topBoundColor;
 }
 
-const ccColor4B& Bounds::getBottomBoundColor() const {
+const GradientColor& Bounds::getBottomBoundColor() const {
     return m_impl->m_bottomBoundColor;
 }
 
-const ccColor4B& Bounds::getVerticalColor() const {
+const GradientColor& Bounds::getVerticalColor() const {
     return m_impl->m_verticalBoundColor;
 }
 

@@ -29,7 +29,7 @@ bool AudioLine::init() {
 }
 
 void AudioLine::draw(float minX, float maxX, float minY, float maxY) {
-    cocos2d::ccColor4B color = {50, 255, 50, 255};
+    GradientColor color = {50, 255, 50, 255};
     auto editorLayer = getDrawGridLayer()->m_editorLayer;
 
     m_impl->m_colorsForTime.rebuildIfNeeded();
@@ -87,6 +87,6 @@ void AudioLine::draw(float minX, float maxX, float minY, float maxY) {
     }
 }
 
-void AudioLine::setPropertiesForObject(AudioLineCallback colorForTime, int priority) {
+void AudioLine::setPropertiesForTime(AudioLineCallback colorForTime, int priority) {
     m_impl->m_colorsForTime.add(std::move(colorForTime), priority);
 }

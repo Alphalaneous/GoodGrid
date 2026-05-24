@@ -2,6 +2,7 @@
 
 #include "../DrawGridBase.hpp"
 #include "../Export.hpp"
+#include "../GradientColor.hpp"
 
 namespace good_grid {
     
@@ -10,11 +11,11 @@ namespace good_grid {
         static Ground* create();
         void draw(float minX, float maxX, float minY, float maxY) override;
 
-        void setTopGroundColor(const cocos2d::ccColor4B& color);
-        void setBottomGroundColor(const cocos2d::ccColor4B& color);
+        void setTopGroundColor(const GradientColor& color);
+        void setBottomGroundColor(const GradientColor& color);
 
-        const cocos2d::ccColor4B& getTopGroundColor() const;
-        const cocos2d::ccColor4B& getBottomGroundColor() const;
+        const GradientColor& getTopGroundColor() const;
+        const GradientColor& getBottomGroundColor() const;
 
         void setTopGroundLineWidth(float width);
         void setBottomGroundLineWidth(float width);

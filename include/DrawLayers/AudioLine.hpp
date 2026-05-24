@@ -2,17 +2,18 @@
 
 #include "../DrawGridBase.hpp"
 #include "../Export.hpp"
+#include "../GradientColor.hpp"
 
 namespace good_grid {
     
     class GOOD_GRID_API_DLL AudioLine : public DrawGridBase {
     public:
-        using AudioLineCallback = std::function<void(cocos2d::ccColor4B& color, bool playback, float time, const cocos2d::CCPoint& position, float& lineWidth)>;
+        using AudioLineCallback = std::function<void(GradientColor& color, bool playback, float time, const cocos2d::CCPoint& position, float& lineWidth)>;
 
         static AudioLine* create();
         void draw(float minX, float maxX, float minY, float maxY) override;
 
-        void setPropertiesForObject(AudioLineCallback colorForTime, int priority = 0);
+        void setPropertiesForTime(AudioLineCallback colorForTime, int priority = 0);
 
     protected:
         bool init() override;

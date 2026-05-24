@@ -2,12 +2,13 @@
 
 #include "../DrawGridBase.hpp"
 #include "../Export.hpp"
+#include "../GradientColor.hpp"
 
 namespace good_grid {
     
     class GOOD_GRID_API_DLL DurationLines : public DrawGridBase {
     public:
-        using DurationLineCallback = std::function<void(cocos2d::ccColor4B& color, EffectGameObject* object, float& lineWidth)>;
+        using DurationLineCallback = std::function<void(GradientColor& color, EffectGameObject* object, float& lineWidth)>;
 
         static DurationLines* create();
         void draw(float minX, float maxX, float minY, float maxY) override;

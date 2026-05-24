@@ -2,12 +2,13 @@
 
 #include "../DrawGridBase.hpp"
 #include "../Export.hpp"
+#include "../GradientColor.hpp"
 
 namespace good_grid {
     
     class GOOD_GRID_API_DLL GuideObjects : public DrawGridBase {
     public:
-        using GuideObjectCallback = std::function<void(cocos2d::ccColor4B& bottomColor, cocos2d::ccColor4B& topColor, EffectGameObject* object, float& lineWidthBottom, float& lineWidthTop)>;
+        using GuideObjectCallback = std::function<void(GradientColor& bottomColor, GradientColor& topColor, EffectGameObject* object, float& lineWidthBottom, float& lineWidthTop)>;
 
         static GuideObjects* create();
         void draw(float minX, float maxX, float minY, float maxY) override;

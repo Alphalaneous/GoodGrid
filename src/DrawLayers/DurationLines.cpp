@@ -47,9 +47,9 @@ void DurationLines::draw(float minX, float maxX, float minY, float maxY) {
     for (auto obj : geode::cocos::CCArrayExt<EffectGameObject*>(editorLayer->m_durationObjects)) {
         if (!isObjectVisible(obj)) continue;
         
-        static const auto defaultLineColor = cocos2d::ccColor4B{255, 255, 255, 115};
+        static const auto defaultLineColor = GradientColor{255, 255, 255, 115};
 
-        cocos2d::ccColor4B color = defaultLineColor;
+        GradientColor color = defaultLineColor;
 
         float lineWidth = 2.0f;
 

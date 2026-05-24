@@ -5,7 +5,7 @@ using namespace good_grid;
 
 class Grid::Impl final {
 public:
-    ccColor4B m_gridColor = { 0, 0, 0, 150 };
+    GradientColor m_gridColor = { 0, 0, 0, 150 };
     float m_lineWidth = 1.0f;
     bool m_invert = false;
 };
@@ -67,11 +67,11 @@ void Grid::draw(float minX, float maxX, float minY, float maxY) {
     }
 }
 
-void Grid::setGridColor(const ccColor4B& color) {
+void Grid::setGridColor(const GradientColor& color) {
     m_impl->m_gridColor = color;
 }
 
-const ccColor4B& Grid::getGridColor() const {
+const GradientColor& Grid::getGridColor() const {
     return m_impl->m_gridColor;
 }
 

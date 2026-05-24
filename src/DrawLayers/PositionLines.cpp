@@ -4,8 +4,8 @@ using namespace good_grid;
 
 class PositionLines::Impl final {
 public:
-    cocos2d::ccColor4B m_verticalLineColor = { 0, 0, 0, 50 };
-    cocos2d::ccColor4B m_horizontalLineColor = { 0, 0, 0, 50 };
+    GradientColor m_verticalLineColor = { 0, 0, 0, 50 };
+    GradientColor m_horizontalLineColor = { 0, 0, 0, 50 };
 
     float m_verticalLineWidth = 2.0f;
     float m_horizontalLineWidth = 2.0f;
@@ -85,19 +85,19 @@ bool PositionLines::posLinesEnabledBE() {
     return betterEdit->getSavedValue<bool>("pos-line");
 }
 
-void PositionLines::setVerticalLineColor(const cocos2d::ccColor4B& color) {
+void PositionLines::setVerticalLineColor(const GradientColor& color) {
     m_impl->m_verticalLineColor = color;
 }
 
-void PositionLines::setHorizontalLineColor(const cocos2d::ccColor4B& color) {
+void PositionLines::setHorizontalLineColor(const GradientColor& color) {
     m_impl->m_horizontalLineColor = color;
 }
 
-const cocos2d::ccColor4B& PositionLines::getVerticalLineColor() const {
+const GradientColor& PositionLines::getVerticalLineColor() const {
     return m_impl->m_verticalLineColor;
 }
 
-const cocos2d::ccColor4B& PositionLines::getHorizontalLineColor() const {
+const GradientColor& PositionLines::getHorizontalLineColor() const {
     return m_impl->m_horizontalLineColor;
 }
 

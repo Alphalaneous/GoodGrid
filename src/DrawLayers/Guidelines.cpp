@@ -34,7 +34,7 @@ void Guidelines::draw(float minX, float maxX, float minY, float maxY) {
     m_impl->m_colorsForValue.rebuildIfNeeded();
 
     for (const auto& [k, v] : getTimeMarkers()) {
-        cocos2d::ccColor4B color = v;
+        GradientColor color = v;
         float x = k;
         float lineWidth = 1.0f;
 

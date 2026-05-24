@@ -70,24 +70,26 @@ bool isObjectVisible(GameObject* object)
 ```
 Util to check if an object is visible (accounting for selecting, group and hide options).
 
+## GradientColor.hpp
+
+This class can store either 1 or 2 colors. It can be constructed just like a ccColor4B, and they are compatible with each other. When there is a second color, what is drawn will be done as a gradient of the two rather than one color.
+
 ## DrawGridBase.hpp
 
 This class is what makes up every part of the new DrawGridLayer, it is a CCNode and thus can have its visibility and z order set. Every child on the DrawGridLayer inherits this class. It provides a few methods as well as some virtuals you can override that will be called when added to the DrawGridLayer as a child. This also contains a few of the API methods seen above for convenience.
 
 ```cpp
-void drawLine(const cocos2d::ccVertex2F& start, const cocos2d::ccVertex2F& end, const ccColor4B& color, float width, BlendMode mode = BlendMode::ADDITIVE)
-void drawLine(const cocos2d::ccVertex2F& start, const cocos2d::ccVertex2F& end, const ccColor4B& colorA, const ccColor4B& colorB, float width, BlendMode mode = BlendMode::ADDITIVE) // gradient with 2 colors
-
+void drawLine(const cocos2d::ccVertex2F& start, const cocos2d::ccVertex2F& end, const GradientColor& color, float width, BlendMode mode = BlendMode::ADDITIVE)
 ```
 Draws a line to the screen with two coordinates where it starts and ends. The width is the line width, for the purpose of optimization. BlendMode is an optional param that will let you change the blending between Additive, Multiply, and Invert.
 
 ```cpp
-void drawRect(const cocos2d::CCRect& rect, const cocos2d::ccColor4B& color, BlendMode mode = BlendMode::ADDITIVE)
+void drawRect(const cocos2d::CCRect& rect, const GradientColor& color, BlendMode mode = BlendMode::ADDITIVE)
 ```
 Draws a rectangle to the screen with a CCRect param dictating the bounds and a color param to set its color. BlendMode is an optional param that will let you change the blending between Additive, Multiply, and Invert.
 
 ```cpp
-void drawRectOutline(const cocos2d::CCRect& rect, const cocos2d::ccColor4B& color, float width, BlendMode mode = BlendMode::ADDITIVE)
+void drawRectOutline(const cocos2d::CCRect& rect, const GradientColor& color, float width, BlendMode mode = BlendMode::ADDITIVE)
 ```
 Draws a rectangle outline to the screen with a CCRect param dictating the bounds, a color param to set its color, and the width of the outline. BlendMode is an optional param that will let you change the blending between Additive, Multiply, and Invert.
 
@@ -107,12 +109,12 @@ You can include all the draw layers by including `DrawLayers.hpp`
 The editor grid.
 
 ```cpp
-void setGridColor(const ccColor4B& color)
+void setGridColor(const GradientColor& color)
 ```
 Sets the grid color.
 
 ```cpp
-const ccColor4B& getGridColor() const
+const GradientColor& getGridColor() const
 ```
 Returns the grid color.
 
@@ -141,32 +143,32 @@ Returns whether the grid is inverted or not.
 The bounds of the editor (white vertical line at X: 0 and the max and minimum height).
 
 ```cpp
-void setTopBoundColor(const ccColor4B& color)
+void setTopBoundColor(const GradientColor& color)
 ```
 Sets the top bound color.
 
 ```cpp
-const ccColor4B& getTopBoundColor() const
+const GradientColor& getTopBoundColor() const
 ```
 Returns the top bound color.
 
 ```cpp
-void setBottomBoundColor(const ccColor4B& color)
+void setBottomBoundColor(const GradientColor& color)
 ```
 Sets the bottom bound color.
 
 ```cpp
-const ccColor4B& getBottomBoundColor() const
+const GradientColor& getBottomBoundColor() const
 ```
 Returns the bottom bound color.
 
 ```cpp
-void setVerticalBoundColor(const ccColor4B& color)
+void setVerticalBoundColor(const GradientColor& color)
 ```
 Sets the vertical bound color.
 
 ```cpp
-const ccColor4B& getVerticalBoundColor() const
+const GradientColor& getVerticalBoundColor() const
 ```
 Returns the vertical bound color.
 
@@ -205,22 +207,22 @@ Returns the vertical bound line width.
 The ground lines (when in a non cube/robot gamemode).
 
 ```cpp
-void setTopGroundColor(const ccColor4B& color)
+void setTopGroundColor(const GradientColor& color)
 ```
 Sets the top ground color.
 
 ```cpp
-const ccColor4B& getTopGroundColor() const
+const GradientColor& getTopGroundColor() const
 ```
 Returns the top ground color.
 
 ```cpp
-void setBottomGroundColor(const ccColor4B& color)
+void setBottomGroundColor(const GradientColor& color)
 ```
 Sets the bottom ground color.
 
 ```cpp
-const ccColor4B& getBottomGroundColor() const
+const GradientColor& getBottomGroundColor() const
 ```
 Returns the bottom ground color.
 
@@ -249,7 +251,7 @@ Returns the bottom ground line width.
 These are the objects that show portal bounds when preview is enabled.
 
 ```cpp
-void setPropertiesForObject(std::function<void(ccColor4B& bottomColor, ccColor4B& topColor, EffectGameObject* object, float& lineWidthBottom, float& lineWidthTop)> colorForObject, int priority = 0)
+void setPropertiesForObject(std::function<void(GradientColor& bottomColor, GradientColor& topColor, EffectGameObject* object, float& lineWidthBottom, float& lineWidthTop)> colorForObject, int priority = 0)
 ```
 Lets you pass in a method that allows for modifying the colors, as well as passing in the object. An example would be setting colors depending on an object.
 
@@ -258,7 +260,7 @@ Lets you pass in a method that allows for modifying the colors, as well as passi
 These are the lines triggers show when not spawn or touch triggered.
 
 ```cpp
-void setPropertiesForObject(std::function<void(ccColor4B& color, EffectGameObject* object, float& lineWidth)> colorForObject, int priority = 0)
+void setPropertiesForObject(std::function<void(GradientColor& color, EffectGameObject* object, float& lineWidth)> colorForObject, int priority = 0)
 ```
 Lets you pass in a method that allows for modifying the color, as well as passing in the object. An example would be setting colors depending on an object.
 
@@ -267,7 +269,7 @@ Lets you pass in a method that allows for modifying the color, as well as passin
 These are the duration lines triggers show.
 
 ```cpp
-void setPropertiesForObject(std::function<void(ccColor4B& color, EffectGameObject* object, float& lineWidth)> colorForObject, int priority = 0)
+void setPropertiesForObject(std::function<void(GradientColor& color, EffectGameObject* object, float& lineWidth)> colorForObject, int priority = 0)
 ```
 Lets you pass in a method that allows for modifying the color, as well as passing in the object. An example would be setting colors depending on an object.
 
@@ -276,7 +278,7 @@ Lets you pass in a method that allows for modifying the color, as well as passin
 These are the music guidelines you can set when choosing a song.
 
 ```cpp
-void setPropertiesForValue(std::function<void(ccColor4B& color, float value, float& lineWidth)> colorForValue, int priority = 0)
+void setPropertiesForValue(std::function<void(GradientColor& color, float value, float& lineWidth)> colorForValue, int priority = 0)
 ```
 Lets you pass in a method that allows for modifying the color, as well as passing in the numeric color value the guideline is set to (view https://wyliemaster.github.io/gddocs/#/resources/client/level-components/guideline-string for more info). An example would be setting colors depending on the value, expanding what color values already exist.
 
@@ -285,7 +287,7 @@ Lets you pass in a method that allows for modifying the color, as well as passin
 These are the bpm guidelines you can set with a BPM Trigger.
 
 ```cpp
-void setPropertiesForBeats(std::function<void(ccColor4B& color, AudioLineGuideGameObject* object, int beat, int beatsPerBar, float& lineWidth)> colorForBeats, int priority = 0)
+void setPropertiesForBeats(std::function<void(GradientColor& color, AudioLineGuideGameObject* object, int beat, int beatsPerBar, float& lineWidth)> colorForBeats, int priority = 0)
 ```
 Lets you pass in a method that allows for modifying the color, as well as passing in the object, what beat the line being modified is on, and how many beats per bar there are. An example would be changing the beat color depending on what beat it is in a bar.
 
@@ -294,7 +296,7 @@ Lets you pass in a method that allows for modifying the color, as well as passin
 This is the line that shows when you play music in the editor.
 
 ```cpp
-void setPropertiesForTime(std::function<void(ccColor4B& color, bool playback, float time, const cocos2d::CCPoint& position, float& lineWidth)> colorForTime, int priority = 0);
+void setPropertiesForTime(std::function<void(GradientColor& color, bool playback, float time, const cocos2d::CCPoint& position, float& lineWidth)> colorForTime, int priority = 0);
 ```
 Lets you pass in a method that allows for modifying the color, as well as passing in if playback is live, the song's time, and the position of the line. An example would be setting the line color hue based on the time. 
 
@@ -303,22 +305,22 @@ Lets you pass in a method that allows for modifying the color, as well as passin
 The center vertical and horizontal lines that mark before and after a trigger activates.
 
 ```cpp
-void setVerticalLineColor(const ccColor4B& color)
+void setVerticalLineColor(const GradientColor& color)
 ```
 Sets the vertical line color.
 
 ```cpp
-const ccColor4B& getVerticalLineColor() const
+const GradientColor& getVerticalLineColor() const
 ```
 Returns the vertical line color.
 
 ```cpp
-void setHorizontalLineColor(const ccColor4B& color)
+void setHorizontalLineColor(const GradientColor& color)
 ```
 Sets the horizontal line color.
 
 ```cpp
-const ccColor4B& getVerticalLineColor() const
+const GradientColor& getVerticalLineColor() const
 ```
 Returns the horizontal line color.
 
@@ -347,12 +349,12 @@ Returns the horizontal line width.
 The line that shows the position where preview is locked.
 
 ```cpp
-void setLineColor(const ccColor4B& color)
+void setLineColor(const GradientColor& color)
 ```
 Sets the line color.
 
 ```cpp
-const ccColor4B& getLineColor() const
+const GradientColor& getLineColor() const
 ```
 Returns the line color.
 
