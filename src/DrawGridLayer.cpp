@@ -97,13 +97,13 @@ void DrawHandler::draw() {
     m_shader->use();
     m_shader->setUniformsForBuiltins();
 
-    drawBatch(m_invertedLineBatches, GL_ONE_MINUS_DST_COLOR, GL_ONE_MINUS_SRC_ALPHA);
+    drawBatch(m_invertBatch, GL_ONE_MINUS_DST_COLOR, GL_ONE_MINUS_SRC_ALPHA);
     drawBatch(m_additiveBatch, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     drawBatch(m_multiplyBatch, GL_ONE, GL_ONE);
 
     m_additiveBatch.clear();
     m_multiplyBatch.clear();
-    m_invertedLineBatches.clear();
+    m_invertBatch.clear();
 
     ccGLBlendFunc(oldSrc, oldDst);
 }
@@ -115,7 +115,7 @@ std::vector<good_grid::Vertex>& DrawHandler::batchForMode(DrawGridBase::BlendMod
         case DrawGridBase::BlendMode::MULTIPLY:
             return m_multiplyBatch;
         case DrawGridBase::BlendMode::INVERT:
-            return m_invertedLineBatches;
+            return m_invertBatch;
     }
 }
 
