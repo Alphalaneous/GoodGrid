@@ -12,6 +12,8 @@
 
 Here's what you can do with the API as a Developer:
 
+Everything here is under the `good_grid` namespace.
+
 ## GoodGrid.hpp
 
 ```cpp
@@ -96,6 +98,8 @@ virtual void draw(float minX, float maxX, float minY, float maxY);
 A virtual you can override that will draw what is within it to the DrawGridLayer, The minX, maxX, minY, and maxY params are the culling bounds, these respect scale and rotation, please use these for the best performance.
 
 ## DrawLayers
+
+You can include all the draw layers by including `DrawLayers.hpp`
 
 `setPropertiesFor` methods will be in order of priority set and all will run.
 
