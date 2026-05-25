@@ -26,8 +26,6 @@ void DrawGridBase::drawLine(const cocos2d::ccVertex2F& start, const cocos2d::ccV
 
     const float scale = m_impl->m_drawGridLayer->m_editorLayer->m_objectLayer->getScale();
 
-    width += 1.f;
-
     width /= scale;
     width /= CCEGLView::get()->m_fScaleX;
 
@@ -98,8 +96,6 @@ void DrawGridBase::drawRectOutline(const cocos2d::CCRect& rect, const GradientCo
     auto& batch = custom->batchForMode(mode);
 
     const float scale = m_impl->m_drawGridLayer->m_editorLayer->m_objectLayer->getScale();
-
-    width += 1.f;
 
     width /= scale;
     width /= CCEGLView::get()->m_fScaleX;

@@ -28,7 +28,7 @@ DrawHandler::DrawHandler(DrawGridLayer* drawGridLayer) {
         varying vec2 v_uv;
 
         void main() {
-            float d = abs(v_uv.y - 2);
+            float d = abs(v_uv.y - 1);
 
             float w = fwidth(d) * 4;
             float alpha = 1.0 - smoothstep(2 - w, 2 + w, d);
