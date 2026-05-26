@@ -518,7 +518,7 @@ void BPMTriggers::setPropertiesForBeats(BPMTriggerCallback colorForBeats, int pr
 }
 
 void AudioLine::draw(DrawGridLayer* dgl, float minX, float maxX, float minY, float maxY) {
-    LineColor color = {50, 255, 50, 255};
+    LineColor color = {2, 255, 2, 255};
     auto& api = DrawGridAPI::get();
     auto editorLayer = dgl->m_editorLayer;
 
@@ -570,10 +570,10 @@ void AudioLine::draw(DrawGridLayer* dgl, float minX, float maxX, float minY, flo
     }
 
     if (playbackX != 0) {
-        api.drawLine({playbackX, minY}, {playbackX, maxY}, color, width, !playbackActive);
+        api.drawLine({playbackX, minY}, {playbackX, maxY}, color, width);
     }
     if (playbackY != 0) {
-        api.drawLine({minX, playbackY}, {maxX, playbackY}, color, width, !playbackActive);
+        api.drawLine({minX, playbackY}, {maxX, playbackY}, color, width);
     }
 }
 

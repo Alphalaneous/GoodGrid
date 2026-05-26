@@ -324,7 +324,7 @@ void DrawGridAPI::batchDraw() {
         glDrawArrays(GL_TRIANGLES, 0, m_impl->m_invertedRectOutlineVertsBuffer.size());
     }
 
-    ccGLBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    ccGLBlendFunc(GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
     
     if (!m_impl->m_lineVertsBuffer.empty()){
         for (auto& [k, v] : m_impl->m_lineVertsBuffer) {
