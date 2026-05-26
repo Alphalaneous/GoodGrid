@@ -148,7 +148,7 @@ void DrawHandler::draw() {
     m_shader->setUniformsForBuiltins();
 
     drawBatch(m_invertBatch, GL_ONE_MINUS_DST_COLOR, GL_ONE_MINUS_SRC_ALPHA);
-    drawBatch(m_additiveBatch, GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    drawBatch(m_additiveBatch, GL_ONE, GL_ONE_MINUS_SRC_ALPHA);
     drawBatch(m_multiplyBatch, GL_ONE, GL_ONE);
 
     m_additiveBatch.clear();

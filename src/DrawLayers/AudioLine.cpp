@@ -29,7 +29,7 @@ bool AudioLine::init() {
 }
 
 void AudioLine::draw(float minX, float maxX, float minY, float maxY) {
-    GradientColor color = {50, 255, 50, 255};
+    GradientColor color = {2, 255, 2, 255};
     auto editorLayer = getDrawGridLayer()->m_editorLayer;
 
     m_impl->m_colorsForTime.rebuildIfNeeded();
@@ -80,10 +80,10 @@ void AudioLine::draw(float minX, float maxX, float minY, float maxY) {
     }
 
     if (playbackX != 0) {
-        drawLine({playbackX, minY}, {playbackX, maxY}, color, width, playbackActive ? BlendMode::ADDITIVE : BlendMode::MULTIPLY);
+        drawLine({playbackX, minY}, {playbackX, maxY}, color, width, BlendMode::ADDITIVE);
     }
     if (playbackY != 0) {
-        drawLine({minX, playbackY}, {maxX, playbackY}, color, width, playbackActive ? BlendMode::ADDITIVE : BlendMode::MULTIPLY);
+        drawLine({minX, playbackY}, {maxX, playbackY}, color, width, BlendMode::ADDITIVE);
     }
 }
 
