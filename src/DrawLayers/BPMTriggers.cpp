@@ -80,6 +80,6 @@ void BPMTriggers::draw(float minX, float maxX, float minY, float maxY) {
     }
 }
 
-void BPMTriggers::setPropertiesForObject(BPMTriggerCallback colorsForBeats, int priority) {
+void BPMTriggers::setPropertiesForBeats(BPMTriggerCallback colorsForBeats, int priority) {
     m_impl->m_colorsForBeats.add(std::move(colorsForBeats), priority);
 }

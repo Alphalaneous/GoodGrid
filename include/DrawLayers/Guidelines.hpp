@@ -13,7 +13,7 @@ namespace good_grid {
         static Guidelines* create();
         void draw(float minX, float maxX, float minY, float maxY) override;
 
-        void setPropertiesForObject(GuidelineCallback colorForValue, int priority = 0);
+        void setPropertiesForValue(GuidelineCallback colorForValue, int priority = 0);
 
     protected:
         bool init() override;

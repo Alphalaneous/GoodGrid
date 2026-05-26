@@ -13,7 +13,7 @@ namespace good_grid {
         static BPMTriggers* create();
         void draw(float minX, float maxX, float minY, float maxY) override;
 
-        void setPropertiesForObject(BPMTriggerCallback colorsForBeats, int priority = 0);
+        void setPropertiesForBeats(BPMTriggerCallback colorsForBeats, int priority = 0);
 
     protected:
         bool init() override;

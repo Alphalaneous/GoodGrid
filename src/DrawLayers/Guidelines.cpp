@@ -47,6 +47,6 @@ void Guidelines::draw(float minX, float maxX, float minY, float maxY) {
     }
 }
 
-void Guidelines::setPropertiesForObject(GuidelineCallback colorForValue, int priority) {
+void Guidelines::setPropertiesForValue(GuidelineCallback colorForValue, int priority) {
     m_impl->m_colorsForValue.add(std::move(colorForValue), priority);
 }
