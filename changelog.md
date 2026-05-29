@@ -1,6 +1,9 @@
 # 2.0.0
 - Rewrite the API to be more usable and future proof
 
+# 1.2.4
+- Fix duration line color
+
 # 1.2.3
 - Fix additive blending
 - Fix audio line inconsistency from vanilla
