@@ -1,3 +1,6 @@
+# 1.2.4
+- Fix duration line color
+
 # 1.2.3
 - Fix additive blending
 - Fix audio line inconsistency from vanilla

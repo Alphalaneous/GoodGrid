@@ -341,7 +341,7 @@ void DurationLines::draw(DrawGridLayer* dgl, float minX, float maxX, float minY,
     for (auto obj : CCArrayExt<EffectGameObject*>(editorLayer->m_durationObjects)) {
         if (!api.isObjectVisible(obj)) continue;
         
-        static const auto defaultLineColor = LineColor{255, 255, 255, 115};
+        static const auto defaultLineColor = LineColor{100, 100, 100, 75};
 
         LineColor color = defaultLineColor;
 
