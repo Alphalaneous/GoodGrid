@@ -2,7 +2,7 @@
 #include "../Utils.hpp"
 #include <Geode/utils/cocos.hpp>
 
-using namespace good_grid;
+namespace alpha::grid {
 
 class EffectLines::Impl final {
 public:
@@ -38,14 +38,15 @@ void EffectLines::draw(float minX, float maxX, float minY, float maxY) {
 
     for (auto obj : geode::cocos::CCArrayExt<EffectGameObject*>(getDrawGridLayer()->m_effectGameObjects)) {
         if (obj->m_isSpawnTriggered || obj->m_isTouchTriggered || !isObjectVisible(obj)) continue;
+        
         float x = obj->getPositionX();
-        if (x < minX || x > maxX || x < 0) continue;
+        if (x < minX || x > maxX || x < 0.f) continue;
 
-        static const auto defaultLineColor = GradientColor{0, 255, 255, 255};
+        static const auto defaultLineColor = Color{0, 255, 255, 255};
 
-        GradientColor color = defaultLineColor;
+        Color color = defaultLineColor;
 
-        float lineWidth = 1.0f;
+        float lineWidth = 1.f;
 
         for (auto& fn : m_impl->m_colorsForObject.flat) {
             fn(color, x, obj, lineWidth);
@@ -57,4 +58,6 @@ void EffectLines::draw(float minX, float maxX, float minY, float maxY) {
 
 void EffectLines::setPropertiesForObject(EffectLineCallback colorForObject, int priority) {
     m_impl->m_colorsForObject.add(std::move(colorForObject), priority);
+}
+
 }

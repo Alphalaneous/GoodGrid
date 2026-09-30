@@ -2,32 +2,29 @@
 
 #include "../DrawGridBase.hpp"
 #include "../Export.hpp"
-#include "../GradientColor.hpp"
+#include "../Color.hpp"
 
-namespace good_grid {
+namespace alpha::grid {
     
-    class GOOD_GRID_API_DLL Grid : public DrawGridBase {
-    public:
-        static Grid* create();
-        void draw(float minX, float maxX, float minY, float maxY) override;
+class GOOD_GRID_API_DLL Grid : public DrawGridBase {
+public:
+    static Grid* create();
+    void draw(float minX, float maxX, float minY, float maxY) override;
 
-        void setGridColor(const GradientColor& color);
-        const GradientColor& getGridColor() const;
+    void setGridColor(const Color& color);
+    const Color& getGridColor() const;
 
-        void setLineWidth(float width);
-        float getLineWidth() const;
+    void setLineWidth(float width);
+    float getLineWidth() const;
 
-        void setInverted(bool inverted);
-        bool isInverted();
+protected:
+    bool init() override;
 
-    protected:
-        bool init() override;
+    Grid();
+    ~Grid();
 
-        Grid();
-        ~Grid();
-
-        class Impl;
-        std::unique_ptr<Impl> m_impl;
-    };
+    class Impl;
+    std::unique_ptr<Impl> m_impl;
+};
 
 }

@@ -1,7 +1,7 @@
 #include "../../include/DrawLayers/Guidelines.hpp"
 #include "../Utils.hpp"
 
-using namespace good_grid;
+namespace alpha::grid {
 
 class Guidelines::Impl final {
 public:
@@ -34,19 +34,22 @@ void Guidelines::draw(float minX, float maxX, float minY, float maxY) {
     m_impl->m_colorsForValue.rebuildIfNeeded();
 
     for (const auto& [k, v] : getTimeMarkers()) {
-        GradientColor color = v;
+        Color color = v;
         float x = k;
-        float lineWidth = 1.0f;
+        float lineWidth = 1.f;
 
         for (auto& fn : m_impl->m_colorsForValue.flat) {
             fn(color, x, lineWidth);
         }
 
         if (x < minX || x > maxX) continue;
+        
         drawLine({x, minY}, {x, maxY}, color, lineWidth);
     }
 }
 
 void Guidelines::setPropertiesForValue(GuidelineCallback colorForValue, int priority) {
     m_impl->m_colorsForValue.add(std::move(colorForValue), priority);
+}
+
 }

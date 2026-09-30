@@ -2,36 +2,35 @@
 
 #include "../DrawGridBase.hpp"
 #include "../Export.hpp"
-#include "../GradientColor.hpp"
+#include "../Color.hpp"
 
-namespace good_grid {
+namespace alpha::grid {
     
-    class GOOD_GRID_API_DLL PositionLines : public DrawGridBase {
-    public:
-        static PositionLines* create();
-        void draw(float minX, float maxX, float minY, float maxY) override;
+class GOOD_GRID_API_DLL PositionLines : public DrawGridBase {
+public:
+    static PositionLines* create();
+    void draw(float minX, float maxX, float minY, float maxY) override;
 
-        void setVerticalLineColor(const GradientColor& color);
-        void setHorizontalLineColor(const GradientColor& color);
+    void setVerticalLineColor(const Color& color);
+    void setHorizontalLineColor(const Color& color);
 
-        const GradientColor& getVerticalLineColor() const;
-        const GradientColor& getHorizontalLineColor() const;
+    const Color& getVerticalLineColor() const;
+    const Color& getHorizontalLineColor() const;
 
-        void setVerticalLineWidth(float width);
-        void setHorizontalLineWidth(float width);
+    void setVerticalLineWidth(float width);
+    void setHorizontalLineWidth(float width);
 
-        float getVerticalLineWidth() const;
-        float getHorizontalLineWidth() const;
+    float getVerticalLineWidth() const;
+    float getHorizontalLineWidth() const;
 
-    protected:
-        bool init() override;
-        bool posLinesEnabledBE();
+protected:
+    bool init() override;
 
-        PositionLines();
-        ~PositionLines();
+    PositionLines();
+    ~PositionLines();
 
-        class Impl;
-        std::unique_ptr<Impl> m_impl;
-    };
+    class Impl;
+    std::unique_ptr<Impl> m_impl;
+};
 
 }

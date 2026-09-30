@@ -1,13 +1,13 @@
 #include "../../include/DrawLayers/PreviewLockLine.hpp"
 
-using namespace good_grid;
+namespace alpha::grid {
 
 class PreviewLockLine::Impl final {
 public:
-    GradientColor m_lineColor = { 255, 150, 0, 255 };
+    Color m_lineColor = {255, 150, 0, 255};
     int m_lineColorPriority = 0;
 
-    float m_lineWidth = 2.0f;
+    float m_lineWidth = 2.f;
     int m_lineWidthPriority = 0;
 };
 
@@ -33,18 +33,16 @@ bool PreviewLockLine::init() {
 
 void PreviewLockLine::draw(float minX, float maxX, float minY, float maxY) {
     auto editorLayer = getDrawGridLayer()->m_editorLayer;
-
-    if (editorLayer->m_playbackMode != PlaybackMode::Not) return;
-    if (editorLayer->m_previewPosition.x <= 0) return;
-    const cocos2d::CCPoint& pos = editorLayer->m_previewPosition;
-    drawLine({pos.x, minY}, {pos.x, maxY}, m_impl->m_lineColor, m_impl->m_lineWidth);
+    if (editorLayer->m_playbackMode != PlaybackMode::Not || editorLayer->m_previewPosition.x <= 0.f) return;
+    
+    drawLine({editorLayer->m_previewPosition.x, minY}, {editorLayer->m_previewPosition.x, maxY}, m_impl->m_lineColor, m_impl->m_lineWidth);
 }
 
-void PreviewLockLine::setLineColor(const GradientColor& color) {
+void PreviewLockLine::setLineColor(const Color& color) {
     m_impl->m_lineColor = color;
 }
 
-const GradientColor& PreviewLockLine::getLineColor() const {
+const Color& PreviewLockLine::getLineColor() const {
     return m_impl->m_lineColor;
 }
 
@@ -54,4 +52,6 @@ void PreviewLockLine::setLineWidth(float width) {
 
 float PreviewLockLine::getLineWidth() const {
     return m_impl->m_lineWidth;
+}
+
 }

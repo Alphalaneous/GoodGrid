@@ -2,27 +2,27 @@
 
 #include "../DrawGridBase.hpp"
 #include "../Export.hpp"
-#include "../GradientColor.hpp"
+#include "../Color.hpp"
 
-namespace good_grid {
-    
-    class GOOD_GRID_API_DLL AudioLine : public DrawGridBase {
-    public:
-        using AudioLineCallback = std::function<void(GradientColor& color, bool playback, float time, const cocos2d::CCPoint& position, float& lineWidth)>;
+namespace alpha::grid {
 
-        static AudioLine* create();
-        void draw(float minX, float maxX, float minY, float maxY) override;
+class GOOD_GRID_API_DLL AudioLine : public DrawGridBase {
+public:
+    using AudioLineCallback = std::function<void(Color& color, bool playback, float time, const cocos2d::CCPoint& position, float& lineWidth)>;
 
-        void setPropertiesForTime(AudioLineCallback colorForTime, int priority = 0);
+    static AudioLine* create();
+    void draw(float minX, float maxX, float minY, float maxY) override;
 
-    protected:
-        bool init() override;
+    void setPropertiesForTime(AudioLineCallback colorForTime, int priority = 0);
 
-        AudioLine();
-        ~AudioLine();
+protected:
+    bool init() override;
 
-        class Impl;
-        std::unique_ptr<Impl> m_impl;
-    };
+    AudioLine();
+    ~AudioLine();
+
+    class Impl;
+    std::unique_ptr<Impl> m_impl;
+};
 
 }

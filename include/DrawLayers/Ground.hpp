@@ -2,38 +2,38 @@
 
 #include "../DrawGridBase.hpp"
 #include "../Export.hpp"
-#include "../GradientColor.hpp"
+#include "../Color.hpp"
 
-namespace good_grid {
-    
-    class GOOD_GRID_API_DLL Ground : public DrawGridBase {
-    public:
-        static Ground* create();
-        void draw(float minX, float maxX, float minY, float maxY) override;
+namespace alpha::grid {
 
-        void setTopGroundColor(const GradientColor& color);
-        void setBottomGroundColor(const GradientColor& color);
+class GOOD_GRID_API_DLL Ground : public DrawGridBase {
+public:
+    static Ground* create();
+    void draw(float minX, float maxX, float minY, float maxY) override;
 
-        const GradientColor& getTopGroundColor() const;
-        const GradientColor& getBottomGroundColor() const;
+    void setTopGroundColor(const Color& color);
+    void setBottomGroundColor(const Color& color);
 
-        void setTopGroundLineWidth(float width);
-        void setBottomGroundLineWidth(float width);
+    const Color& getTopGroundColor() const;
+    const Color& getBottomGroundColor() const;
 
-        float getTopGroundLineWidth() const;
-        float getBottomGroundLineWidth() const;
+    void setTopGroundLineWidth(float width);
+    void setBottomGroundLineWidth(float width);
 
-        float getMinPortalY();
-        float getMaxPortalY();
+    float getTopGroundLineWidth() const;
+    float getBottomGroundLineWidth() const;
 
-    protected:
-        bool init() override;
+    float getMinPortalY();
+    float getMaxPortalY();
 
-        Ground();
-        ~Ground();
+protected:
+    bool init() override;
 
-        class Impl;
-        std::unique_ptr<Impl> m_impl;
-    };
+    Ground();
+    ~Ground();
+
+    class Impl;
+    std::unique_ptr<Impl> m_impl;
+};
 
 }

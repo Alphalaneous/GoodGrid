@@ -1,13 +1,12 @@
 #include "../../include/DrawLayers/Grid.hpp"
 #include "../DrawGridLayer.hpp"
 
-using namespace good_grid;
+namespace alpha::grid {
 
 class Grid::Impl final {
 public:
-    GradientColor m_gridColor = { 0, 0, 0, 150 };
-    float m_lineWidth = 1.0f;
-    bool m_invert = false;
+    Color m_gridColor = {0, 0, 0, 150};
+    float m_lineWidth = 1.f;
 };
 
 Grid::Grid() : m_impl(std::make_unique<Impl>()) {}
@@ -35,43 +34,41 @@ void Grid::draw(float minX, float maxX, float minY, float maxY) {
 
     if (!editorLayer->m_showGrid || (editorLayer->m_hideGridOnPlay && editorLayer->m_playbackMode == PlaybackMode::Playing)) return;
     
-    auto& gridSize = getDrawGridLayer()->m_gridSize;
-    
-    const CCSize size = getGridBoundsSize();
-    const CCPoint origin = getGridBoundsOrigin();
+    auto gridSize = getDrawGridLayer()->m_gridSize;
+    auto size = getGridBoundsSize();
+    auto origin = getGridBoundsOrigin();
 
-    const float scale = editorLayer->m_objectLayer->getScale();
-    const float xStart = std::max(minX - gridSize, origin.x);
-    const float xEnd   = std::min(maxX + gridSize, size.width);
+    float scale = editorLayer->m_objectLayer->getScale();
+    float xStart = std::max(minX - gridSize, origin.x);
+    float xEnd = std::min(maxX + gridSize, size.width);
     
-    const float invGridSize = 1.0f / gridSize;
+    float invGridSize = 1.f / gridSize;
 
-    const int firstGridX = static_cast<int>(std::floor(xStart  * invGridSize));
-    const int lastGridX  = static_cast<int>(std::floor(xEnd * invGridSize)) - 1;
+    int firstGridX = static_cast<int>(std::floor(xStart  * invGridSize));
+    int lastGridX = static_cast<int>(std::floor(xEnd * invGridSize)) - 1;
     
-    const float yStart = std::max(minY - gridSize, origin.y);
-    const float yEnd   = std::min(maxY + gridSize, (editorLayer->m_levelSettings->m_dynamicLevelHeight ? size.height : DrawHandler::MAX_HEIGHT));
+    float yStart = std::max(minY - gridSize, origin.y);
+    float yEnd = std::min(maxY + gridSize, (editorLayer->m_levelSettings->m_dynamicLevelHeight ? size.height : DrawHandler::MAX_HEIGHT));
     
-    const int firstGridY = static_cast<int>(std::floor(yStart * invGridSize));
-    const int lastGridY  = static_cast<int>(std::floor(yEnd * invGridSize)) - 1;
+    int firstGridY = static_cast<int>(std::floor(yStart * invGridSize));
+    int lastGridY = static_cast<int>(std::floor(yEnd * invGridSize)) - 1;
     
     float x = firstGridX * gridSize + gridSize;
-
-    for (int i = firstGridX; i <= lastGridX; ++i, x += gridSize) {
-        drawLine({x, minY}, {x, maxY}, m_impl->m_gridColor, m_impl->m_lineWidth, m_impl->m_invert ? BlendMode::INVERT : BlendMode::ADDITIVE);
+    for (int i = firstGridX; i <= lastGridX; i++, x += gridSize) {
+        drawLine({x, minY}, {x, maxY}, m_impl->m_gridColor, m_impl->m_lineWidth);
     }
 
     float y = firstGridY * gridSize + gridSize;
-    for (int i = firstGridY; i <= lastGridY; ++i, y += gridSize) {
-        drawLine({minX, y}, {maxX, y}, m_impl->m_gridColor, m_impl->m_lineWidth, m_impl->m_invert ? BlendMode::INVERT : BlendMode::ADDITIVE);
+    for (int i = firstGridY; i <= lastGridY; i++, y += gridSize) {
+        drawLine({minX, y}, {maxX, y}, m_impl->m_gridColor, m_impl->m_lineWidth);
     }
 }
 
-void Grid::setGridColor(const GradientColor& color) {
+void Grid::setGridColor(const Color& color) {
     m_impl->m_gridColor = color;
 }
 
-const GradientColor& Grid::getGridColor() const {
+const Color& Grid::getGridColor() const {
     return m_impl->m_gridColor;
 }
 
@@ -83,10 +80,4 @@ float Grid::getLineWidth() const {
     return m_impl->m_lineWidth;
 }
 
-void Grid::setInverted(bool inverted) {
-    m_impl->m_invert = inverted;
-}
-
-bool Grid::isInverted() {
-    return m_impl->m_invert;
 }

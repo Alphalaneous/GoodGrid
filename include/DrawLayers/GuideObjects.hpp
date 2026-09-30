@@ -2,28 +2,28 @@
 
 #include "../DrawGridBase.hpp"
 #include "../Export.hpp"
-#include "../GradientColor.hpp"
+#include "../Color.hpp"
 
-namespace good_grid {
+namespace alpha::grid {
     
-    class GOOD_GRID_API_DLL GuideObjects : public DrawGridBase {
-    public:
-        using GuideObjectCallback = std::function<void(GradientColor& bottomColor, GradientColor& topColor, EffectGameObject* object, float& lineWidthBottom, float& lineWidthTop)>;
+class GOOD_GRID_API_DLL GuideObjects : public DrawGridBase {
+public:
+    using GuideObjectCallback = std::function<void(Color& bottomColor, Color& topColor, EffectGameObject* object, float& lineWidthBottom, float& lineWidthTop)>;
 
-        static GuideObjects* create();
-        void draw(float minX, float maxX, float minY, float maxY) override;
+    static GuideObjects* create();
+    void draw(float minX, float maxX, float minY, float maxY) override;
 
-        void setPropertiesForObject(GuideObjectCallback colorForObject, int priority = 0);
-        cocos2d::CCPoint getPortalMinMax(GameObject* obj);
+    void setPropertiesForObject(GuideObjectCallback colorForObject, int priority = 0);
+    cocos2d::CCPoint getPortalMinMax(GameObject* obj);
 
-    protected:
-        bool init() override;
+protected:
+    bool init() override;
 
-        GuideObjects();
-        ~GuideObjects();
+    GuideObjects();
+    ~GuideObjects();
 
-        class Impl;
-        std::unique_ptr<Impl> m_impl;
-    };
+    class Impl;
+    std::unique_ptr<Impl> m_impl;
+};
 
 }

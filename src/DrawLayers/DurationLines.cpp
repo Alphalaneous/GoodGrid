@@ -2,7 +2,7 @@
 #include "../Utils.hpp"
 #include <Geode/utils/cocos.hpp>
 
-using namespace good_grid;
+namespace alpha::grid {
 
 class DurationLines::Impl final {
 public:
@@ -37,30 +37,30 @@ void DurationLines::draw(float minX, float maxX, float minY, float maxY) {
 
     m_impl->m_colorsForObject.rebuildIfNeeded();
 
-    const auto& startSpeed = editorLayer->m_levelSettings->m_startSpeed;
-    const auto& isPlatformer = editorLayer->m_isPlatformer;
+    auto startSpeed = editorLayer->m_levelSettings->m_startSpeed;
+    auto isPlatformer = editorLayer->m_isPlatformer;
     auto& rotateChannel = editorLayer->m_gameState.m_rotateChannel;
-    const auto& updateTimeMarkers = getDrawGridLayer()->m_updateTimeMarkers;
+    auto updateTimeMarkers = getDrawGridLayer()->m_updateTimeMarkers;
     auto speedObjects = getDrawGridLayer()->m_speedObjects;
     auto snapObject = editorLayer->m_editorUI->m_snapObject;
 
     for (auto obj : geode::cocos::CCArrayExt<EffectGameObject*>(editorLayer->m_durationObjects)) {
         if (!isObjectVisible(obj)) continue;
         
-        static const auto defaultLineColor = GradientColor{100, 100, 100, 75};
+        static const auto defaultLineColor = Color{100, 100, 100, 75};
 
-        GradientColor color = defaultLineColor;
+        Color color = defaultLineColor;
 
-        float lineWidth = 2.0f;
+        float lineWidth = 2.f;
 
         for (auto& fn : m_impl->m_colorsForObject.flat) {
             fn(color, obj, lineWidth);
         }
 
-        cocos2d::CCPoint& endPos = obj->m_endPosition;
+        auto& endPos = obj->m_endPosition;
 
         if (updateTimeMarkers || (obj == m_impl->m_lastSnappedObject && !snapObject)) {
-            endPos = cocos2d::CCPoint{0, 0};
+            endPos = cocos2d::CCPoint{0.f, 0.f};
             m_impl->m_lastSnappedObject = nullptr;
         }
         else {
@@ -73,13 +73,12 @@ void DurationLines::draw(float minX, float maxX, float minY, float maxY) {
             time = obj->m_fadeInDuration + obj->m_holdDuration + obj->m_fadeOutDuration;
         }
         else if (obj->m_objectID == 3602) {
-            SFXTriggerGameObject* sfxTrigger = static_cast<SFXTriggerGameObject*>(obj);
-            time = sfxTrigger->m_soundDuration;
+            time = static_cast<SFXTriggerGameObject*>(obj)->m_soundDuration;
         }
 
-        if ((time <= 0)) continue;
+        if (time <= 0.f) continue;
         
-        const cocos2d::CCPoint& currentPos = obj->getPosition();
+        auto currentPos = obj->getPosition();
 
         if (!obj->m_isSpawnTriggered) {
             if (endPos == cocos2d::CCPointZero) {
@@ -98,7 +97,7 @@ void DurationLines::draw(float minX, float maxX, float minY, float maxY) {
 
                 bool wasRotated = LevelTools::getLastGameplayRotated();
 
-                cocos2d::CCPoint newPos = LevelTools::posForTimeInternal(
+                auto newPos = LevelTools::posForTimeInternal(
                     currentTime + time,
                     speedObjects,
                     static_cast<int>(startSpeed),
@@ -139,4 +138,6 @@ void DurationLines::draw(float minX, float maxX, float minY, float maxY) {
 
 void DurationLines::setPropertiesForObject(DurationLineCallback colorForObject, int priority) {
     m_impl->m_colorsForObject.add(std::move(colorForObject), priority);
+}
+
 }

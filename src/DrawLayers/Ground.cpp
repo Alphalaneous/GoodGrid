@@ -1,17 +1,17 @@
 #include "../../include/DrawLayers/Ground.hpp"
 
-using namespace good_grid;
+namespace alpha::grid {
 
 class Ground::Impl final {
 public:
-    GradientColor m_topGroundColor = { 255, 175, 50, 255 };
-    GradientColor m_bottomGroundColor = { 255, 175, 50, 255 };
+    Color m_topGroundColor = {255, 175, 50, 255};
+    Color m_bottomGroundColor = {255, 175, 50, 255};
 
-    float m_topGroundLineWidth = 2.0f;
-    float m_bottomGroundLineWidth = 2.0f;
+    float m_topGroundLineWidth = 2.f;
+    float m_bottomGroundLineWidth = 2.f;
 
-    float m_minPortalY = 0;
-    float m_maxPortalY = 0;
+    float m_minPortalY = 0.f;
+    float m_maxPortalY = 0.f;
 };
 
 Ground::Ground() : m_impl(std::make_unique<Impl>()) {}
@@ -36,34 +36,31 @@ bool Ground::init() {
 
 void Ground::draw(float minX, float maxX, float minY, float maxY) {
     auto editor = getDrawGridLayer()->m_editorLayer;
-    if (editor->m_playbackMode == PlaybackMode::Not) return;
-    
-    auto& gamestate = editor->m_gameState;
-    
-    if (gamestate.m_unkBool8) return;
-
-    if (!editor->m_player1->isInBasicMode() || gamestate.m_isDualMode) {
-        float minPortalY = getMinPortalY();
-        float maxPortalY = getMaxPortalY();
-
-        drawLine({minX, minPortalY}, {maxX, minPortalY}, m_impl->m_bottomGroundColor, m_impl->m_bottomGroundLineWidth);
-        drawLine({minX, maxPortalY}, {maxX, maxPortalY}, m_impl->m_topGroundColor, m_impl->m_topGroundLineWidth);
+    if (editor->m_playbackMode == PlaybackMode::Not || editor->m_gameState.m_isFreeMode ||
+        editor->m_player1->isInBasicMode()  || !editor->m_gameState.m_isDualMode) {
+        return;
     }
+ 
+    float minPortalY = getMinPortalY();
+    float maxPortalY = getMaxPortalY();
+
+    drawLine({minX, minPortalY}, {maxX, minPortalY}, m_impl->m_bottomGroundColor, m_impl->m_bottomGroundLineWidth);
+    drawLine({minX, maxPortalY}, {maxX, maxPortalY}, m_impl->m_topGroundColor, m_impl->m_topGroundLineWidth);
 }
 
-void Ground::setTopGroundColor(const GradientColor& color) {
+void Ground::setTopGroundColor(const Color& color) {
     m_impl->m_topGroundColor = color;
 }
 
-void Ground::setBottomGroundColor(const GradientColor& color) {
+void Ground::setBottomGroundColor(const Color& color) {
     m_impl->m_bottomGroundColor = color;
 }
 
-const GradientColor& Ground::getTopGroundColor() const {
+const Color& Ground::getTopGroundColor() const {
     return m_impl->m_topGroundColor;
 }
 
-const GradientColor& Ground::getBottomGroundColor() const {
+const Color& Ground::getBottomGroundColor() const {
     return m_impl->m_bottomGroundColor;
 }
 
@@ -101,4 +98,6 @@ float Ground::getMaxPortalY() {
     }
 
     return m_impl->m_maxPortalY;
+}
+
 }

@@ -2,7 +2,7 @@
 #include "../Utils.hpp"
 #include <Geode/utils/cocos.hpp>
 
-using namespace good_grid;
+namespace alpha::grid {
 
 class GuideObjects::Impl final {
 public:
@@ -36,22 +36,28 @@ void GuideObjects::draw(float minX, float maxX, float minY, float maxY) {
 
     for (auto obj : geode::cocos::CCArrayExt<EffectGameObject*>(getDrawGridLayer()->m_guideObjects)) {
         if (!isObjectVisible(obj)) continue;
+
         auto [y1, y2] = getPortalMinMax(obj);
 
-        static const auto defaultLineColor = GradientColor{0, 255, 255, 255};
+        static const auto defaultLineColor = Color{0, 255, 255, 255};
 
-        GradientColor bottomColor = defaultLineColor;
-        GradientColor topColor = defaultLineColor;
+        Color bottomColor = defaultLineColor;
+        Color topColor = defaultLineColor;
 
-        float lineWidthBottom = 2.0f;
-        float lineWidthTop = 2.0f;
+        float lineWidthBottom = 2.f;
+        float lineWidthTop = 2.f;
 
         for (auto& fn : m_impl->m_colorsForObject.flat) {
             fn(bottomColor, topColor, obj, lineWidthBottom, lineWidthTop);
         }
 
-        if (y1 >= minY && y1 <= maxY) drawLine({minX, y1}, {maxX, y1}, bottomColor, lineWidthBottom);
-        if (y2 >= minY && y2 <= maxY) drawLine({minX, y2}, {maxX, y2}, topColor, lineWidthTop);
+        if (y1 >= minY && y1 <= maxY) {
+            drawLine({minX, y1}, {maxX, y1}, bottomColor, lineWidthBottom);
+        }
+        
+        if (y2 >= minY && y2 <= maxY) {
+            drawLine({minX, y2}, {maxX, y2}, topColor, lineWidthTop);
+        }
     }
 }
 
@@ -60,22 +66,30 @@ void GuideObjects::setPropertiesForObject(GuideObjectCallback colorForObject, in
 }
 
 cocos2d::CCPoint GuideObjects::getPortalMinMax(GameObject* obj) {
-    GameObjectType objectType = obj->m_objectType;
-    static constexpr float defaultHeight = 300.0f;
-    static constexpr float ballPortalHeight = 240.0f;
-    static constexpr float spiderPortalHeight = 270.0f;
-    static constexpr float gridStep = 30.0f;
-    static constexpr float minYClamp = 90.0f;
+    static constexpr float defaultHeight = 300.f;
+    static constexpr float ballPortalHeight = 240.f;
+    static constexpr float spiderPortalHeight = 270.f;
+    static constexpr float gridStep = 30.f;
+    static constexpr float minYClamp = 90.f;
     
     float height = defaultHeight;
     switch (obj->m_objectType) {
-        case GameObjectType::BallPortal: height = ballPortalHeight; break;
-        case GameObjectType::SpiderPortal: height = spiderPortalHeight; break;
-        default: break;
+        case GameObjectType::BallPortal: {
+            height = ballPortalHeight;
+            break;
+        }
+        case GameObjectType::SpiderPortal: {
+            height = spiderPortalHeight;
+            break;
+        }
+        default: {
+            break;
+        }
     }
     
-    float posY = obj->getPositionY();
-    float yMin = std::floor((posY - height * 0.5f) / gridStep) * gridStep;
-    if (yMin < minYClamp) yMin = minYClamp;
-    return cocos2d::CCPoint{ yMin, yMin + height };
+    float yMin = std::max(std::floor((obj->getPositionY() - height * 0.5f) / gridStep) * gridStep, minYClamp);
+
+    return { yMin, yMin + height };
+}
+
 }
