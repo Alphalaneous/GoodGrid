@@ -11,7 +11,7 @@ public:
     using AudioLineCallback = std::function<void(Color& color, bool playback, float time, const cocos2d::CCPoint& position, float& lineWidth)>;
 
     static AudioLine* create();
-    void draw(float minX, float maxX, float minY, float maxY) override;
+    void draw(const cocos2d::CCRect& visibleRect) override;
 
     void setPropertiesForTime(AudioLineCallback colorForTime, int priority = 0);
 

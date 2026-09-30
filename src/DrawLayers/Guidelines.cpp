@@ -28,7 +28,7 @@ bool Guidelines::init() {
     return true;
 }
 
-void Guidelines::draw(float minX, float maxX, float minY, float maxY) {
+void Guidelines::draw(const cocos2d::CCRect& visibleRect) {
     if (!GameManager::get()->m_showSongMarkers) return;
 
     m_impl->m_colorsForValue.rebuildIfNeeded();
@@ -42,9 +42,9 @@ void Guidelines::draw(float minX, float maxX, float minY, float maxY) {
             fn(color, x, lineWidth);
         }
 
-        if (x < minX || x > maxX) continue;
+        if (x < visibleRect.getMinX() || x > visibleRect.getMaxX()) continue;
         
-        drawLine({x, minY}, {x, maxY}, color, lineWidth);
+        drawLine({x, visibleRect.getMinY()}, {x, visibleRect.getMaxY()}, color, lineWidth);
     }
 }
 

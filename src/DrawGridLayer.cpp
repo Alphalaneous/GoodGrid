@@ -37,6 +37,15 @@ void DrawHandler::Batch::draw() const {
         &m_batch[0].uv
     );
 
+    glVertexAttribPointer(
+        3,
+        1,
+        GL_FLOAT,
+        GL_FALSE,
+        sizeof(alpha::grid::Vertex),
+        &m_batch[0].angle
+    );
+
     glDrawArrays(GL_TRIANGLES, 0, m_batch.size());
 }
 
@@ -47,14 +56,17 @@ DrawHandler::DrawHandler(DrawGridLayer* drawGridLayer) {
         attribute vec4 a_position;
         attribute vec4 a_color;
         attribute vec2 a_uv;
+        attribute float a_angle;
 
         varying vec4 v_color;
         varying vec2 v_uv;
+        varying float v_angle;
 
         void main() {
             gl_Position = CC_MVPMatrix * a_position;
             v_color = a_color;
             v_uv = a_uv;
+            v_angle = a_angle;
         }
     )";
 
@@ -65,6 +77,7 @@ DrawHandler::DrawHandler(DrawGridLayer* drawGridLayer) {
 
         varying vec4 v_color;
         varying vec2 v_uv;
+        varying float v_angle;
 
         void main() {
             vec2 derivative = fwidth(v_uv);
@@ -75,13 +88,15 @@ DrawHandler::DrawHandler(DrawGridLayer* drawGridLayer) {
             float minEdgeDistX = min(distToBottomLeft.x, distToTopRight.x);
             float minEdgeDistY = min(distToBottomLeft.y, distToTopRight.y);
 
-            float totalLineWidthX = 1.0 / derivative.x;
-            float totalLineWidthY = 1.0 / derivative.y;
-
             float edgeDist = min(minEdgeDistX, minEdgeDistY);
-            float alpha = smoothstep(0.0, 1.0, edgeDist);
-            
-            gl_FragColor = vec4(v_color.rgb, v_color.a * alpha);
+
+            float axisAngle = mod(abs(v_angle), 1.5707963);
+            float deviation = min(axisAngle, 1.5707963 - axisAngle);
+
+            float aa = smoothstep(0.0, 0.05, deviation);
+            float alpha = mix(1.0, smoothstep(0.0, 1.0, edgeDist), aa);
+
+            gl_FragColor = vec4(v_color.rgb * alpha, v_color.a * alpha);
         }
     )";
 
@@ -91,6 +106,7 @@ DrawHandler::DrawHandler(DrawGridLayer* drawGridLayer) {
     m_shader->addAttribute("a_position", kCCVertexAttrib_Position);
     m_shader->addAttribute("a_color", kCCVertexAttrib_Color);
     m_shader->addAttribute("a_uv", 2);
+    m_shader->addAttribute("a_angle", 3);
     m_shader->link();
     m_shader->updateUniforms();
     
@@ -101,7 +117,7 @@ DrawHandler::DrawHandler(DrawGridLayer* drawGridLayer) {
 
 void DrawHandler::draw() {
     if (m_vanillaDraw) return m_drawGridLayer->draw();
-    if (m_drawGridLayer->m_editorLayer->m_objectLayer->getScale() == 0) return;
+    if (m_drawGridLayer->m_editorLayer->m_objectLayer->getScale() == 0.f) return;
 
     GLint oldSrc, oldDst;
     glGetIntegerv(GL_BLEND_SRC_ALPHA, &oldSrc);
@@ -126,7 +142,7 @@ void DrawHandler::draw() {
     auto visibleSize = CCSize{scaledWin.width * m_cos + scaledWin.height * m_sin, scaledWin.width * m_sin + scaledWin.height * m_cos};
 
     float height = levelSettings->m_dynamicLevelHeight ? m_gridHeightMax : MAX_HEIGHT;
-    if (m_drawGridLayer->m_editorLayer->m_gameState.m_cameraAngle != 0) {
+    if (m_drawGridLayer->m_editorLayer->m_gameState.m_cameraAngle != 0.f) {
         cameraPos -= visibleSize / 2.f;
     }
 
@@ -135,7 +151,12 @@ void DrawHandler::draw() {
     float visibleMinY = std::max(cameraPos.y, m_gridHeightMin);
     float visibleMaxY = std::min(cameraPos.y + visibleSize.height, height);
     
-    m_visibleBounds = CCRect{{visibleMinX, visibleMinY}, {visibleMaxX, visibleMaxY}};
+    auto visibleRect = CCRect{
+        visibleMinX, 
+        visibleMinY, 
+        visibleMaxX - visibleMinX, 
+        visibleMaxY - visibleMinY
+    };
 
     if (m_drawGridLayer->m_bReorderChildDirty) {
         m_drawGridLayer->sortAllChildren();
@@ -146,12 +167,14 @@ void DrawHandler::draw() {
         if (!child->isVisible()) continue;
 
         if (auto base = typeinfo_cast<DrawGridBase*>(child)) {
-            base->draw(visibleMinX, visibleMaxX, visibleMinY, visibleMaxY);
+            base->draw(visibleRect);
         }
     }
 
     glEnableVertexAttribArray(kCCVertexAttrib_Position);
     glEnableVertexAttribArray(kCCVertexAttrib_Color);
+    glEnableVertexAttribArray(2);
+    glEnableVertexAttribArray(3);
 
     m_shader->use();
     m_shader->setUniformsForBuiltins();
@@ -243,10 +266,6 @@ float DrawHandler::getSin() {
 
 float DrawHandler::getCos() {
     return m_cos;
-}
-
-CCRect DrawHandler::getVisibleBounds() {
-    return m_visibleBounds;
 }
 
 }

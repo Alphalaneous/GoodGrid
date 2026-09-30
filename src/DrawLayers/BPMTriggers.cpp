@@ -28,7 +28,7 @@ bool BPMTriggers::init() {
     return true;
 }
 
-void BPMTriggers::draw(float minX, float maxX, float minY, float maxY) {
+void BPMTriggers::draw(const cocos2d::CCRect& visibleRect) {
     m_impl->m_colorsForBeats.rebuildIfNeeded();
 
     for (auto& [_, obj] : getDrawGridLayer()->m_audioLineObjects) {
@@ -66,8 +66,8 @@ void BPMTriggers::draw(float minX, float maxX, float minY, float maxY) {
 
         float timeStep = speed * 60.f / (obj->m_beatsPerMinute * beatsPerBar);
        
-        int beatStart = std::max(0, static_cast<int>(std::floor((minX - startX) / timeStep)));
-        int beatEnd = static_cast<int>(std::ceil((maxX - startX) / timeStep));
+        int beatStart = std::max(0, static_cast<int>(std::floor((visibleRect.getMinX() - startX) / timeStep)));
+        int beatEnd = static_cast<int>(std::ceil((visibleRect.getMaxX() - startX) / timeStep));
         
         for (int beat = beatStart; beat <= beatEnd; ++beat) {
             float x = startX + timeStep * beat;
@@ -89,9 +89,9 @@ void BPMTriggers::draw(float minX, float maxX, float minY, float maxY) {
                 fn(color, obj, x, beat, beatsPerBar, lineWidth);
             }
 
-            if (x < minX || x > maxX || x > endX || beat > beatEnd) continue;
+            if (x < visibleRect.getMinX() || x > visibleRect.getMaxX() || x > endX || beat > beatEnd) continue;
             
-            drawLine({x, minY}, {x, maxY}, color, lineWidth);
+            drawLine({x, visibleRect.getMinY()}, {x, visibleRect.getMaxY()}, color, lineWidth);
         }
     }
 }

@@ -9,7 +9,7 @@ namespace alpha::grid {
 class GOOD_GRID_API_DLL PositionLines : public DrawGridBase {
 public:
     static PositionLines* create();
-    void draw(float minX, float maxX, float minY, float maxY) override;
+    void draw(const cocos2d::CCRect& visibleRect) override;
 
     void setVerticalLineColor(const Color& color);
     void setHorizontalLineColor(const Color& color);

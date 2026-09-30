@@ -29,7 +29,7 @@ bool GuideObjects::init() {
     return true;
 }
 
-void GuideObjects::draw(float minX, float maxX, float minY, float maxY) {
+void GuideObjects::draw(const cocos2d::CCRect& visibleRect) {
     if (getDrawGridLayer()->m_editorLayer->m_playbackMode == PlaybackMode::Playing) return;
 
     m_impl->m_colorsForObject.rebuildIfNeeded();
@@ -51,12 +51,12 @@ void GuideObjects::draw(float minX, float maxX, float minY, float maxY) {
             fn(bottomColor, topColor, obj, lineWidthBottom, lineWidthTop);
         }
 
-        if (y1 >= minY && y1 <= maxY) {
-            drawLine({minX, y1}, {maxX, y1}, bottomColor, lineWidthBottom);
+        if (y1 >= visibleRect.getMinY() && y1 <= visibleRect.getMaxY()) {
+            drawLine({visibleRect.getMinX(), y1}, {visibleRect.getMaxX(), y1}, bottomColor, lineWidthBottom);
         }
         
-        if (y2 >= minY && y2 <= maxY) {
-            drawLine({minX, y2}, {maxX, y2}, topColor, lineWidthTop);
+        if (y2 >= visibleRect.getMinY() && y2 <= visibleRect.getMaxY()) {
+            drawLine({visibleRect.getMinX(), y2}, {visibleRect.getMaxX(), y2}, topColor, lineWidthTop);
         }
     }
 }
@@ -87,7 +87,7 @@ cocos2d::CCPoint GuideObjects::getPortalMinMax(GameObject* obj) {
         }
     }
     
-    float yMin = std::max(std::floor((obj->getPositionY() - height * 0.5f) / gridStep) * gridStep, minYClamp);
+    float yMin = std::max(std::floor((obj->getPositionY() - height / 2.f) / gridStep) * gridStep, minYClamp);
 
     return { yMin, yMin + height };
 }

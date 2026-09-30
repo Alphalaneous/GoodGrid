@@ -11,7 +11,7 @@ public:
     using GuideObjectCallback = std::function<void(Color& bottomColor, Color& topColor, EffectGameObject* object, float& lineWidthBottom, float& lineWidthTop)>;
 
     static GuideObjects* create();
-    void draw(float minX, float maxX, float minY, float maxY) override;
+    void draw(const cocos2d::CCRect& visibleRect) override;
 
     void setPropertiesForObject(GuideObjectCallback colorForObject, int priority = 0);
     cocos2d::CCPoint getPortalMinMax(GameObject* obj);

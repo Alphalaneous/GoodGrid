@@ -9,7 +9,7 @@ namespace alpha::grid {
 class GOOD_GRID_API_DLL Bounds : public DrawGridBase {
 public:
     static Bounds* create();
-    void draw(float minX, float maxX, float minY, float maxY) override;
+    void draw(const cocos2d::CCRect& visibleRect) override;
 
     void setTopBoundColor(const Color& color);
     void setBottomBoundColor(const Color& color);

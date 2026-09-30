@@ -9,7 +9,7 @@ namespace alpha::grid {
 class GOOD_GRID_API_DLL PreviewLockLine : public DrawGridBase {
 public:
     static PreviewLockLine* create();
-    void draw(float minX, float maxX, float minY, float maxY) override;
+    void draw(const cocos2d::CCRect& visibleRect) override;
 
     void setLineColor(const Color& color);
     const Color& getLineColor() const;

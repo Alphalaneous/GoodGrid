@@ -11,7 +11,7 @@ public:
     using BPMTriggerCallback = std::function<void(Color& color, AudioLineGuideGameObject* object, float& x, int beat, int beatsPerBar, float& lineWidth)>;
 
     static BPMTriggers* create();
-    void draw(float minX, float maxX, float minY, float maxY) override;
+    void draw(const cocos2d::CCRect& visibleRect) override;
 
     void setPropertiesForBeats(BPMTriggerCallback colorsForBeats, int priority = 0);
 

@@ -31,11 +31,11 @@ bool PreviewLockLine::init() {
     return true;
 }
 
-void PreviewLockLine::draw(float minX, float maxX, float minY, float maxY) {
+void PreviewLockLine::draw(const cocos2d::CCRect& visibleRect) {
     auto editorLayer = getDrawGridLayer()->m_editorLayer;
     if (editorLayer->m_playbackMode != PlaybackMode::Not || editorLayer->m_previewPosition.x <= 0.f) return;
     
-    drawLine({editorLayer->m_previewPosition.x, minY}, {editorLayer->m_previewPosition.x, maxY}, m_impl->m_lineColor, m_impl->m_lineWidth);
+    drawLine({editorLayer->m_previewPosition.x, visibleRect.getMinY()}, {editorLayer->m_previewPosition.x, visibleRect.getMaxY()}, m_impl->m_lineColor, m_impl->m_lineWidth);
 }
 
 void PreviewLockLine::setLineColor(const Color& color) {

@@ -29,7 +29,7 @@ bool Grid::init() {
     return true;
 }
 
-void Grid::draw(float minX, float maxX, float minY, float maxY) {
+void Grid::draw(const cocos2d::CCRect& visibleRect) {
     auto editorLayer = getDrawGridLayer()->m_editorLayer;
 
     if (!editorLayer->m_showGrid || (editorLayer->m_hideGridOnPlay && editorLayer->m_playbackMode == PlaybackMode::Playing)) return;
@@ -39,28 +39,28 @@ void Grid::draw(float minX, float maxX, float minY, float maxY) {
     auto origin = getGridBoundsOrigin();
 
     float scale = editorLayer->m_objectLayer->getScale();
-    float xStart = std::max(minX - gridSize, origin.x);
-    float xEnd = std::min(maxX + gridSize, size.width);
+    float xStart = std::max(visibleRect.getMinX() - gridSize, origin.x);
+    float xEnd = std::min(visibleRect.getMaxX() + gridSize, size.width);
     
     float invGridSize = 1.f / gridSize;
 
     int firstGridX = static_cast<int>(std::floor(xStart  * invGridSize));
     int lastGridX = static_cast<int>(std::floor(xEnd * invGridSize)) - 1;
     
-    float yStart = std::max(minY - gridSize, origin.y);
-    float yEnd = std::min(maxY + gridSize, (editorLayer->m_levelSettings->m_dynamicLevelHeight ? size.height : DrawHandler::MAX_HEIGHT));
+    float yStart = std::max(visibleRect.getMinY() - gridSize, origin.y);
+    float yEnd = std::min(visibleRect.getMaxY() + gridSize, (editorLayer->m_levelSettings->m_dynamicLevelHeight ? size.height : DrawHandler::MAX_HEIGHT));
     
     int firstGridY = static_cast<int>(std::floor(yStart * invGridSize));
     int lastGridY = static_cast<int>(std::floor(yEnd * invGridSize)) - 1;
     
     float x = firstGridX * gridSize + gridSize;
     for (int i = firstGridX; i <= lastGridX; i++, x += gridSize) {
-        drawLine({x, minY}, {x, maxY}, m_impl->m_gridColor, m_impl->m_lineWidth);
+        drawLine({x, visibleRect.getMinY()}, {x, visibleRect.getMaxY()}, m_impl->m_gridColor, m_impl->m_lineWidth);
     }
 
     float y = firstGridY * gridSize + gridSize;
     for (int i = firstGridY; i <= lastGridY; i++, y += gridSize) {
-        drawLine({minX, y}, {maxX, y}, m_impl->m_gridColor, m_impl->m_lineWidth);
+        drawLine({visibleRect.getMinX(), y}, {visibleRect.getMaxX(), y}, m_impl->m_gridColor, m_impl->m_lineWidth);
     }
 }
 

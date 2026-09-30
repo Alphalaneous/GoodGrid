@@ -85,11 +85,4 @@ float getCos() {
     return dgl->getCustom()->getCos();
 }
 
-CCRect getVisibleBounds() {
-    auto dgl = utils::getDrawGridLayer();
-    if (!dgl) return {};
-
-    return dgl->getCustom()->getVisibleBounds();
-}
-
 }

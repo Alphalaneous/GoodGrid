@@ -29,7 +29,7 @@ bool EffectLines::init() {
     return true;
 }
 
-void EffectLines::draw(float minX, float maxX, float minY, float maxY) {
+void EffectLines::draw(const cocos2d::CCRect& visibleRect) {
     auto editorLayer = getDrawGridLayer()->m_editorLayer;
 
     if (!editorLayer->m_drawEffectLines || editorLayer->m_playbackMode == PlaybackMode::Playing) return;
@@ -40,7 +40,7 @@ void EffectLines::draw(float minX, float maxX, float minY, float maxY) {
         if (obj->m_isSpawnTriggered || obj->m_isTouchTriggered || !isObjectVisible(obj)) continue;
         
         float x = obj->getPositionX();
-        if (x < minX || x > maxX || x < 0.f) continue;
+        if (x < visibleRect.getMinX() || x > visibleRect.getMaxX() || x < 0.f) continue;
 
         static const auto defaultLineColor = Color{0, 255, 255, 255};
 
@@ -52,7 +52,7 @@ void EffectLines::draw(float minX, float maxX, float minY, float maxY) {
             fn(color, x, obj, lineWidth);
         }
 
-        drawLine({x, minY}, { x, maxY}, color, lineWidth);
+        drawLine({x, visibleRect.getMinY()}, {x, visibleRect.getMaxY()}, color, lineWidth);
     }
 }
 

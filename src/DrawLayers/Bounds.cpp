@@ -35,11 +35,11 @@ bool Bounds::init() {
     return true;
 }
 
-void Bounds::draw(float minX, float maxX, float minY, float maxY) {
-    drawLine({0.f, minY}, {0.f, maxY}, m_impl->m_verticalBoundColor, m_impl->m_verticalBoundLineWidth);
+void Bounds::draw(const cocos2d::CCRect& visibleRect) {
+    drawLine({0.f, visibleRect.getMinY()}, {0.f, visibleRect.getMaxY()}, m_impl->m_verticalBoundColor, m_impl->m_verticalBoundLineWidth);
 
     if (!getDrawGridLayer()->m_editorLayer->m_showGround) {
-        drawLine({minX, DrawHandler::GROUND_OFFSET}, {maxX, DrawHandler::GROUND_OFFSET}, m_impl->m_bottomBoundColor, m_impl->m_bottomBoundLineWidth);
+        drawLine({visibleRect.getMinX(), DrawHandler::GROUND_OFFSET}, {visibleRect.getMaxX(), DrawHandler::GROUND_OFFSET}, m_impl->m_bottomBoundColor, m_impl->m_bottomBoundLineWidth);
     }
 
     auto levelSettings = alpha::grid::utils::getDrawGridLayer()->m_editorLayer->m_levelSettings;
@@ -47,8 +47,8 @@ void Bounds::draw(float minX, float maxX, float minY, float maxY) {
 
     float height = levelSettings->m_dynamicLevelHeight ? boundHeight : DrawHandler::MAX_HEIGHT;
 
-    if (minY <= height || maxY >= height) {
-        drawLine({minX, height}, {maxX, height}, m_impl->m_topBoundColor, m_impl->m_topBoundLineWidth);
+    if (visibleRect.getMinY() <= height || visibleRect.getMaxY() >= height) {
+        drawLine({visibleRect.getMinX(), height}, {visibleRect.getMaxX(), height}, m_impl->m_topBoundColor, m_impl->m_topBoundLineWidth);
     }
 }
 

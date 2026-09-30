@@ -59,9 +59,9 @@ This class can store either 1 or 2 colors. It can be constructed just like a ccC
 This class is what makes up every part of the new DrawGridLayer, it is a CCNode and thus can have its visibility and z order set. Every child on the DrawGridLayer inherits this class. It provides a few methods as well as some virtuals you can override that will be called when added to the DrawGridLayer as a child. This also contains a few of the API methods seen above for convenience.
 
 ```cpp
-void drawLine(const cocos2d::ccVertex2F& start, const cocos2d::ccVertex2F& end, const alpha::grid::Color& color, float width)
+void drawLine(const cocos2d::ccVertex2F& start, const cocos2d::ccVertex2F& end, const alpha::grid::Color& color, float width, bool relative = false)
 ```
-Draws a line to the screen with two coordinates where it starts and ends. The width is the line width, for the purpose of optimization.
+Draws a line to the screen with two coordinates where it starts and ends. The width is the line width. Relative is if it scales with the editor zoom.
 
 ```cpp
 void drawRect(const cocos2d::CCRect& rect, const alpha::grid::Color& color)
@@ -69,14 +69,14 @@ void drawRect(const cocos2d::CCRect& rect, const alpha::grid::Color& color)
 Draws a rectangle to the screen with a CCRect param dictating the bounds and a color param to set its color.
 
 ```cpp
-void drawRectOutline(const cocos2d::CCRect& rect, const alpha::grid::Color& color, float width)
+void drawRectOutline(const cocos2d::CCRect& rect, const alpha::grid::Color& color, float width, bool relative = false)
 ```
-Draws a rectangle outline to the screen with a CCRect param dictating the bounds, a color param to set its color, and the width of the outline.
+Draws a rectangle outline to the screen with a CCRect param dictating the bounds, a color param to set its color, and the width of the outline. Relative is if it scales with the editor zoom.
 
 ```cpp
-virtual void draw(float minX, float maxX, float minY, float maxY);
+virtual void draw(const CCRect& visibleRect);
 ```
-A virtual you can override that will draw what is within it to the DrawGridLayer, The minX, maxX, minY, and maxY params are the culling bounds, these respect scale and rotation, please use these for the best performance.
+A virtual you can override that will draw what is within it to the DrawGridLayer, The rect param is the bounds of the screen in the grid's node space to handle culling, these respect scale and rotation, please use these for the best performance.
 
 ## DrawLayers
 

@@ -32,7 +32,7 @@ bool PositionLines::init() {
     return true;
 }
 
-void PositionLines::draw(float minX, float maxX, float minY, float maxY) {
+void PositionLines::draw(const cocos2d::CCRect& visibleRect) {
     auto editorLayer = getDrawGridLayer()->m_editorLayer;
 
     if (editorLayer->m_playbackMode == PlaybackMode::Playing) return;
@@ -42,9 +42,9 @@ void PositionLines::draw(float minX, float maxX, float minY, float maxY) {
 
     auto objectLayer = editorLayer->m_objectLayer;
 
-    auto screenCenter = cocos2d::CCPoint{winSize.width * 0.5f, winSize.height * 0.5f};
+    auto screenCenter = winSize / 2.f;
     auto pivotInObject = objectLayer->convertToNodeSpace(screenCenter);
-    auto lineScreenPos = cocos2d::CCPoint{winSize.width * 0.5f, (winSize.height + toolbarHeight) * 0.5f};
+    auto lineScreenPos = winSize + CCSize{0.f, toolbarHeight / 2.f};
     auto linePosInObject = objectLayer->convertToNodeSpace(lineScreenPos);
 
     float dx = linePosInObject.x - pivotInObject.x;
@@ -55,12 +55,12 @@ void PositionLines::draw(float minX, float maxX, float minY, float maxY) {
     float rotatedX = custom->getCos() * dx - custom->getSin() * dy + pivotInObject.x;
     float rotatedY = custom->getSin() * dx + custom->getCos() * dy + pivotInObject.y;
 
-    if (rotatedX >= minX && rotatedX <= maxX) {
-        drawLine({rotatedX, minY}, {rotatedX, maxY}, m_impl->m_verticalLineColor, m_impl->m_verticalLineWidth);
+    if (rotatedX >= visibleRect.getMinX() && rotatedX <= visibleRect.getMaxX()) {
+        drawLine({rotatedX, visibleRect.getMinY()}, {rotatedX, visibleRect.getMaxY()}, m_impl->m_verticalLineColor, m_impl->m_verticalLineWidth);
     }
 
-    if (rotatedY >= minY && rotatedY <= maxY) {
-        drawLine({minX, rotatedY}, {maxX, rotatedY}, m_impl->m_horizontalLineColor, m_impl->m_horizontalLineWidth);
+    if (rotatedY >= visibleRect.getMinY() && rotatedY <= visibleRect.getMaxY()) {
+        drawLine({visibleRect.getMinX(), rotatedY}, {visibleRect.getMaxX(), rotatedY}, m_impl->m_horizontalLineColor, m_impl->m_horizontalLineWidth);
     }
 }
 

@@ -9,7 +9,7 @@ namespace alpha::grid {
 class GOOD_GRID_API_DLL Ground : public DrawGridBase {
 public:
     static Ground* create();
-    void draw(float minX, float maxX, float minY, float maxY) override;
+    void draw(const cocos2d::CCRect& visibleRect) override;
 
     void setTopGroundColor(const Color& color);
     void setBottomGroundColor(const Color& color);

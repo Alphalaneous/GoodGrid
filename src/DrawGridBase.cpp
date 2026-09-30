@@ -1,5 +1,6 @@
 #include "../include/DrawGridBase.hpp"
 #include "DrawGridLayer.hpp"
+#include <numbers>
 
 namespace alpha::grid {
 
@@ -21,12 +22,38 @@ DrawGridBase* DrawGridBase::create() {
     return nullptr;
 }
 
-void DrawGridBase::drawLine(const cocos2d::ccVertex2F& start, const cocos2d::ccVertex2F& end, const Color& color, float width) {
+void DrawGridBase::drawQuad(const ccVertex2F& v0, const ccVertex2F& v1, const ccVertex2F& v2, const ccVertex2F& v3, const Color& color, float angle) {
     if (!m_impl->m_drawGridLayer) return;
 
-    float scale = m_impl->m_drawGridLayer->m_editorLayer->m_objectLayer->getScale();
+    auto custom = m_impl->m_drawGridLayer->getCustom();
+    auto& batch = custom->batchForFunc(color.getBlendFunc());
 
-    auto newWidth = width / (scale * CCEGLView::get()->m_fScaleX);
+    batch.push_back({v0, color.getColorA(), {0.f, 1.f}, angle});
+    batch.push_back({v1, color.getColorA(), {0.f, 0.f}, angle});
+    batch.push_back({v2, color.getColorB(), {1.f, 1.f}, angle});
+
+    batch.push_back({v2, color.getColorB(), {1.f, 1.f}, angle});
+    batch.push_back({v1, color.getColorA(), {0.f, 0.f}, angle});
+    batch.push_back({v3, color.getColorB(), {1.f, 0.f}, angle});
+}
+
+void DrawGridBase::drawLine(const cocos2d::ccVertex2F& start, const cocos2d::ccVertex2F& end, const Color& color, float width, bool relative) {
+    if (!m_impl->m_drawGridLayer) return;
+
+    float scale = relative ? 1.f : m_impl->m_drawGridLayer->m_editorLayer->m_objectLayer->getScale();
+    float rot = m_impl->m_drawGridLayer->m_editorLayer->m_gameState.m_cameraAngle;
+    float lineAngle = std::atan2(end.y - start.y, end.x - start.x);
+
+    float fullAngle = lineAngle + CC_DEGREES_TO_RADIANS(rot);
+
+    constexpr auto halfPi = std::numbers::pi_v<float> / 2.f;
+
+    float axisAngle = std::fmod(std::abs(fullAngle), halfPi);
+    float deviation = std::min(axisAngle, halfPi - axisAngle);
+    float widthModifier = halfPi * std::sin(deviation * 2.f);
+
+    width += widthModifier;
+    width /= (scale * CCEGLView::get()->m_fScaleX * 2.f);
 
     float ax = start.x;
     float ay = start.y;
@@ -48,95 +75,62 @@ void DrawGridBase::drawLine(const cocos2d::ccVertex2F& start, const cocos2d::ccV
     float nx = -dy;
     float ny = dx;
 
-    auto scaleMult = scale * CCEGLView::get()->m_fScaleX;
-
-    auto mult = 1.f;
-    if (width > 1.f) {
-        mult = 0.5f;
-    }
-
-    nx *= (newWidth * mult);
-    ny *= (newWidth * mult);
+    nx *= width;
+    ny *= width;
 
     auto v0 = ccVertex2F{ax + nx, ay + ny};
     auto v1 = ccVertex2F{ax - nx, ay - ny};
     auto v2 = ccVertex2F{bx + nx, by + ny};
     auto v3 = ccVertex2F{bx - nx, by - ny};
 
-    drawQuad(v0, v1, v2, v3, color);
+    drawQuad(v0, v1, v2, v3, color, fullAngle);
 }
 
 void DrawGridBase::drawRect(const cocos2d::CCRect& rect, const Color& color) {
-    float x = rect.getMinX();
-    float y = rect.getMinY();
-    float w = rect.size.width;
-    float h = rect.size.height;
+    float rot = m_impl->m_drawGridLayer->m_editorLayer->m_gameState.m_cameraAngle;
+    float angle = CC_DEGREES_TO_RADIANS(rot);
 
-    auto v0 = ccVertex2F{ x, y };
-    auto v1 = ccVertex2F{ x + w, y };
-    auto v2 = ccVertex2F{ x + w, y + h };
-    auto v3 = ccVertex2F{ x, y + h };
-
-    drawQuad(v0, v1, v2, v3, color);
+    drawRectInternal(rect, color, angle);
 }
 
-void DrawGridBase::drawQuad(const ccVertex2F& v0, const ccVertex2F& v1, const ccVertex2F& v2, const ccVertex2F& v3, const Color& color) {
-    if (!m_impl->m_drawGridLayer) return;
+void DrawGridBase::drawRectInternal(const cocos2d::CCRect& rect, const Color& color, float angle) {
+    auto v0 = ccVertex2F{rect.getMinX(), rect.getMinY()};
+    auto v1 = ccVertex2F{rect.getMinX(), rect.getMaxY()};
+    auto v2 = ccVertex2F{rect.getMaxX(), rect.getMinY()};
+    auto v3 = ccVertex2F{rect.getMaxX(), rect.getMaxY()};
 
-    auto custom = m_impl->m_drawGridLayer->getCustom();
-    auto& batch = custom->batchForFunc(color.getBlendFunc());
-
-    batch.push_back({v0, color.getColorA(), {0.f, 1.f}});
-    batch.push_back({v1, color.getColorA(), {0.f, 0.f}});
-    batch.push_back({v2, color.getColorB(), {1.f, 1.f}});
-
-    batch.push_back({v2, color.getColorB(), {1.f, 1.f}});
-    batch.push_back({v1, color.getColorA(), {0.f, 0.f}});
-    batch.push_back({v3, color.getColorB(), {1.f, 0.f}});
+    drawQuad(v0, v1, v2, v3, color, angle);
 }
 
-void DrawGridBase::drawRectOutline(const cocos2d::CCRect& rect, const Color& color, float width) {
+void DrawGridBase::drawRectOutline(const cocos2d::CCRect& rect, const Color& color, float width, bool relative) {
     if (!m_impl->m_drawGridLayer) return;
 
-    auto custom = m_impl->m_drawGridLayer->getCustom();
-    auto& batch = custom->batchForFunc(color.getBlendFunc());
+    float scale = relative ? 1.f : m_impl->m_drawGridLayer->m_editorLayer->m_objectLayer->getScale();
+    float rot = m_impl->m_drawGridLayer->m_editorLayer->m_gameState.m_cameraAngle;
+    float angle = CC_DEGREES_TO_RADIANS(rot);
 
-    const float scale = m_impl->m_drawGridLayer->m_editorLayer->m_objectLayer->getScale();
+    constexpr auto halfPi = std::numbers::pi_v<float> / 2.f;
 
-    width /= scale;
-    width /= CCEGLView::get()->m_fScaleX;
+    float axisAngle = std::fmod(std::abs(angle), halfPi);
+    float deviation = std::min(axisAngle, halfPi - axisAngle);
+    float widthModifier = halfPi * std::sin(deviation * 2.f);
 
-    float x = rect.getMinX();
-    float y = rect.getMinY();
-    float w = rect.size.width;
-    float h = rect.size.height;
+    float scaleModifier = scale * CCEGLView::get()->m_fScaleX * 2.f;
 
-    float t = width * 0.5f;
+    float scaledWidthModifier = widthModifier / scaleModifier;
 
-    float ox0 = x - t;
-    float oy0 = y - t;
-    float ox1 = x + w + t;
-    float oy1 = y + h + t;
+    width += widthModifier;
+    width /= scaleModifier;
 
-    float ix0 = x;
-    float iy0 = y;
-    float ix1 = x + w;
-    float iy1 = y + h;
-
-    auto push = [&](float x1, float y1, float x2, float y2, float x3, float y3, float x4, float y4) {
-        batch.push_back({{x1, y1}, color.getColorA(), {0.f, 1.f}});
-        batch.push_back({{x2, y2}, color.getColorA(), {0.f, 0.f}});
-        batch.push_back({{x3, y3}, color.getColorB(), {1.f, 1.f}});
-
-        batch.push_back({{x1, y1}, color.getColorB(), {1.f, 1.f}});
-        batch.push_back({{x3, y3}, color.getColorA(), {0.f, 0.f}});
-        batch.push_back({{x4, y4}, color.getColorB(), {1.f, 0.f}});
-    };
-
-    push(ox0, oy0, ox1, oy0, ix1, iy0, ix0, iy0);
-    push(ox1, oy0, ox1, oy1, ix1, iy1, ix1, iy0);
-    push(ox1, oy1, ox0, oy1, ix0, iy1, ix1, iy1);
-    push(ox0, oy1, ox0, oy0, ix0, iy0, ix0, iy1);
+    auto b = CCRect{rect.getMinX(), rect.getMinY(), rect.getMaxX() - rect.getMinX() - width + scaledWidthModifier, width};
+    auto t = CCRect{rect.getMinX() + width - scaledWidthModifier, rect.getMaxY() - width, rect.getMaxX() - rect.getMinX() - width + scaledWidthModifier, width};
+    auto r = CCRect{rect.getMaxX() - width, rect.getMinY(), width, rect.getMaxY() - rect.getMinY() - width + scaledWidthModifier};
+    auto l = CCRect{rect.getMinX(), rect.getMinY() + width - scaledWidthModifier, width, rect.getMaxY() - rect.getMinY() - width + scaledWidthModifier};
+    
+    drawRectInternal(b, color, angle);
+    drawRectInternal(t, color, angle);
+    drawRectInternal(r, color, angle);
+    drawRectInternal(l, color, angle);
 }
 
 void DrawGridBase::visit() {}
@@ -149,7 +143,7 @@ void DrawGridBase::onEnter() {
     m_impl->m_drawGridLayer = parent;
 }
 
-void DrawGridBase::draw(float minX, float maxX, float minY, float maxY) {}
+void DrawGridBase::draw(const CCRect& visibleRect) {}
 
 cocos2d::CCSize DrawGridBase::getGridBoundsSize() {
     return m_impl->m_drawGridLayer->getCustom()->getGridBoundsSize();

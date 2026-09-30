@@ -41,7 +41,4 @@ GEODE_EVENT_EXPORT_NORES(&getSin, ());
 inline float getCos()
 GEODE_EVENT_EXPORT_NORES(&getCos, ());
 
-inline cocos2d::CCRect getVisibleBounds()
-GEODE_EVENT_EXPORT_NORES(&getVisibleBounds, ());
-
 }

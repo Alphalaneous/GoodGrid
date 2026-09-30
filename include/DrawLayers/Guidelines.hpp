@@ -11,7 +11,7 @@ public:
     using GuidelineCallback = std::function<void(Color& color, float& value, float& lineWidth)>;
 
     static Guidelines* create();
-    void draw(float minX, float maxX, float minY, float maxY) override;
+    void draw(const cocos2d::CCRect& visibleRect) override;
 
     void setPropertiesForValue(GuidelineCallback colorForValue, int priority = 0);
 

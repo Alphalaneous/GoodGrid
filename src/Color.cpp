@@ -11,7 +11,7 @@ public:
     cocos2d::ccColor4B m_colorA = {0, 0, 0, 255};
     cocos2d::ccColor4B m_colorB = {0, 0, 0, 255};
     bool m_hasColorB = false;
-    ccBlendFunc m_blendFunc = blend::Alpha;
+    ccBlendFunc m_blendFunc = blend::Additive;
 };
 
 Color::Color() : m_impl(std::make_shared<Impl>()) {}

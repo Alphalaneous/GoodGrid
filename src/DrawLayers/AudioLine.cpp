@@ -28,7 +28,7 @@ bool AudioLine::init() {
     return true;
 }
 
-void AudioLine::draw(float minX, float maxX, float minY, float maxY) {
+void AudioLine::draw(const cocos2d::CCRect& visibleRect) {
     Color color = {2, 255, 2, 255};
     auto editorLayer = getDrawGridLayer()->m_editorLayer;
 
@@ -83,11 +83,11 @@ void AudioLine::draw(float minX, float maxX, float minY, float maxY) {
     }
 
     if (playbackX != 0.f) {
-        drawLine({playbackX, minY}, {playbackX, maxY}, color, width);
+        drawLine({playbackX, visibleRect.getMinY()}, {playbackX, visibleRect.getMaxY()}, color, width);
     }
 
     if (playbackY != 0.f) {
-        drawLine({minX, playbackY}, {maxX, playbackY}, color, width);
+        drawLine({visibleRect.getMinX(), playbackY}, {visibleRect.getMaxX(), playbackY}, color, width);
     }
 }
 

@@ -42,7 +42,6 @@ public:
 
     float getSin();
     float getCos();
-    CCRect getVisibleBounds();
 
     static constexpr float MAX_HEIGHT = 2490.f;
     static constexpr float GROUND_OFFSET = 90.f;
@@ -67,7 +66,6 @@ protected:
 
     float m_sin = 0.f;
     float m_cos = 0.f;
-    CCRect m_visibleBounds;
 };
 
 }

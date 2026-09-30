@@ -30,7 +30,7 @@ bool DurationLines::init() {
     return true;
 }
 
-void DurationLines::draw(float minX, float maxX, float minY, float maxY) {
+void DurationLines::draw(const cocos2d::CCRect& visibleRect) {
     auto editorLayer = getDrawGridLayer()->m_editorLayer;
 
     if (!editorLayer->m_showDurationLines || editorLayer->m_playbackMode == PlaybackMode::Playing) return;
@@ -129,7 +129,7 @@ void DurationLines::draw(float minX, float maxX, float minY, float maxY) {
             endPos.y = currentPos.y;
         }
 
-        if (endPos.x < minX || currentPos.x > maxX || endPos.y < minY || currentPos.y > maxY) continue;
+        if (endPos.x < visibleRect.getMinX() || currentPos.x > visibleRect.getMaxX() || endPos.y < visibleRect.getMinY() || currentPos.y > visibleRect.getMaxY()) continue;
 
         drawLine({currentPos.x, currentPos.y}, {endPos.x, endPos.y}, color, lineWidth);
     }

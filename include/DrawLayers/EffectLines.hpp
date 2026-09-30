@@ -11,7 +11,7 @@ public:
     using EffectLineCallback = std::function<void(Color& color, float& x, EffectGameObject* object, float& lineWidth)>;
 
     static EffectLines* create();
-    void draw(float minX, float maxX, float minY, float maxY) override;
+    void draw(const cocos2d::CCRect& visibleRect) override;
 
     void setPropertiesForObject(EffectLineCallback colorForObject, int priority = 0);
 

@@ -11,7 +11,7 @@ public:
     using DurationLineCallback = std::function<void(Color& color, EffectGameObject* object, float& lineWidth)>;
 
     static DurationLines* create();
-    void draw(float minX, float maxX, float minY, float maxY) override;
+    void draw(const cocos2d::CCRect& visibleRect) override;
 
     void setPropertiesForObject(DurationLineCallback colorForObject, int priority = 0);
 

@@ -34,7 +34,7 @@ bool Ground::init() {
     return true;
 }
 
-void Ground::draw(float minX, float maxX, float minY, float maxY) {
+void Ground::draw(const cocos2d::CCRect& visibleRect) {
     auto editor = getDrawGridLayer()->m_editorLayer;
     if (editor->m_playbackMode == PlaybackMode::Not || editor->m_gameState.m_isFreeMode ||
         editor->m_player1->isInBasicMode()  || !editor->m_gameState.m_isDualMode) {
@@ -44,8 +44,8 @@ void Ground::draw(float minX, float maxX, float minY, float maxY) {
     float minPortalY = getMinPortalY();
     float maxPortalY = getMaxPortalY();
 
-    drawLine({minX, minPortalY}, {maxX, minPortalY}, m_impl->m_bottomGroundColor, m_impl->m_bottomGroundLineWidth);
-    drawLine({minX, maxPortalY}, {maxX, maxPortalY}, m_impl->m_topGroundColor, m_impl->m_topGroundLineWidth);
+    drawLine({visibleRect.getMinX(), minPortalY}, {visibleRect.getMaxX(), minPortalY}, m_impl->m_bottomGroundColor, m_impl->m_bottomGroundLineWidth);
+    drawLine({visibleRect.getMinX(), maxPortalY}, {visibleRect.getMaxX(), maxPortalY}, m_impl->m_topGroundColor, m_impl->m_topGroundLineWidth);
 }
 
 void Ground::setTopGroundColor(const Color& color) {
