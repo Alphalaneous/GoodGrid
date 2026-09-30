@@ -4,6 +4,7 @@
 #include <Geode/modify/DrawGridLayer.hpp>
 #include <Geode/modify/EditorUI.hpp>
 #include "Vertex.hpp"
+#include "../include/DrawGridBase.hpp"
 
 using namespace geode::prelude;
 
@@ -43,9 +44,6 @@ public:
     float getSin();
     float getCos();
 
-    static constexpr float MAX_HEIGHT = 2490.f;
-    static constexpr float GROUND_OFFSET = 90.f;
-
 protected:
     std::vector<Batch> m_batches;
     Batch* m_activeBatch = nullptr;
@@ -54,11 +52,11 @@ protected:
 
     bool m_vanillaDraw = false;
 
-    float m_gridWidthMin = -3000.f;
-    float m_gridHeightMin = -3000.f;
+    float m_gridWidthMin = DrawGridBase::MinWidth;
+    float m_gridHeightMin = DrawGridBase::MinHeight;
 
-    float m_gridWidthMax = 240000.f;
-    float m_gridHeightMax = 30090.f;
+    float m_gridWidthMax = DrawGridBase::MaxWidth;
+    float m_gridHeightMax = DrawGridBase::MaxDynamicHeight;
 
     std::unordered_map<float, cocos2d::ccColor4B> m_timeMarkers;
 

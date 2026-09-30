@@ -39,13 +39,13 @@ void Bounds::draw(const cocos2d::CCRect& visibleRect) {
     drawLine({0.f, visibleRect.getMinY()}, {0.f, visibleRect.getMaxY()}, m_impl->m_verticalBoundColor, m_impl->m_verticalBoundLineWidth);
 
     if (!getDrawGridLayer()->m_editorLayer->m_showGround) {
-        drawLine({visibleRect.getMinX(), DrawHandler::GROUND_OFFSET}, {visibleRect.getMaxX(), DrawHandler::GROUND_OFFSET}, m_impl->m_bottomBoundColor, m_impl->m_bottomBoundLineWidth);
+        drawLine({visibleRect.getMinX(), DrawGridBase::GroundOffset}, {visibleRect.getMaxX(), DrawGridBase::GroundOffset}, m_impl->m_bottomBoundColor, m_impl->m_bottomBoundLineWidth);
     }
 
     auto levelSettings = alpha::grid::utils::getDrawGridLayer()->m_editorLayer->m_levelSettings;
     auto boundHeight = alpha::grid::utils::getDrawGridLayer()->getCustom()->getGridBoundsSize().height;
 
-    float height = levelSettings->m_dynamicLevelHeight ? boundHeight : DrawHandler::MAX_HEIGHT;
+    float height = levelSettings->m_dynamicLevelHeight ? boundHeight : DrawGridBase::MaxHeight;
 
     if (visibleRect.getMinY() <= height || visibleRect.getMaxY() >= height) {
         drawLine({visibleRect.getMinX(), height}, {visibleRect.getMaxX(), height}, m_impl->m_topBoundColor, m_impl->m_topBoundLineWidth);

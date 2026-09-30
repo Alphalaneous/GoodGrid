@@ -1,5 +1,4 @@
 #include "../../include/DrawLayers/Grid.hpp"
-#include "../DrawGridLayer.hpp"
 
 namespace alpha::grid {
 
@@ -48,7 +47,7 @@ void Grid::draw(const cocos2d::CCRect& visibleRect) {
     int lastGridX = static_cast<int>(std::floor(xEnd * invGridSize)) - 1;
     
     float yStart = std::max(visibleRect.getMinY() - gridSize, origin.y);
-    float yEnd = std::min(visibleRect.getMaxY() + gridSize, (editorLayer->m_levelSettings->m_dynamicLevelHeight ? size.height : DrawHandler::MAX_HEIGHT));
+    float yEnd = std::min(visibleRect.getMaxY() + gridSize, (editorLayer->m_levelSettings->m_dynamicLevelHeight ? size.height : DrawGridBase::MaxHeight));
     
     int firstGridY = static_cast<int>(std::floor(yStart * invGridSize));
     int lastGridY = static_cast<int>(std::floor(yEnd * invGridSize)) - 1;

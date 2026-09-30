@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Geode/cocos/cocoa/CCGeometry.h"
+#include <Geode/cocos/cocoa/CCGeometry.h>
 #include <Geode/loader/Event.hpp>
 #include <Geode/loader/Dispatch.hpp>
 

@@ -141,7 +141,7 @@ void DrawHandler::draw() {
 
     auto visibleSize = CCSize{scaledWin.width * m_cos + scaledWin.height * m_sin, scaledWin.width * m_sin + scaledWin.height * m_cos};
 
-    float height = levelSettings->m_dynamicLevelHeight ? m_gridHeightMax : MAX_HEIGHT;
+    float height = levelSettings->m_dynamicLevelHeight ? m_gridHeightMax : DrawGridBase::MaxHeight;
     if (m_drawGridLayer->m_editorLayer->m_gameState.m_cameraAngle != 0.f) {
         cameraPos -= visibleSize / 2.f;
     }
