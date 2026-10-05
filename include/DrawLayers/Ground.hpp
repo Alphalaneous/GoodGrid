@@ -17,11 +17,17 @@ public:
     const Color& getTopGroundColor() const;
     const Color& getBottomGroundColor() const;
 
+    static const Color& getDefaultTopGroundColor();
+    static const Color& getDefaultBottomGroundColor();
+
     void setTopGroundLineWidth(float width);
     void setBottomGroundLineWidth(float width);
 
     float getTopGroundLineWidth() const;
     float getBottomGroundLineWidth() const;
+
+    static float getDefaultTopGroundLineWidth();
+    static float getDefaultBottomGroundLineWidth();
 
     float getMinPortalY();
     float getMaxPortalY();

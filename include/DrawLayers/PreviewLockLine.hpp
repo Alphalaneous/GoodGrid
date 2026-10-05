@@ -13,8 +13,11 @@ public:
 
     void setLineColor(const Color& color);
     const Color& getLineColor() const;
+    static const Color& getDefaultLineColor();
+
     void setLineWidth(float width);
     float getLineWidth() const;
+    static float getDefaultLineWidth();
 
 protected:
     bool init() override;

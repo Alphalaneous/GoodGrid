@@ -44,7 +44,7 @@ void PositionLines::draw(const cocos2d::CCRect& visibleRect) {
 
     auto screenCenter = winSize / 2.f;
     auto pivotInObject = objectLayer->convertToNodeSpace(screenCenter);
-    auto lineScreenPos = winSize + CCSize{0.f, toolbarHeight / 2.f};
+    auto lineScreenPos = winSize / 2.f + CCSize{0.f, toolbarHeight / 2.f};
     auto linePosInObject = objectLayer->convertToNodeSpace(lineScreenPos);
 
     float dx = linePosInObject.x - pivotInObject.x;
@@ -52,8 +52,8 @@ void PositionLines::draw(const cocos2d::CCRect& visibleRect) {
 
     auto custom = alpha::grid::utils::getDrawGridLayer()->getCustom();
 
-    float rotatedX = custom->getCos() * dx - custom->getSin() * dy + pivotInObject.x;
-    float rotatedY = custom->getSin() * dx + custom->getCos() * dy + pivotInObject.y;
+    float rotatedX = custom->getCos() * dx + custom->getSin() * dy + pivotInObject.x;
+    float rotatedY = -custom->getSin() * dx + custom->getCos() * dy + pivotInObject.y;
 
     if (rotatedX >= visibleRect.getMinX() && rotatedX <= visibleRect.getMaxX()) {
         drawLine({rotatedX, visibleRect.getMinY()}, {rotatedX, visibleRect.getMaxY()}, m_impl->m_verticalLineColor, m_impl->m_verticalLineWidth);
@@ -94,6 +94,24 @@ float PositionLines::getVerticalLineWidth() const {
 
 float PositionLines::getHorizontalLineWidth() const {
     return m_impl->m_horizontalLineWidth;
+}
+
+const Color& PositionLines::getDefaultVerticalLineColor() {
+    static Color defaultColor = {0, 0, 0, 50};
+    return defaultColor;
+}
+
+const Color& PositionLines::getDefaultHorizontalLineColor() {
+    static Color defaultColor = {0, 0, 0, 50};
+    return defaultColor;
+}
+
+float PositionLines::getDefaultVerticalLineWidth() {
+    return 2.f;
+}
+
+float PositionLines::getDefaultHorizontalLineWidth() {
+    return 2.f;
 }
 
 }

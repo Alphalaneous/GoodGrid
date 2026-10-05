@@ -12,8 +12,8 @@ public:
 
     virtual void draw(const cocos2d::CCRect& visibleRect);
 
-    void drawQuad(const cocos2d::ccVertex2F& v0, const cocos2d::ccVertex2F& v1, const cocos2d::ccVertex2F& v2, const cocos2d::ccVertex2F& v3, const Color& color, float angle = 0.f);
-    void drawLine(const cocos2d::ccVertex2F& start, const cocos2d::ccVertex2F& end, const Color& color, float width, bool relative = false);
+    void drawQuad(const cocos2d::CCPoint& v0, const cocos2d::CCPoint& v1, const cocos2d::CCPoint& v2, const cocos2d::CCPoint& v3, const Color& color, float angle = 0.f);
+    void drawLine(const cocos2d::CCPoint& start, const cocos2d::CCPoint& end, const Color& color, float width, bool relative = false);
     void drawRect(const cocos2d::CCRect& rect, const Color& color);
     void drawRectOutline(const cocos2d::CCRect& rect, const Color& color, float width, bool relative = false);
 
@@ -39,7 +39,7 @@ protected:
     bool isObjectVisible(GameObject* object);
     cocos2d::CCSize getGridBoundsSize();
     cocos2d::CCPoint getGridBoundsOrigin();
-    const std::unordered_map<float, cocos2d::ccColor4B>& getTimeMarkers();
+    const std::unordered_map<float, const Color&>& getTimeMarkers();
 
     void visit() override;
     void onEnter() override;

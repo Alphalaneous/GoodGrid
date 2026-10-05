@@ -13,9 +13,11 @@ public:
 
     void setGridColor(const Color& color);
     const Color& getGridColor() const;
+    static const Color& getDefaultGridColor();
 
     void setLineWidth(float width);
     float getLineWidth() const;
+    static float getDefaultLineWidth();
 
 protected:
     bool init() override;

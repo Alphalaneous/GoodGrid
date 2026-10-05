@@ -100,4 +100,22 @@ float Ground::getMaxPortalY() {
     return m_impl->m_maxPortalY;
 }
 
+const Color& Ground::getDefaultTopGroundColor() {
+    static Color defaultColor = {255, 175, 50, 255};
+    return defaultColor;
+}
+
+const Color& Ground::getDefaultBottomGroundColor() {
+    static Color defaultColor = {255, 175, 50, 255};
+    return defaultColor;
+}
+
+float Ground::getDefaultTopGroundLineWidth() {
+    return 2.f;
+}
+
+float Ground::getDefaultBottomGroundLineWidth() {
+    return 2.f;
+}
+
 }

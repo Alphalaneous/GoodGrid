@@ -71,12 +71,21 @@ const Color& Grid::getGridColor() const {
     return m_impl->m_gridColor;
 }
 
+const Color& Grid::getDefaultGridColor() {
+    static Color defaultColor = {0, 0, 0, 150};
+    return defaultColor;
+}
+
 void Grid::setLineWidth(float width) {
     m_impl->m_lineWidth = width;
 }
 
 float Grid::getLineWidth() const {
     return m_impl->m_lineWidth;
+}
+
+float Grid::getDefaultLineWidth() {
+    return 1.f;
 }
 
 }

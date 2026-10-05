@@ -8,12 +8,18 @@ namespace alpha::grid {
     
 class GOOD_GRID_API_DLL Guidelines : public DrawGridBase {
 public:
-    using GuidelineCallback = std::function<void(Color& color, float& value, float& lineWidth)>;
+    using GuidelineCallback = geode::Function<void(Color& color, float& value, float& lineWidth)>;
 
     static Guidelines* create();
     void draw(const cocos2d::CCRect& visibleRect) override;
 
-    void setPropertiesForValue(GuidelineCallback colorForValue, int priority = 0);
+    void setPropertiesForValue(geode::ZStringView ID, GuidelineCallback colorForValue, int priority = 0);
+    void removePropertiesForValue(geode::ZStringView ID);
+
+    static const Color& getColorA();
+    static const Color& getColorB();
+    static const Color& getColorC();
+    static const Color& getColorD();
 
 protected:
     bool init() override;

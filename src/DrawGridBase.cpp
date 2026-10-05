@@ -1,5 +1,6 @@
 #include "../include/DrawGridBase.hpp"
 #include "DrawGridLayer.hpp"
+#include "Geode/loader/Log.hpp"
 #include <numbers>
 
 namespace alpha::grid {
@@ -22,7 +23,7 @@ DrawGridBase* DrawGridBase::create() {
     return nullptr;
 }
 
-void DrawGridBase::drawQuad(const ccVertex2F& v0, const ccVertex2F& v1, const ccVertex2F& v2, const ccVertex2F& v3, const Color& color, float angle) {
+void DrawGridBase::drawQuad(const CCPoint& v0, const CCPoint& v1, const CCPoint& v2, const CCPoint& v3, const Color& color, float angle) {
     if (!m_impl->m_drawGridLayer) return;
 
     auto custom = m_impl->m_drawGridLayer->getCustom();
@@ -37,7 +38,7 @@ void DrawGridBase::drawQuad(const ccVertex2F& v0, const ccVertex2F& v1, const cc
     batch.push_back({v3, color.getColorB(), {1.f, 0.f}, angle});
 }
 
-void DrawGridBase::drawLine(const cocos2d::ccVertex2F& start, const cocos2d::ccVertex2F& end, const Color& color, float width, bool relative) {
+void DrawGridBase::drawLine(const cocos2d::CCPoint& start, const cocos2d::CCPoint& end, const Color& color, float width, bool relative) {
     if (!m_impl->m_drawGridLayer) return;
 
     float scale = relative ? 1.f : m_impl->m_drawGridLayer->m_editorLayer->m_objectLayer->getScale();
@@ -50,9 +51,13 @@ void DrawGridBase::drawLine(const cocos2d::ccVertex2F& start, const cocos2d::ccV
 
     float axisAngle = std::fmod(std::abs(fullAngle), halfPi);
     float deviation = std::min(axisAngle, halfPi - axisAngle);
-    float widthModifier = halfPi * std::sin(deviation * 2.f);
+    float sin = std::sin(deviation * 2.f);
+    float modifier = halfPi * sin;
 
-    width += widthModifier;
+    if (modifier > 0.0001f) {
+        width += (1.f + sin / 2.f);
+    }
+
     width /= (scale * CCEGLView::get()->m_fScaleX * 2.f);
 
     float ax = start.x;
@@ -78,10 +83,10 @@ void DrawGridBase::drawLine(const cocos2d::ccVertex2F& start, const cocos2d::ccV
     nx *= width;
     ny *= width;
 
-    auto v0 = ccVertex2F{ax + nx, ay + ny};
-    auto v1 = ccVertex2F{ax - nx, ay - ny};
-    auto v2 = ccVertex2F{bx + nx, by + ny};
-    auto v3 = ccVertex2F{bx - nx, by - ny};
+    auto v0 = CCPoint{ax + nx, ay + ny};
+    auto v1 = CCPoint{ax - nx, ay - ny};
+    auto v2 = CCPoint{bx + nx, by + ny};
+    auto v3 = CCPoint{bx - nx, by - ny};
 
     drawQuad(v0, v1, v2, v3, color, fullAngle);
 }
@@ -94,10 +99,10 @@ void DrawGridBase::drawRect(const cocos2d::CCRect& rect, const Color& color) {
 }
 
 void DrawGridBase::drawRectInternal(const cocos2d::CCRect& rect, const Color& color, float angle) {
-    auto v0 = ccVertex2F{rect.getMinX(), rect.getMinY()};
-    auto v1 = ccVertex2F{rect.getMinX(), rect.getMaxY()};
-    auto v2 = ccVertex2F{rect.getMaxX(), rect.getMinY()};
-    auto v3 = ccVertex2F{rect.getMaxX(), rect.getMaxY()};
+    auto v0 = CCPoint{rect.getMinX(), rect.getMinY()};
+    auto v1 = CCPoint{rect.getMinX(), rect.getMaxY()};
+    auto v2 = CCPoint{rect.getMaxX(), rect.getMinY()};
+    auto v3 = CCPoint{rect.getMaxX(), rect.getMaxY()};
 
     drawQuad(v0, v1, v2, v3, color, angle);
 }
@@ -113,13 +118,20 @@ void DrawGridBase::drawRectOutline(const cocos2d::CCRect& rect, const Color& col
 
     float axisAngle = std::fmod(std::abs(angle), halfPi);
     float deviation = std::min(axisAngle, halfPi - axisAngle);
-    float widthModifier = halfPi * std::sin(deviation * 2.f);
+    float sin = std::sin(deviation * 2.f);
+    float modifier = halfPi * sin;
+
+    if (modifier > 0.0001f) {
+        width += (1.f + sin / 2.f);
+    }
+    else {
+        modifier = 0.f;
+    }
 
     float scaleModifier = scale * CCEGLView::get()->m_fScaleX * 2.f;
 
-    float scaledWidthModifier = widthModifier / scaleModifier;
+    float scaledWidthModifier = modifier / scaleModifier;
 
-    width += widthModifier;
     width /= scaleModifier;
 
     auto b = CCRect{rect.getMinX(), rect.getMinY(), rect.getMaxX() - rect.getMinX() - width + scaledWidthModifier, width};
@@ -157,7 +169,7 @@ bool DrawGridBase::isObjectVisible(GameObject* object) {
     return m_impl->m_drawGridLayer->getCustom()->isObjectVisible(object);
 }
 
-const std::unordered_map<float, cocos2d::ccColor4B>& DrawGridBase::getTimeMarkers() {
+const std::unordered_map<float, const Color&>& DrawGridBase::getTimeMarkers() {
     return m_impl->m_drawGridLayer->getCustom()->getTimeMarkers();
 }
 

@@ -57,20 +57,6 @@ bool isObjectVisible(GameObject* object) {
     return dgl->getCustom()->isObjectVisible(object);
 }
 
-void generateTimeMarkers() {
-    auto dgl = utils::getDrawGridLayer();
-    if (!dgl) return;
-
-    dgl->getCustom()->generateTimeMarkers();
-}
-
-std::unordered_map<float, cocos2d::ccColor4B> getTimeMarkers() {
-    auto dgl = utils::getDrawGridLayer();
-    if (!dgl) return {};
-
-    return dgl->getCustom()->getTimeMarkers();
-}
-
 float getSin() {
     auto dgl = utils::getDrawGridLayer();
     if (!dgl) return 0.f;

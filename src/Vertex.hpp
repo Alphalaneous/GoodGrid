@@ -5,9 +5,9 @@
 namespace alpha::grid {
 
 struct Vertex {
-    cocos2d::ccVertex2F position;
+    cocos2d::CCPoint position;
     cocos2d::ccColor4B color;
-    cocos2d::ccVertex2F uv;
+    cocos2d::CCPoint uv;
     float angle;
 };
 

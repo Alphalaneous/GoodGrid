@@ -35,7 +35,7 @@ void DurationLines::draw(const cocos2d::CCRect& visibleRect) {
 
     if (!editorLayer->m_showDurationLines || editorLayer->m_playbackMode == PlaybackMode::Playing) return;
 
-    m_impl->m_colorsForObject.rebuildIfNeeded();
+    m_impl->m_colorsForObject.rebuildLazy();
 
     auto startSpeed = editorLayer->m_levelSettings->m_startSpeed;
     auto isPlatformer = editorLayer->m_isPlatformer;
@@ -47,14 +47,12 @@ void DurationLines::draw(const cocos2d::CCRect& visibleRect) {
     for (auto obj : geode::cocos::CCArrayExt<EffectGameObject*>(editorLayer->m_durationObjects)) {
         if (!isObjectVisible(obj)) continue;
         
-        static const auto defaultLineColor = Color{100, 100, 100, 75};
+        Color color = getDefaultGridColor();
 
-        Color color = defaultLineColor;
+        float lineWidth = getDefaultLineWidth();;
 
-        float lineWidth = 2.f;
-
-        for (auto& fn : m_impl->m_colorsForObject.flat) {
-            fn(color, obj, lineWidth);
+        for (auto& fn : m_impl->m_colorsForObject.all()) {
+            (*fn)(color, obj, lineWidth);
         }
 
         auto& endPos = obj->m_endPosition;
@@ -136,8 +134,21 @@ void DurationLines::draw(const cocos2d::CCRect& visibleRect) {
     getDrawGridLayer()->m_updateTimeMarkers = false;
 }
 
-void DurationLines::setPropertiesForObject(DurationLineCallback colorForObject, int priority) {
-    m_impl->m_colorsForObject.add(std::move(colorForObject), priority);
+void DurationLines::setPropertiesForObject(ZStringView ID, DurationLineCallback colorForObject, int priority) {
+    m_impl->m_colorsForObject.add(ID, std::move(colorForObject), priority);
+}
+
+void DurationLines::removePropertiesForObject(geode::ZStringView ID) {
+    m_impl->m_colorsForObject.remove(ID);
+}
+
+const Color& DurationLines::getDefaultGridColor() {
+    static Color defaultColor = Color{100, 100, 100, 75};
+    return defaultColor;
+}
+
+float DurationLines::getDefaultLineWidth() {
+    return 2.f;
 }
 
 }

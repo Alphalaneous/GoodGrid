@@ -29,7 +29,7 @@ bool BPMTriggers::init() {
 }
 
 void BPMTriggers::draw(const cocos2d::CCRect& visibleRect) {
-    m_impl->m_colorsForBeats.rebuildIfNeeded();
+    m_impl->m_colorsForBeats.rebuildLazy();
 
     for (auto& [_, obj] : getDrawGridLayer()->m_audioLineObjects) {
         if (obj->m_disabled || !isObjectVisible(obj)) continue;
@@ -72,21 +72,18 @@ void BPMTriggers::draw(const cocos2d::CCRect& visibleRect) {
         for (int beat = beatStart; beat <= beatEnd; ++beat) {
             float x = startX + timeStep * beat;
 
-            static const auto defaultLineColorA = Color{255, 255, 0, 255};
-            static const auto defaultLineColorB = Color{255, 127, 0, 255};
-
             Color color;
-            float lineWidth = 1.f;
+            float lineWidth = getDefaultLineWidth();
 
             if (beat % beatsPerBar == 0) {
-                color = defaultLineColorA;
+                color = getDefaultBeatColor();
             }
             else {
-                color = defaultLineColorB;
+                color = getDefaultPerBarBeatColor();
             }
 
-            for (auto& fn : m_impl->m_colorsForBeats.flat) {
-                fn(color, obj, x, beat, beatsPerBar, lineWidth);
+            for (auto& fn : m_impl->m_colorsForBeats.all()) {
+                (*fn)(color, obj, x, beat, beatsPerBar, lineWidth);
             }
 
             if (x < visibleRect.getMinX() || x > visibleRect.getMaxX() || x > endX || beat > beatEnd) continue;
@@ -96,8 +93,26 @@ void BPMTriggers::draw(const cocos2d::CCRect& visibleRect) {
     }
 }
 
-void BPMTriggers::setPropertiesForBeats(BPMTriggerCallback colorsForBeats, int priority) {
-    m_impl->m_colorsForBeats.add(std::move(colorsForBeats), priority);
+void BPMTriggers::setPropertiesForBeats(ZStringView ID, BPMTriggerCallback colorsForBeats, int priority) {
+    m_impl->m_colorsForBeats.add(ID, std::move(colorsForBeats), priority);
+}
+
+void BPMTriggers::removePropertiesForBeats(geode::ZStringView ID) {
+    m_impl->m_colorsForBeats.remove(ID);
+}
+
+const Color& BPMTriggers::getDefaultBeatColor() {
+    static Color defaultColor = {255, 255, 0, 255};
+    return defaultColor;
+}
+
+const Color& BPMTriggers::getDefaultPerBarBeatColor() {
+    static Color defaultColor = {255, 127, 0, 255};
+    return defaultColor;
+}
+
+float BPMTriggers::getDefaultLineWidth() {
+    return 1.f;
 }
 
 }

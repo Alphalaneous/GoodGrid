@@ -8,12 +8,16 @@ namespace alpha::grid {
     
 class GOOD_GRID_API_DLL EffectLines : public DrawGridBase {
 public:
-    using EffectLineCallback = std::function<void(Color& color, float& x, EffectGameObject* object, float& lineWidth)>;
+    using EffectLineCallback = geode::Function<void(Color& color, float& x, EffectGameObject* object, float& lineWidth)>;
 
     static EffectLines* create();
     void draw(const cocos2d::CCRect& visibleRect) override;
 
-    void setPropertiesForObject(EffectLineCallback colorForObject, int priority = 0);
+    void setPropertiesForObject(geode::ZStringView ID, EffectLineCallback colorForObject, int priority = 0);
+    void removePropertiesForObject(geode::ZStringView ID);
+
+    static const Color& getDefaultLineColor();
+    static float getDefaultLineWidth();
 
 protected:
     bool init() override;

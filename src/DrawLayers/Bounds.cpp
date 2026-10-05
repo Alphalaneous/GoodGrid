@@ -76,6 +76,21 @@ const Color& Bounds::getVerticalColor() const {
     return m_impl->m_verticalBoundColor;
 }
 
+const Color& Bounds::getDefaultTopBoundColor() {
+    static Color defaultColor = {255, 255, 255, 255};
+    return defaultColor;
+}
+
+const Color& Bounds::getDefaultBottomBoundColor() {
+    static Color defaultColor = {255, 255, 255, 255};
+    return defaultColor;
+}
+
+const Color& Bounds::getDefaultVerticalColor() {
+    static Color defaultColor = {255, 255, 255, 255};
+    return defaultColor;
+}
+
 void Bounds::setTopBoundLineWidth(float width) {
     m_impl->m_topBoundLineWidth = width;
 }
@@ -98,6 +113,18 @@ float Bounds::getBottomBoundLineWidth() const {
 
 float Bounds::getVerticalLineWidth() const {
     return m_impl->m_verticalBoundLineWidth;
+}
+
+float Bounds::getDefaultTopBoundLineWidth() {
+    return 2.f;
+}
+
+float Bounds::getDefaultBottomBoundLineWidth() {
+    return 2.f;
+}
+
+float Bounds::getDefaultVerticalLineWidth() {
+    return 1.f;
 }
 
 }

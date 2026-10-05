@@ -44,7 +44,6 @@ cocos2d::CCPoint getGridBoundsOrigin()
 ```
 Returns the coordinates of the grid's origin.
 
-
 ```cpp
 bool isObjectVisible(GameObject* object)
 ```
@@ -59,7 +58,7 @@ This class can store either 1 or 2 colors. It can be constructed just like a ccC
 This class is what makes up every part of the new DrawGridLayer, it is a CCNode and thus can have its visibility and z order set. Every child on the DrawGridLayer inherits this class. It provides a few methods as well as some virtuals you can override that will be called when added to the DrawGridLayer as a child. This also contains a few of the API methods seen above for convenience.
 
 ```cpp
-void drawLine(const cocos2d::ccVertex2F& start, const cocos2d::ccVertex2F& end, const alpha::grid::Color& color, float width, bool relative = false)
+void drawLine(const cocos2d::CCPoint& start, const cocos2d::CCPoint& end, const alpha::grid::Color& color, float width, bool relative = false)
 ```
 Draws a line to the screen with two coordinates where it starts and ends. The width is the line width. Relative is if it scales with the editor zoom.
 

@@ -29,12 +29,6 @@ GEODE_EVENT_EXPORT_NORES(&isVanillaDraw, ());
 inline bool isObjectVisible(GameObject* object)
 GEODE_EVENT_EXPORT_NORES(&isObjectVisible, (object));
 
-inline void generateTimeMarkers()
-GEODE_EVENT_EXPORT_NORES(&generateTimeMarkers, ());
-
-inline std::unordered_map<float, cocos2d::ccColor4B> getTimeMarkers()
-GEODE_EVENT_EXPORT_NORES(&getTimeMarkers, ());
-
 inline float getSin()
 GEODE_EVENT_EXPORT_NORES(&getSin, ());
 

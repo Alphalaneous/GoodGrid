@@ -17,11 +17,17 @@ public:
     const Color& getVerticalLineColor() const;
     const Color& getHorizontalLineColor() const;
 
+    static const Color& getDefaultVerticalLineColor();
+    static const Color& getDefaultHorizontalLineColor();
+
     void setVerticalLineWidth(float width);
     void setHorizontalLineWidth(float width);
 
     float getVerticalLineWidth() const;
     float getHorizontalLineWidth() const;
+
+    static float getDefaultVerticalLineWidth();
+    static float getDefaultHorizontalLineWidth();
 
 protected:
     bool init() override;

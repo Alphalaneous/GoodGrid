@@ -34,7 +34,7 @@ void EffectLines::draw(const cocos2d::CCRect& visibleRect) {
 
     if (!editorLayer->m_drawEffectLines || editorLayer->m_playbackMode == PlaybackMode::Playing) return;
 
-    m_impl->m_colorsForObject.rebuildIfNeeded();
+    m_impl->m_colorsForObject.rebuildLazy();
 
     for (auto obj : geode::cocos::CCArrayExt<EffectGameObject*>(getDrawGridLayer()->m_effectGameObjects)) {
         if (obj->m_isSpawnTriggered || obj->m_isTouchTriggered || !isObjectVisible(obj)) continue;
@@ -42,22 +42,33 @@ void EffectLines::draw(const cocos2d::CCRect& visibleRect) {
         float x = obj->getPositionX();
         if (x < visibleRect.getMinX() || x > visibleRect.getMaxX() || x < 0.f) continue;
 
-        static const auto defaultLineColor = Color{0, 255, 255, 255};
+        Color color = getDefaultLineColor();
 
-        Color color = defaultLineColor;
+        float lineWidth = getDefaultLineWidth();
 
-        float lineWidth = 1.f;
-
-        for (auto& fn : m_impl->m_colorsForObject.flat) {
-            fn(color, x, obj, lineWidth);
+        for (auto& fn : m_impl->m_colorsForObject.all()) {
+            (*fn)(color, x, obj, lineWidth);
         }
 
         drawLine({x, visibleRect.getMinY()}, {x, visibleRect.getMaxY()}, color, lineWidth);
     }
 }
 
-void EffectLines::setPropertiesForObject(EffectLineCallback colorForObject, int priority) {
-    m_impl->m_colorsForObject.add(std::move(colorForObject), priority);
+void EffectLines::setPropertiesForObject(ZStringView ID, EffectLineCallback colorForObject, int priority) {
+    m_impl->m_colorsForObject.add(ID, std::move(colorForObject), priority);
+}
+
+void EffectLines::removePropertiesForObject(geode::ZStringView ID) {
+    m_impl->m_colorsForObject.remove(ID);
+}
+
+const Color& EffectLines::getDefaultLineColor() {
+    static Color defaultColor = Color{0, 255, 255, 255};
+    return defaultColor;
+}
+
+float EffectLines::getDefaultLineWidth() {
+    return 1.f;
 }
 
 }

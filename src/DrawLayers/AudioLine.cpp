@@ -1,5 +1,6 @@
 #include "../../include/DrawLayers/AudioLine.hpp"
 #include "../Utils.hpp"
+#include "Geode/utils/ZStringView.hpp"
 
 namespace alpha::grid {
 
@@ -29,10 +30,10 @@ bool AudioLine::init() {
 }
 
 void AudioLine::draw(const cocos2d::CCRect& visibleRect) {
-    Color color = {2, 255, 2, 255};
+    Color color = getDefaultActiveColor();
     auto editorLayer = getDrawGridLayer()->m_editorLayer;
 
-    m_impl->m_colorsForTime.rebuildIfNeeded();
+    m_impl->m_colorsForTime.rebuildLazy();
 
     auto startSpeed = editorLayer->m_levelSettings->m_startSpeed;
     auto isPlatformer = editorLayer->m_isPlatformer;
@@ -44,10 +45,10 @@ void AudioLine::draw(const cocos2d::CCRect& visibleRect) {
 
     auto speedObjects = getDrawGridLayer()->m_speedObjects;
 
-    float width = 5.f;
+    float width = getDefaultActiveLineWidth();
 
     if (playbackActive) {
-        cocos2d::CCPoint pos = LevelTools::posForTimeInternal(
+        auto pos = LevelTools::posForTimeInternal(
             playbackTime,
             speedObjects,
             static_cast<int>(startSpeed),
@@ -68,8 +69,8 @@ void AudioLine::draw(const cocos2d::CCRect& visibleRect) {
         }
     } 
     else {
-        color = {2, 255, 2, 100};
-        width = 3.f;
+        color = getDefaultInactiveColor();
+        width = getDefaultInactiveLineWidth();
     }
 
     if (editorLayer->m_playbackMode == PlaybackMode::Playing) {
@@ -78,8 +79,8 @@ void AudioLine::draw(const cocos2d::CCRect& visibleRect) {
         playbackTime = 0.f;
     }
 
-    for (auto& fn : m_impl->m_colorsForTime.flat) {
-        fn(color, playbackActive, playbackTime, {playbackX, playbackY}, width);
+    for (auto fn : m_impl->m_colorsForTime.all()) {
+        (*fn)(color, playbackActive, playbackTime, {playbackX, playbackY}, width);
     }
 
     if (playbackX != 0.f) {
@@ -91,8 +92,30 @@ void AudioLine::draw(const cocos2d::CCRect& visibleRect) {
     }
 }
 
-void AudioLine::setPropertiesForTime(AudioLineCallback colorForTime, int priority) {
-    m_impl->m_colorsForTime.add(std::move(colorForTime), priority);
+void AudioLine::setPropertiesForTime(ZStringView ID, AudioLineCallback colorForTime, int priority) {
+    m_impl->m_colorsForTime.add(ID, std::move(colorForTime), priority);
+}
+
+void AudioLine::removePropertiesForTime(geode::ZStringView ID) {
+    m_impl->m_colorsForTime.remove(ID);
+}
+
+const Color& AudioLine::getDefaultActiveColor() {
+    static Color defaultColor = {2, 255, 2, 255};
+    return defaultColor;
+}
+
+const Color& AudioLine::getDefaultInactiveColor() {
+    static Color defaultColor = {2, 255, 2, 100};
+    return defaultColor;
+}
+
+float AudioLine::getDefaultActiveLineWidth() {
+    return 5.f;
+}
+
+float AudioLine::getDefaultInactiveLineWidth() {
+    return 3.f;
 }
 
 }

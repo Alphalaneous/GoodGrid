@@ -8,12 +8,16 @@ namespace alpha::grid {
     
 class GOOD_GRID_API_DLL DurationLines : public DrawGridBase {
 public:
-    using DurationLineCallback = std::function<void(Color& color, EffectGameObject* object, float& lineWidth)>;
+    using DurationLineCallback = geode::Function<void(Color& color, EffectGameObject* object, float& lineWidth)>;
 
     static DurationLines* create();
     void draw(const cocos2d::CCRect& visibleRect) override;
 
-    void setPropertiesForObject(DurationLineCallback colorForObject, int priority = 0);
+    void setPropertiesForObject(geode::ZStringView ID, DurationLineCallback colorForObject, int priority = 0);
+    void removePropertiesForObject(geode::ZStringView ID);
+
+    static const Color& getDefaultGridColor();
+    static float getDefaultLineWidth();
 
 protected:
     bool init() override;

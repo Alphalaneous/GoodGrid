@@ -8,12 +8,19 @@ namespace alpha::grid {
 
 class GOOD_GRID_API_DLL AudioLine : public DrawGridBase {
 public:
-    using AudioLineCallback = std::function<void(Color& color, bool playback, float time, const cocos2d::CCPoint& position, float& lineWidth)>;
+    using AudioLineCallback = geode::Function<void(Color& color, bool playback, float time, const cocos2d::CCPoint& position, float& lineWidth)>;
 
     static AudioLine* create();
     void draw(const cocos2d::CCRect& visibleRect) override;
 
-    void setPropertiesForTime(AudioLineCallback colorForTime, int priority = 0);
+    void setPropertiesForTime(geode::ZStringView ID, AudioLineCallback colorForTime, int priority = 0);
+    void removePropertiesForTime(geode::ZStringView ID);
+
+    static const Color& getDefaultActiveColor();
+    static const Color& getDefaultInactiveColor();
+
+    static float getDefaultActiveLineWidth();
+    static float getDefaultInactiveLineWidth();
 
 protected:
     bool init() override;

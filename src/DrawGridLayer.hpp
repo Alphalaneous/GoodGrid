@@ -28,7 +28,7 @@ public:
     std::vector<alpha::grid::Vertex>& batchForFunc(ccBlendFunc func);
     
     void generateTimeMarkers();
-    const std::unordered_map<float, cocos2d::ccColor4B>& getTimeMarkers();
+    const std::unordered_map<float, const Color&>& getTimeMarkers();
 
     void setVanillaDraw(bool enabled);
 
@@ -44,6 +44,11 @@ public:
     float getSin();
     float getCos();
 
+    static const Color& getColorA();
+    static const Color& getColorB();
+    static const Color& getColorC();
+    static const Color& getColorD();
+
 protected:
     std::vector<Batch> m_batches;
     Batch* m_activeBatch = nullptr;
@@ -58,7 +63,7 @@ protected:
     float m_gridWidthMax = DrawGridBase::MaxWidth;
     float m_gridHeightMax = DrawGridBase::MaxDynamicHeight;
 
-    std::unordered_map<float, cocos2d::ccColor4B> m_timeMarkers;
+    std::unordered_map<float, const Color&> m_timeMarkers;
 
     bool m_hideInvisible;
 

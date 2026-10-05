@@ -54,4 +54,13 @@ float PreviewLockLine::getLineWidth() const {
     return m_impl->m_lineWidth;
 }
 
+const Color& PreviewLockLine::getDefaultLineColor() {
+    static Color defaultColor = {255, 150, 0, 255};
+    return defaultColor;
+}
+
+float PreviewLockLine::getDefaultLineWidth() {
+    return 2.f;
+}
+
 }

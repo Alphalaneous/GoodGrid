@@ -32,23 +32,21 @@ bool GuideObjects::init() {
 void GuideObjects::draw(const cocos2d::CCRect& visibleRect) {
     if (getDrawGridLayer()->m_editorLayer->m_playbackMode == PlaybackMode::Playing) return;
 
-    m_impl->m_colorsForObject.rebuildIfNeeded();
+    m_impl->m_colorsForObject.rebuildLazy();
 
     for (auto obj : geode::cocos::CCArrayExt<EffectGameObject*>(getDrawGridLayer()->m_guideObjects)) {
         if (!isObjectVisible(obj)) continue;
 
         auto [y1, y2] = getPortalMinMax(obj);
 
-        static const auto defaultLineColor = Color{0, 255, 255, 255};
+        Color bottomColor = getDefaultBottomColor();
+        Color topColor = getDefaultTopColor();
 
-        Color bottomColor = defaultLineColor;
-        Color topColor = defaultLineColor;
+        float lineWidthBottom = getDefaultBottomLineWidth();
+        float lineWidthTop = getDefaultTopLineWidth();
 
-        float lineWidthBottom = 2.f;
-        float lineWidthTop = 2.f;
-
-        for (auto& fn : m_impl->m_colorsForObject.flat) {
-            fn(bottomColor, topColor, obj, lineWidthBottom, lineWidthTop);
+        for (auto& fn : m_impl->m_colorsForObject.all()) {
+            (*fn)(bottomColor, topColor, obj, lineWidthBottom, lineWidthTop);
         }
 
         if (y1 >= visibleRect.getMinY() && y1 <= visibleRect.getMaxY()) {
@@ -61,8 +59,12 @@ void GuideObjects::draw(const cocos2d::CCRect& visibleRect) {
     }
 }
 
-void GuideObjects::setPropertiesForObject(GuideObjectCallback colorForObject, int priority) {
-    m_impl->m_colorsForObject.add(std::move(colorForObject), priority);
+void GuideObjects::setPropertiesForObject(ZStringView ID, GuideObjectCallback colorForObject, int priority) {
+    m_impl->m_colorsForObject.add(ID, std::move(colorForObject), priority);
+}
+
+void GuideObjects::removePropertiesForObject(geode::ZStringView ID) {
+    m_impl->m_colorsForObject.remove(ID);
 }
 
 cocos2d::CCPoint GuideObjects::getPortalMinMax(GameObject* obj) {
@@ -89,7 +91,25 @@ cocos2d::CCPoint GuideObjects::getPortalMinMax(GameObject* obj) {
     
     float yMin = std::max(std::floor((obj->getPositionY() - height / 2.f) / gridStep) * gridStep, minYClamp);
 
-    return { yMin, yMin + height };
+    return {yMin, yMin + height};
+}
+
+const Color& GuideObjects::getDefaultTopColor() {
+    static Color defaultColor = {0, 255, 255, 255};
+    return defaultColor;
+}
+
+const Color& GuideObjects::getDefaultBottomColor() {
+    static Color defaultColor = {0, 255, 255, 255};
+    return defaultColor;
+}
+
+float GuideObjects::getDefaultTopLineWidth() {
+    return 2.f;
+}
+
+float GuideObjects::getDefaultBottomLineWidth() {
+    return 2.f;
 }
 
 }

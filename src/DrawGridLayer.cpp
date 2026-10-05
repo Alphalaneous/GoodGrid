@@ -93,7 +93,7 @@ DrawHandler::DrawHandler(DrawGridLayer* drawGridLayer) {
             float axisAngle = mod(abs(v_angle), 1.5707963);
             float deviation = min(axisAngle, 1.5707963 - axisAngle);
 
-            float aa = smoothstep(0.0, 0.05, deviation);
+            float aa = smoothstep(0.0, 0.0001, deviation);
             float alpha = mix(1.0, smoothstep(0.0, 1.0, edgeDist), aa);
 
             gl_FragColor = vec4(v_color.rgb * alpha, v_color.a * alpha);
@@ -136,10 +136,10 @@ void DrawHandler::draw() {
     auto scaledWin = winSize / scale;
 
     auto rad = CC_DEGREES_TO_RADIANS(m_drawGridLayer->m_editorLayer->m_gameState.m_cameraAngle);
-    m_sin = std::abs(std::sin(rad));
-    m_cos = std::abs(std::cos(rad));
+    m_sin = std::sin(rad);
+    m_cos = std::cos(rad);
 
-    auto visibleSize = CCSize{scaledWin.width * m_cos + scaledWin.height * m_sin, scaledWin.width * m_sin + scaledWin.height * m_cos};
+    auto visibleSize = CCSize{scaledWin.width * std::abs(m_cos) + scaledWin.height * std::abs(m_sin), scaledWin.width * std::abs(m_sin) + scaledWin.height * std::abs(m_cos)};
 
     float height = levelSettings->m_dynamicLevelHeight ? m_gridHeightMax : DrawGridBase::MaxHeight;
     if (m_drawGridLayer->m_editorLayer->m_gameState.m_cameraAngle != 0.f) {
@@ -211,21 +211,34 @@ void DrawHandler::generateTimeMarkers() {
 
         ccColor4B color;
 
-        static const auto colorA = ccColor4B{255, 255, 0, 255};
-        static const auto colorB = ccColor4B{127, 255, 0, 255};
-        static const auto colorC = ccColor4B{255, 127, 0, 255};
-        static const auto colorD = ccColor4B{0, 0, 0, 0};
-
-        if (type == 0.9f) color = colorA;
-        else if (type == 1.f) color = colorB;
-        else if (type >= 0.8f || type == 0.f) color = colorC;
-        else color = colorD;
-
-        m_timeMarkers[pos] = color;
+        if (type == 0.9f) m_timeMarkers.try_emplace(pos, getColorA());
+        else if (type == 1.f) m_timeMarkers.try_emplace(pos, getColorB());
+        else if (type >= 0.8f || type == 0.f) m_timeMarkers.try_emplace(pos, getColorC());
+        else m_timeMarkers.try_emplace(pos, getColorD());
     }
 }
 
-const std::unordered_map<float, cocos2d::ccColor4B>& DrawHandler::getTimeMarkers() { 
+const Color& DrawHandler::getColorA() {
+    static Color defaultColor = {255, 255, 0, 255};
+    return defaultColor;
+}
+
+const Color& DrawHandler::getColorB() {
+    static Color defaultColor = {127, 255, 0, 255};
+    return defaultColor;
+}
+
+const Color& DrawHandler::getColorC() {
+    static Color defaultColor = {255, 127, 0, 255};
+    return defaultColor;
+}
+
+const Color& DrawHandler::getColorD() {
+    static Color defaultColor = {0, 0, 0, 0};
+    return defaultColor;
+}
+
+const std::unordered_map<float, const Color&>& DrawHandler::getTimeMarkers() { 
     return m_timeMarkers; 
 }
 
