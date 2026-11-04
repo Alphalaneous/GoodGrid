@@ -1,0 +1,42 @@
+#pragma once
+
+#include "../DrawGridBase.hpp"
+#include "../Export.hpp"
+#include "../Color.hpp"
+
+namespace alpha::grid {
+    
+class GOOD_GRID_API_DLL CenterCross : public DrawGridBase {
+public:
+    static CenterCross* create();
+    void draw(const cocos2d::CCRect& visibleRect) override;
+
+    void setVerticalLineColor(const Color& color);
+    void setHorizontalLineColor(const Color& color);
+
+    const Color& getVerticalLineColor() const;
+    const Color& getHorizontalLineColor() const;
+
+    static const Color& getDefaultVerticalLineColor();
+    static const Color& getDefaultHorizontalLineColor();
+
+    void setVerticalLineWidth(float width);
+    void setHorizontalLineWidth(float width);
+
+    float getVerticalLineWidth() const;
+    float getHorizontalLineWidth() const;
+
+    static float getDefaultVerticalLineWidth();
+    static float getDefaultHorizontalLineWidth();
+
+protected:
+    bool init() override;
+
+    CenterCross();
+    ~CenterCross();
+
+    class Impl;
+    std::unique_ptr<Impl> m_impl;
+};
+
+}

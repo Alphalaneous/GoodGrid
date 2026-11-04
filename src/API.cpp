@@ -1,0 +1,60 @@
+#define GEODE_DEFINE_EVENT_EXPORTS
+
+#include "../include/API.hpp"
+#include <Geode/Geode.hpp>
+#include "Utils.hpp"
+
+using namespace geode::prelude;
+
+namespace alpha::grid {
+
+void overrideGridBoundsSize(cocos2d::CCSize size) {
+    auto dgl = utils::getDrawGridLayer();
+    if (!dgl) return;
+
+    dgl->getCustom()->overrideGridBoundsSize(size);
+}
+
+void overrideGridBoundsOrigin(cocos2d::CCPoint point) {
+    auto dgl = utils::getDrawGridLayer();
+    if (!dgl) return;
+
+    dgl->getCustom()->overrideGridBoundsOrigin(point);
+}
+
+cocos2d::CCSize getGridBoundsSize() {
+    auto dgl = utils::getDrawGridLayer();
+    if (!dgl) return {};
+
+    return dgl->getCustom()->getGridBoundsSize();
+}
+
+cocos2d::CCPoint getGridBoundsOrigin() {
+    auto dgl = utils::getDrawGridLayer();
+    if (!dgl) return {};
+
+    return dgl->getCustom()->getGridBoundsOrigin();
+}
+
+bool isObjectVisible(GameObject* object) {
+    auto dgl = utils::getDrawGridLayer();
+    if (!dgl) return false;
+
+    return dgl->getCustom()->isObjectVisible(object);
+}
+
+float getSin() {
+    auto dgl = utils::getDrawGridLayer();
+    if (!dgl) return 0.f;
+
+    return dgl->getCustom()->getSin();
+}
+
+float getCos() {
+    auto dgl = utils::getDrawGridLayer();
+    if (!dgl) return 0.f;
+
+    return dgl->getCustom()->getCos();
+}
+
+}
