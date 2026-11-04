@@ -42,7 +42,7 @@ void Guidelines::draw(const cocos2d::CCRect& visibleRect) {
             (*fn)(color, x, lineWidth);
         }
 
-        if (x < visibleRect.getMinX() || x > visibleRect.getMaxX()) continue;
+        if (x < visibleRect.getMinX() || x > visibleRect.getMaxX() || x == 0.f) continue;
         
         drawLine({x, visibleRect.getMinY()}, {x, visibleRect.getMaxY()}, color, lineWidth);
     }

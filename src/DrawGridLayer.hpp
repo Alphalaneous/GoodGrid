@@ -55,8 +55,6 @@ protected:
     DrawGridLayer* m_drawGridLayer = nullptr;
     Ref<CCGLProgram> m_shader = nullptr;
 
-    bool m_vanillaDraw = false;
-
     float m_gridWidthMin = DrawGridBase::MinWidth;
     float m_gridHeightMin = DrawGridBase::MinHeight;
 
@@ -84,7 +82,7 @@ class $modify(MyDrawGridLayer, DrawGridLayer) {
 
     static DrawGridLayer* create(cocos2d::CCNode* p0, LevelEditorLayer* p1);
 
-    void loadTimeMarkers(gd::string p0);
+    void loadTimeMarkers(std::string p0);
     void draw();
 
     alpha::grid::DrawHandler* getCustom();

@@ -1,9 +1,9 @@
-#include "../../include/DrawLayers/PositionLines.hpp"
+#include "../../include/DrawLayers/CenterCross.hpp"
 #include "../Utils.hpp"
 
 namespace alpha::grid {
 
-class PositionLines::Impl final {
+class CenterCross::Impl final {
 public:
     Color m_verticalLineColor = {0, 0, 0, 50};
     Color m_horizontalLineColor = {0, 0, 0, 50};
@@ -12,12 +12,12 @@ public:
     float m_horizontalLineWidth = 2.f;
 };
 
-PositionLines::PositionLines() : m_impl(std::make_unique<Impl>()) {}
+CenterCross::CenterCross() : m_impl(std::make_unique<Impl>()) {}
 
-PositionLines::~PositionLines() {}
+CenterCross::~CenterCross() {}
 
-PositionLines* PositionLines::create() {
-    auto ret = new PositionLines();
+CenterCross* CenterCross::create() {
+    auto ret = new CenterCross();
     if (ret->init()) {
         ret->autorelease();
         return ret;
@@ -26,16 +26,16 @@ PositionLines* PositionLines::create() {
     return nullptr;
 }
 
-bool PositionLines::init() {
+bool CenterCross::init() {
     if (!CCNode::init()) return false;
-    setID("position-lines"_spr);
+    setID("center-cross"_spr);
     return true;
 }
 
-void PositionLines::draw(const cocos2d::CCRect& visibleRect) {
+void CenterCross::draw(const cocos2d::CCRect& visibleRect) {
     auto editorLayer = getDrawGridLayer()->m_editorLayer;
 
-    if (editorLayer->m_playbackMode == PlaybackMode::Playing) return;
+    if (editorLayer->m_playbackMode == PlaybackMode::Playing || editorLayer->m_hideCenterCross || editorLayer->m_editorUI->m_uiHidden) return;
 
     auto winSize = getDrawGridLayer()->getContentSize();
     auto toolbarHeight = editorLayer->m_editorUI->m_toolbarHeight;
@@ -64,53 +64,53 @@ void PositionLines::draw(const cocos2d::CCRect& visibleRect) {
     }
 }
 
-void PositionLines::setVerticalLineColor(const Color& color) {
+void CenterCross::setVerticalLineColor(const Color& color) {
     m_impl->m_verticalLineColor = color;
 }
 
-void PositionLines::setHorizontalLineColor(const Color& color) {
+void CenterCross::setHorizontalLineColor(const Color& color) {
     m_impl->m_horizontalLineColor = color;
 }
 
-const Color& PositionLines::getVerticalLineColor() const {
+const Color& CenterCross::getVerticalLineColor() const {
     return m_impl->m_verticalLineColor;
 }
 
-const Color& PositionLines::getHorizontalLineColor() const {
+const Color& CenterCross::getHorizontalLineColor() const {
     return m_impl->m_horizontalLineColor;
 }
 
-void PositionLines::setVerticalLineWidth(float width) {
+void CenterCross::setVerticalLineWidth(float width) {
     m_impl->m_verticalLineWidth = width;
 }
 
-void PositionLines::setHorizontalLineWidth(float width) {
+void CenterCross::setHorizontalLineWidth(float width) {
     m_impl->m_horizontalLineWidth = width;
 }
 
-float PositionLines::getVerticalLineWidth() const {
+float CenterCross::getVerticalLineWidth() const {
     return m_impl->m_verticalLineWidth;
 }
 
-float PositionLines::getHorizontalLineWidth() const {
+float CenterCross::getHorizontalLineWidth() const {
     return m_impl->m_horizontalLineWidth;
 }
 
-const Color& PositionLines::getDefaultVerticalLineColor() {
+const Color& CenterCross::getDefaultVerticalLineColor() {
     static Color defaultColor = {0, 0, 0, 50};
     return defaultColor;
 }
 
-const Color& PositionLines::getDefaultHorizontalLineColor() {
+const Color& CenterCross::getDefaultHorizontalLineColor() {
     static Color defaultColor = {0, 0, 0, 50};
     return defaultColor;
 }
 
-float PositionLines::getDefaultVerticalLineWidth() {
+float CenterCross::getDefaultVerticalLineWidth() {
     return 2.f;
 }
 
-float PositionLines::getDefaultHorizontalLineWidth() {
+float CenterCross::getDefaultHorizontalLineWidth() {
     return 2.f;
 }
 

@@ -15,16 +15,6 @@ Everything here is under the `alpha::grid` namespace.
 ## API.hpp
 
 ```cpp
-void setVanillaDraw(bool enabled)
-```
-Sets the grid rendering to Vanilla's implementation (used mostly for debugging, should not be used in a mod).
-
-```cpp
-bool isVanillaDraw()
-```
-Returns true if vanilla draw is enabled.
-
-```cpp
 void overrideGridBoundsSize(cocos2d::CCSize size)
 ```
 Sets the grid's max width and height bounds (useful for editor extenders and limiters).
@@ -220,7 +210,7 @@ Returns the bottom ground line width.
 These are the objects that show portal bounds when preview is enabled.
 
 ```cpp
-void setPropertiesForObject(std::function<void(alpha::grid::Color& bottomColor, alpha::grid::Color& topColor, EffectGameObject* object, float& lineWidthBottom, float& lineWidthTop)> colorForObject, int priority = 0)
+void setPropertiesForObject(geode::Function<void(alpha::grid::Color& bottomColor, alpha::grid::Color& topColor, EffectGameObject* object, float& lineWidthBottom, float& lineWidthTop)> colorForObject, int priority = 0)
 ```
 Lets you pass in a method that allows for modifying the colors, as well as passing in the object. An example would be setting colors depending on an object.
 
@@ -229,7 +219,7 @@ Lets you pass in a method that allows for modifying the colors, as well as passi
 These are the lines triggers show when not spawn or touch triggered.
 
 ```cpp
-void setPropertiesForObject(std::function<void(alpha::grid::Color& color, EffectGameObject* object, float& lineWidth)> colorForObject, int priority = 0)
+void setPropertiesForObject(geode::Function<void(alpha::grid::Color& color, EffectGameObject* object, float& lineWidth)> colorForObject, int priority = 0)
 ```
 Lets you pass in a method that allows for modifying the color, as well as passing in the object. An example would be setting colors depending on an object.
 
@@ -238,7 +228,7 @@ Lets you pass in a method that allows for modifying the color, as well as passin
 These are the duration lines triggers show.
 
 ```cpp
-void setPropertiesForObject(std::function<void(alpha::grid::Color& color, EffectGameObject* object, float& lineWidth)> colorForObject, int priority = 0)
+void setPropertiesForObject(geode::Function<void(alpha::grid::Color& color, EffectGameObject* object, float& lineWidth)> colorForObject, int priority = 0)
 ```
 Lets you pass in a method that allows for modifying the color, as well as passing in the object. An example would be setting colors depending on an object.
 
@@ -247,7 +237,7 @@ Lets you pass in a method that allows for modifying the color, as well as passin
 These are the music guidelines you can set when choosing a song.
 
 ```cpp
-void setPropertiesForValue(std::function<void(alpha::grid::Color& color, float value, float& lineWidth)> colorForValue, int priority = 0)
+void setPropertiesForValue(geode::Function<void(alpha::grid::Color& color, float value, float& lineWidth)> colorForValue, int priority = 0)
 ```
 Lets you pass in a method that allows for modifying the color, as well as passing in the numeric color value the guideline is set to (view https://wyliemaster.github.io/gddocs/#/resources/client/level-components/guideline-string for more info). An example would be setting colors depending on the value, expanding what color values already exist.
 
@@ -256,7 +246,7 @@ Lets you pass in a method that allows for modifying the color, as well as passin
 These are the bpm guidelines you can set with a BPM Trigger.
 
 ```cpp
-void setPropertiesForBeats(std::function<void(alpha::grid::Color& color, AudioLineGuideGameObject* object, int beat, int beatsPerBar, float& lineWidth)> colorForBeats, int priority = 0)
+void setPropertiesForBeats(geode::Function<void(alpha::grid::Color& color, AudioLineGuideGameObject* object, int beat, int beatsPerBar, float& lineWidth)> colorForBeats, int priority = 0)
 ```
 Lets you pass in a method that allows for modifying the color, as well as passing in the object, what beat the line being modified is on, and how many beats per bar there are. An example would be changing the beat color depending on what beat it is in a bar.
 
@@ -265,11 +255,11 @@ Lets you pass in a method that allows for modifying the color, as well as passin
 This is the line that shows when you play music in the editor.
 
 ```cpp
-void setPropertiesForTime(std::function<void(alpha::grid::Color& color, bool playback, float time, const cocos2d::CCPoint& position, float& lineWidth)> colorForTime, int priority = 0);
+void setPropertiesForTime(geode::Function<void(alpha::grid::Color& color, bool playback, float time, const cocos2d::CCPoint& position, float& lineWidth)> colorForTime, int priority = 0);
 ```
 Lets you pass in a method that allows for modifying the color, as well as passing in if playback is live, the song's time, and the position of the line. An example would be setting the line color hue based on the time. 
 
-### **`class PositionLines : public DrawGridBase`**
+### **`class CenterCross : public DrawGridBase`**
 
 The center vertical and horizontal lines that mark before and after a trigger activates.
 

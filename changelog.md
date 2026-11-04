@@ -1,5 +1,6 @@
 # 2.0.0
 - Rewrite the API to be more usable and future proof
+- 2.2091 support
 
 # 1.2.4
 - Fix duration line color

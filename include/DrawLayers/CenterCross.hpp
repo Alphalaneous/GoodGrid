@@ -6,9 +6,9 @@
 
 namespace alpha::grid {
     
-class GOOD_GRID_API_DLL PositionLines : public DrawGridBase {
+class GOOD_GRID_API_DLL CenterCross : public DrawGridBase {
 public:
-    static PositionLines* create();
+    static CenterCross* create();
     void draw(const cocos2d::CCRect& visibleRect) override;
 
     void setVerticalLineColor(const Color& color);
@@ -32,8 +32,8 @@ public:
 protected:
     bool init() override;
 
-    PositionLines();
-    ~PositionLines();
+    CenterCross();
+    ~CenterCross();
 
     class Impl;
     std::unique_ptr<Impl> m_impl;

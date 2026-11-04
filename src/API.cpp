@@ -8,13 +8,6 @@ using namespace geode::prelude;
 
 namespace alpha::grid {
 
-void setVanillaDraw(bool enabled) {
-    auto dgl = utils::getDrawGridLayer();
-    if (!dgl) return;
-
-    dgl->getCustom()->setVanillaDraw(enabled);
-}
-
 void overrideGridBoundsSize(cocos2d::CCSize size) {
     auto dgl = utils::getDrawGridLayer();
     if (!dgl) return;
@@ -41,13 +34,6 @@ cocos2d::CCPoint getGridBoundsOrigin() {
     if (!dgl) return {};
 
     return dgl->getCustom()->getGridBoundsOrigin();
-}
-
-bool isVanillaDraw() {
-    auto dgl = utils::getDrawGridLayer();
-    if (!dgl) return false;
-
-    return dgl->getCustom()->isVanillaDraw();
 }
 
 bool isObjectVisible(GameObject* object) {

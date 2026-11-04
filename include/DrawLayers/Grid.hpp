@@ -19,6 +19,12 @@ public:
     float getLineWidth() const;
     static float getDefaultLineWidth();
 
+    void overrideGridSize(std::optional<cocos2d::CCSize> size);
+    std::optional<cocos2d::CCSize> getGridSize();
+
+    void offsetGrid(std::optional<cocos2d::CCPoint> offset);
+    std::optional<cocos2d::CCPoint> getGridOffset();
+
 protected:
     bool init() override;
 

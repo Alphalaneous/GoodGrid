@@ -10,4 +10,4 @@
 #include "DrawLayers/Guidelines.hpp"
 #include "DrawLayers/BPMTriggers.hpp"
 #include "DrawLayers/AudioLine.hpp"
-#include "DrawLayers/PositionLines.hpp"
+#include "DrawLayers/CenterCross.hpp"

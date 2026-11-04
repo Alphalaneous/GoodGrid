@@ -93,7 +93,7 @@ DrawHandler::DrawHandler(DrawGridLayer* drawGridLayer) {
             float axisAngle = mod(abs(v_angle), 1.5707963);
             float deviation = min(axisAngle, 1.5707963 - axisAngle);
 
-            float aa = smoothstep(0.0, 0.0001, deviation);
+            float aa = smoothstep(0.0, 1e-6, deviation);
             float alpha = mix(1.0, smoothstep(0.0, 1.0, edgeDist), aa);
 
             gl_FragColor = vec4(v_color.rgb * alpha, v_color.a * alpha);
@@ -116,7 +116,6 @@ DrawHandler::DrawHandler(DrawGridLayer* drawGridLayer) {
 }
 
 void DrawHandler::draw() {
-    if (m_vanillaDraw) return m_drawGridLayer->draw();
     if (m_drawGridLayer->m_editorLayer->m_objectLayer->getScale() == 0.f) return;
 
     GLint oldSrc, oldDst;
@@ -242,10 +241,6 @@ const std::unordered_map<float, const Color&>& DrawHandler::getTimeMarkers() {
     return m_timeMarkers; 
 }
 
-void DrawHandler::setVanillaDraw(bool enabled) { 
-    m_vanillaDraw = enabled; 
-}
-
 void DrawHandler::overrideGridBoundsSize(cocos2d::CCSize size) { 
     m_gridWidthMax = size.width; 
     m_gridHeightMax = size.height; 
@@ -262,10 +257,6 @@ cocos2d::CCSize DrawHandler::getGridBoundsSize() {
 
 cocos2d::CCPoint DrawHandler::getGridBoundsOrigin() { 
     return {m_gridWidthMin, m_gridHeightMin}; 
-}
-
-bool DrawHandler::isVanillaDraw() { 
-    return m_vanillaDraw; 
 }
 
 bool DrawHandler::isObjectVisible(GameObject* object) {
@@ -297,21 +288,21 @@ DrawGridLayer* MyDrawGridLayer::create(cocos2d::CCNode* p0, LevelEditorLayer* p1
 	fields->m_customDgl = std::make_shared<alpha::grid::DrawHandler>(ret);
 
     addChild<alpha::grid::Grid>(ret, 0);
-    addChild<alpha::grid::Bounds>(ret, 100);
-    addChild<alpha::grid::Ground>(ret, 200);
-    addChild<alpha::grid::GuideObjects>(ret, 300);
-    addChild<alpha::grid::PreviewLockLine>(ret, 400);
-    addChild<alpha::grid::EffectLines>(ret, 500);
-    addChild<alpha::grid::DurationLines>(ret, 600);
-    addChild<alpha::grid::Guidelines>(ret, 700);
-    addChild<alpha::grid::BPMTriggers>(ret, 800);
-    addChild<alpha::grid::PositionLines>(ret, 900);
+    addChild<alpha::grid::Ground>(ret, 100);
+    addChild<alpha::grid::GuideObjects>(ret, 200);
+    addChild<alpha::grid::PreviewLockLine>(ret, 300);
+    addChild<alpha::grid::EffectLines>(ret, 400);
+    addChild<alpha::grid::DurationLines>(ret, 500);
+    addChild<alpha::grid::Guidelines>(ret, 600);
+    addChild<alpha::grid::BPMTriggers>(ret, 700);
+    addChild<alpha::grid::Bounds>(ret, 800);
+    addChild<alpha::grid::CenterCross>(ret, 900);
     addChild<alpha::grid::AudioLine>(ret, 1000);
 
 	return ret;
 }
 
-void MyDrawGridLayer::loadTimeMarkers(gd::string p0) {
+void MyDrawGridLayer::loadTimeMarkers(std::string p0) {
 	DrawGridLayer::loadTimeMarkers(p0);
 	m_fields->m_customDgl->generateTimeMarkers();
 }

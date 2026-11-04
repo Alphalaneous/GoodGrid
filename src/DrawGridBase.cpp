@@ -54,7 +54,7 @@ void DrawGridBase::drawLine(const cocos2d::CCPoint& start, const cocos2d::CCPoin
     float sin = std::sin(deviation * 2.f);
     float modifier = halfPi * sin;
 
-    if (modifier > 0.0001f) {
+    if (modifier > 1e-6f) {
         width += (1.f + sin / 2.f);
     }
 
@@ -121,7 +121,7 @@ void DrawGridBase::drawRectOutline(const cocos2d::CCRect& rect, const Color& col
     float sin = std::sin(deviation * 2.f);
     float modifier = halfPi * sin;
 
-    if (modifier > 0.0001f) {
+    if (modifier > 0.000001f) {
         width += (1.f + sin / 2.f);
     }
     else {

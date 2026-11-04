@@ -8,31 +8,18 @@
 
 namespace alpha::grid {
 
-inline void setVanillaDraw(bool enabled)
-GEODE_EVENT_EXPORT_NORES(&setVanillaDraw, (enabled));
+GEODE_EVENT_EXPORT(void, overrideGridBoundsSize, (cocos2d::CCSize size), (size));
 
-inline void overrideGridBoundsSize(cocos2d::CCSize size)
-GEODE_EVENT_EXPORT_NORES(&overrideGridBoundsSize, (size));
+GEODE_EVENT_EXPORT(void, overrideGridBoundsOrigin, (cocos2d::CCPoint point), (point));
 
-inline void overrideGridBoundsOrigin(cocos2d::CCPoint point)
-GEODE_EVENT_EXPORT_NORES(&overrideGridBoundsOrigin, (point));
+GEODE_EVENT_EXPORT(cocos2d::CCSize, getGridBoundsSize, (void), ());
 
-inline cocos2d::CCSize getGridBoundsSize()
-GEODE_EVENT_EXPORT_NORES(&getGridBoundsSize, ());
+GEODE_EVENT_EXPORT(cocos2d::CCPoint, getGridBoundsOrigin, (void), ());
 
-inline cocos2d::CCPoint getGridBoundsOrigin()
-GEODE_EVENT_EXPORT_NORES(&getGridBoundsOrigin, ());
+GEODE_EVENT_EXPORT(bool, isObjectVisible, (GameObject* object), (object));
 
-inline bool isVanillaDraw()
-GEODE_EVENT_EXPORT_NORES(&isVanillaDraw, ());
+GEODE_EVENT_EXPORT(float, getSin, (void), ());
 
-inline bool isObjectVisible(GameObject* object)
-GEODE_EVENT_EXPORT_NORES(&isObjectVisible, (object));
-
-inline float getSin()
-GEODE_EVENT_EXPORT_NORES(&getSin, ());
-
-inline float getCos()
-GEODE_EVENT_EXPORT_NORES(&getCos, ());
+GEODE_EVENT_EXPORT(float, getCos, (void), ());
 
 }
