@@ -2,7 +2,7 @@
 
 #include <Geode/cocos/cocoa/CCGeometry.h>
 #include <Geode/loader/Event.hpp>
-#include <Geode/loader/Dispatch.hpp>
+#include <Geode/loader/EventExport.hpp>
 
 #define MY_MOD_ID "alphalaneous.good_grid"
 

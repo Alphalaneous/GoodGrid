@@ -47,6 +47,7 @@ void Grid::draw(const cocos2d::CCRect& visibleRect) {
 
     auto size = getGridBoundsSize();
     auto origin = getGridBoundsOrigin();
+    auto gridOrigin = cocos2d::CCPoint{0.f, 90.f};
 
     float xStart = std::max(visibleRect.getMinX() - gridSizeX, origin.x);
     float xEnd = std::min(visibleRect.getMaxX() + gridSizeX, size.width);
@@ -69,8 +70,8 @@ void Grid::draw(const cocos2d::CCRect& visibleRect) {
         }
     }
 
-    float firstX = std::floor((xStart - offsetX) / gridSizeX) * gridSizeX + offsetX;
-    float firstY = std::floor((yStart - offsetY) / gridSizeY) * gridSizeY + offsetY;
+    float firstX = std::floor((xStart - gridOrigin.x - offsetX) / gridSizeX) * gridSizeX + gridOrigin.x + offsetX;
+    float firstY = std::floor((yStart - gridOrigin.y - offsetY) / gridSizeY) * gridSizeY + gridOrigin.y + offsetY;
 
     for (float x = firstX; x <= xEnd; x += gridSizeX) {
         auto newX = std::clamp(x, origin.x, size.width);
