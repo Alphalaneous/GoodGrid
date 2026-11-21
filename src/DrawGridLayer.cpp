@@ -96,7 +96,8 @@ DrawHandler::DrawHandler(DrawGridLayer* drawGridLayer) {
 
         void main() {
             gl_Position = CC_MVPMatrix * vec4(a_position, 0.0, 1.0);;
-            v_color = a_color;
+            //v_color = a_color;
+            v_color = vec4(1.0, 0.0, 0.0, a_color.a);
             v_uv = a_uv;
             v_angle = a_angle;
         }
@@ -162,8 +163,8 @@ void DrawHandler::draw() {
     if (m_drawGridLayer->m_editorLayer->m_objectLayer->getScale() == 0.f) return;
 
     GLint oldSrc, oldDst;
-    glGetIntegerv(0x0BE0, &oldSrc);
-    glGetIntegerv(0x0BE1, &oldDst);
+    glGetIntegerv(GL_BLEND_SRC_ALPHA, &oldSrc);
+    glGetIntegerv(GL_BLEND_DST_ALPHA, &oldDst);
 
     m_hideInvisible = GameManager::get()->getGameVariable(GameVar::HideInvisible);
 
