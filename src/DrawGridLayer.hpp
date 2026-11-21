@@ -5,6 +5,7 @@
 #include <Geode/modify/EditorUI.hpp>
 #include "Vertex.hpp"
 #include "../include/DrawGridBase.hpp"
+#include "CCGLProgramExt.hpp"
 
 using namespace geode::prelude;
 
@@ -55,7 +56,7 @@ protected:
     std::vector<Batch> m_batches;
     Batch* m_activeBatch = nullptr;
     DrawGridLayer* m_drawGridLayer = nullptr;
-    Ref<CCGLProgram> m_shader = nullptr;
+    Ref<CCGLProgramExt> m_shader = nullptr;
     GLuint m_vbo = 0;
 
     float m_gridWidthMin = DrawGridBase::MinWidth;

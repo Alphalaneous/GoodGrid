@@ -1,6 +1,5 @@
 #include "DrawGridLayer.hpp"
 #include "../include/DrawLayers.hpp"
-#include "Geode/loader/Log.hpp"
 
 namespace alpha::grid {
 
@@ -61,6 +60,8 @@ void DrawHandler::Batch::draw() const {
     glDrawArrays(GL_TRIANGLES, 0, m_batch.size());
 }
 
+
+
 DrawHandler::DrawHandler(DrawGridLayer* drawGridLayer) {
     m_drawGridLayer = drawGridLayer;
 
@@ -83,8 +84,6 @@ DrawHandler::DrawHandler(DrawGridLayer* drawGridLayer) {
     )";
 
     auto frag = R"(
-        //#extension GL_OES_standard_derivatives : enable
-
         varying vec4 v_color;
         varying vec2 v_uv;
         varying float v_angle;
@@ -110,12 +109,9 @@ DrawHandler::DrawHandler(DrawGridLayer* drawGridLayer) {
         }
     )";
 
-    m_shader = new CCGLProgram();
-    m_shader->autorelease();
-    auto ret = m_shader->initWithVertexShaderByteArray(vert, frag);
-    log::info("init: {}", ret);
+    m_shader = CCGLProgramExt::create(vert, frag);
 
-    auto printLog = [](GLuint shader) {
+    auto printLog = [] (GLuint shader) {
         GLint length = 0;
         glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &length);
 
