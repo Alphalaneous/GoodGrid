@@ -7,20 +7,31 @@
 
 namespace alpha::grid {
 
-DrawHandler::Batch::Batch(ccBlendFunc func) {
+DrawHandler::Batch::Batch(ccBlendFunc func, GLuint vbo) {
     m_blendFunc = func;
+    m_vbo = vbo;
 }
 
 void DrawHandler::Batch::draw() const {
+    if (m_batch.empty()) return;
+
     ccGLBlendFunc(m_blendFunc.src, m_blendFunc.dst);
-    
+    auto stride = sizeof(alpha::grid::Vertex);
+
+    glBufferData(
+        GL_ARRAY_BUFFER,
+        m_batch.size() * sizeof(alpha::grid::Vertex),
+        m_batch.data(),
+        GL_DYNAMIC_DRAW
+    );
+
     glVertexAttribPointer(
         kCCVertexAttrib_Position,
         2,
         GL_FLOAT,
         GL_FALSE,
-        sizeof(alpha::grid::Vertex),
-        &m_batch[0].position
+        stride,
+        reinterpret_cast<void*>(offsetof(Vertex, position))
     );
 
     glVertexAttribPointer(
@@ -28,8 +39,8 @@ void DrawHandler::Batch::draw() const {
         4,
         GL_UNSIGNED_BYTE,
         GL_TRUE,
-        sizeof(alpha::grid::Vertex),
-        &m_batch[0].color
+        stride,
+        reinterpret_cast<void*>(offsetof(Vertex, color))
     );
 
     glVertexAttribPointer(
@@ -37,8 +48,8 @@ void DrawHandler::Batch::draw() const {
         2,
         GL_FLOAT,
         GL_FALSE,
-        sizeof(alpha::grid::Vertex),
-        &m_batch[0].uv
+        stride,
+        reinterpret_cast<void*>(offsetof(Vertex, uv))
     );
 
     glVertexAttribPointer(
@@ -46,8 +57,8 @@ void DrawHandler::Batch::draw() const {
         1,
         GL_FLOAT,
         GL_FALSE,
-        sizeof(alpha::grid::Vertex),
-        &m_batch[0].angle
+        stride,
+        reinterpret_cast<void*>(offsetof(Vertex, angle))
     );
 
     glDrawArrays(GL_TRIANGLES, 0, m_batch.size());
@@ -125,6 +136,8 @@ DrawHandler::DrawHandler(DrawGridLayer* drawGridLayer) {
     m_shader->addAttribute("a_uv", 2);
     m_shader->addAttribute("a_angle", 3);
 
+    glGenBuffers(1, &m_vbo);
+
     GLint error = glGetError();
     log::debug("error: {}", error);
 
@@ -135,6 +148,13 @@ DrawHandler::DrawHandler(DrawGridLayer* drawGridLayer) {
 
     if (Loader::get()->isModLoaded("raydeeux.grandeditorextension") || Mod::get()->getSettingValue<bool>("extension-override")) {
         m_gridWidthMax = FLT_MAX;
+    }
+}
+
+DrawHandler::~DrawHandler() {
+    if (m_vbo != 0) {
+        glDeleteBuffers(1, &m_vbo);
+        m_vbo = 0;
     }
 }
 
@@ -193,6 +213,7 @@ void DrawHandler::draw() {
         }
     }
 
+    
     ccGLBindTexture2D(0);
 
     glEnableVertexAttribArray(kCCVertexAttrib_Position);
@@ -201,19 +222,9 @@ void DrawHandler::draw() {
     glEnableVertexAttribArray(3);
 
     m_shader->use();
-
-    GLint error = glGetError();
-    //log::debug("error: {}", error);
-
-    GLint program;
-    glGetIntegerv(GL_CURRENT_PROGRAM, &program);
-
-    /*log::debug("Program: {}", program);
-    log::debug("Expected: {}", m_shader->getProgram());
-
-    log::debug("Offset: {}", offsetof(CCGLProgram, m_uProgram));*/
-
     m_shader->setUniformsForBuiltins();
+
+    glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
 
     for (const auto& batch : m_batches) {
         batch.draw();
@@ -224,6 +235,7 @@ void DrawHandler::draw() {
 
     ccGLBlendFunc(oldSrc, oldDst);
     glDisableVertexAttribArray(3);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
 std::vector<alpha::grid::Vertex>& DrawHandler::batchForFunc(ccBlendFunc func) {
@@ -231,7 +243,7 @@ std::vector<alpha::grid::Vertex>& DrawHandler::batchForFunc(ccBlendFunc func) {
         return m_activeBatch->m_batch;
     }
 
-    auto& batch = m_batches.emplace_back(func);
+    auto& batch = m_batches.emplace_back(func, m_vbo);
     m_activeBatch = &batch;
 
     return m_activeBatch->m_batch;

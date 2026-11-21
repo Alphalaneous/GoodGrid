@@ -13,15 +13,17 @@ namespace alpha::grid {
 class DrawHandler {
 public:
     struct Batch {
-        Batch(ccBlendFunc mode);
+        Batch(ccBlendFunc mode, GLuint vbo);
 
         std::vector<alpha::grid::Vertex> m_batch;
         ccBlendFunc m_blendFunc;
+        GLuint m_vbo = 0;
 
         void draw() const;
     };
 
     DrawHandler(DrawGridLayer* drawGridLayer);
+    ~DrawHandler();
 
     void draw();
 
@@ -54,6 +56,7 @@ protected:
     Batch* m_activeBatch = nullptr;
     DrawGridLayer* m_drawGridLayer = nullptr;
     Ref<CCGLProgram> m_shader = nullptr;
+    GLuint m_vbo = 0;
 
     float m_gridWidthMin = DrawGridBase::MinWidth;
     float m_gridHeightMin = DrawGridBase::MinHeight;
