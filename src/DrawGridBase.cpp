@@ -1,6 +1,5 @@
 #include "../include/DrawGridBase.hpp"
 #include "DrawGridLayer.hpp"
-#include "Geode/loader/Log.hpp"
 #include <numbers>
 
 namespace alpha::grid {

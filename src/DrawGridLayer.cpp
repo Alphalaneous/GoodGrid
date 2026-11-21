@@ -60,8 +60,6 @@ void DrawHandler::Batch::draw() const {
     glDrawArrays(GL_TRIANGLES, 0, m_batch.size());
 }
 
-
-
 DrawHandler::DrawHandler(DrawGridLayer* drawGridLayer) {
     m_drawGridLayer = drawGridLayer;
 
@@ -110,32 +108,6 @@ DrawHandler::DrawHandler(DrawGridLayer* drawGridLayer) {
     )";
 
     m_shader = CCGLProgramExt::create(vert, frag);
-
-    auto printLog = [] (GLuint shader) {
-        GLint length = 0;
-        glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &length);
-
-        if (length <= 1) return;
-
-        std::string log(length, '\0');
-        GLsizei written = 0;
-
-        glGetShaderInfoLog(shader, length, &written, log.data());
-        log.resize(written);
-
-        log::debug("Shader compilation log: {}", log);
-    };
-
-    GLint status = 0;
-
-    glGetShaderiv(m_shader->m_uVertShader, GL_COMPILE_STATUS, &status);
-    log::debug("Vertex compile: {}", status);
-    printLog(m_shader->m_uVertShader);
-
-    glGetShaderiv(m_shader->m_uFragShader, GL_COMPILE_STATUS, &status);
-    log::debug("Fragment compile: {}", status);
-    printLog(m_shader->m_uFragShader);
-
     m_shader->addAttribute("a_position", kCCVertexAttrib_Position);
     m_shader->addAttribute("a_color", kCCVertexAttrib_Color);
     m_shader->addAttribute("a_uv", 2);
@@ -143,15 +115,8 @@ DrawHandler::DrawHandler(DrawGridLayer* drawGridLayer) {
 
     glGenBuffers(1, &m_vbo);
 
-    log::debug("[glGenBuffers] GL error: {}", glGetError());
-
     m_shader->link();
-
-    log::debug("[link] GL error: {}", glGetError());
-
     m_shader->updateUniforms();
-
-    log::debug("[updateUniforms] GL error: {}", glGetError());
 
     if (Loader::get()->isModLoaded("raydeeux.grandeditorextension") || Mod::get()->getSettingValue<bool>("extension-override")) {
         m_gridWidthMax = FLT_MAX;
@@ -228,7 +193,6 @@ void DrawHandler::draw() {
     glEnableVertexAttribArray(2);
     glEnableVertexAttribArray(3);
 
-    glBindTexture(GL_TEXTURE_2D, 0);
     glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
 
     for (const auto& batch : m_batches) {
