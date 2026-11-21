@@ -113,6 +113,9 @@ DrawHandler::DrawHandler(DrawGridLayer* drawGridLayer) {
     auto ret = m_shader->link();
     log::info("link: {}", ret);
     m_shader->updateUniforms();
+
+    GLint error = glGetError();
+    log::debug("error: {}", error);
     
     if (Loader::get()->isModLoaded("raydeeux.grandeditorextension") || Mod::get()->getSettingValue<bool>("extension-override")) {
         m_gridWidthMax = FLT_MAX;
@@ -179,13 +182,10 @@ void DrawHandler::draw() {
     glEnableVertexAttribArray(2);
     glEnableVertexAttribArray(3);
 
-    GLint errorPre = glGetError();
-    log::debug("errorPre: {}", errorPre);
-
     glUseProgram(m_shader->getProgram());
 
-    GLint errorPost = glGetError();
-    log::debug("errorPost: {}", errorPost);
+    GLint error = glGetError();
+    //log::debug("error: {}", error);
 
     GLint program;
     glGetIntegerv(GL_CURRENT_PROGRAM, &program);
