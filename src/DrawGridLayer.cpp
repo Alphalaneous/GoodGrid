@@ -123,8 +123,7 @@ DrawHandler::DrawHandler(DrawGridLayer* drawGridLayer) {
     m_shader->addAttribute("a_color", kCCVertexAttrib_Color);
     m_shader->addAttribute("a_uv", 2);
     m_shader->addAttribute("a_angle", 3);
-    auto ret = m_shader->link();
-    log::info("link: {}", ret);
+    m_shader->link();
     m_shader->updateUniforms();
 
     GLint error = glGetError();
@@ -193,12 +192,15 @@ void DrawHandler::draw() {
         }
     }
 
+    ccGLBindVAO(0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
     glEnableVertexAttribArray(kCCVertexAttrib_Position);
     glEnableVertexAttribArray(kCCVertexAttrib_Color);
     glEnableVertexAttribArray(2);
     glEnableVertexAttribArray(3);
 
-    glUseProgram(m_shader->getProgram());
+    m_shader->use();
 
     GLint error = glGetError();
     //log::debug("error: {}", error);
