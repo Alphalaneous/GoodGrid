@@ -1,10 +1,5 @@
 #include "DrawGridLayer.hpp"
 #include "../include/DrawLayers.hpp"
-#include "Geode/cocos/shaders/CCGLProgram.h"
-#include "Geode/cocos/shaders/ccGLStateCache.h"
-#include "Geode/loader/Log.hpp"
-#include <cstddef>
-#include "Utils.hpp"
 
 namespace alpha::grid {
 
@@ -62,34 +57,9 @@ void DrawHandler::Batch::draw() const {
         reinterpret_cast<void*>(offsetof(Vertex, angle))
     );
 
-    auto dgl = alpha::grid::utils::getDrawGridLayer();
-    if (!dgl) return;
-
     GLint program = 0;
     glGetIntegerv(GL_CURRENT_PROGRAM, &program);
-
-    log::debug("Expected program: {}", dgl->getCustom()->getProgram()->getProgram());
-    log::debug("Active program: {}", program);
-    log::debug("GL error: {}", glGetError());
-
     glDrawArrays(GL_TRIANGLES, 0, m_batch.size());
-}
-
-void printShaderLog(GLuint shader, const char* name) {
-    GLint length = 0;
-    glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &length);
-
-    if (length <= 1) {
-        log::info("{}: No shader log", name);
-        return;
-    }
-
-    std::vector<GLchar> buffer(length);
-    GLsizei written = 0;
-
-    glGetShaderInfoLog(shader, length, &written, buffer.data());
-
-    log::info("{} shader log: {}", name, buffer.data());
 }
 
 DrawHandler::DrawHandler(DrawGridLayer* drawGridLayer) {
@@ -135,8 +105,7 @@ DrawHandler::DrawHandler(DrawGridLayer* drawGridLayer) {
             float aa = smoothstep(0.0, 1e-6, deviation);
             float alpha = mix(1.0, smoothstep(0.0, 1.0, edgeDist), aa);
 
-            //gl_FragColor = vec4(v_color.rgb * alpha, v_color.a * alpha);
-            gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
+            gl_FragColor = vec4(v_color.rgb * alpha, v_color.a * alpha);
         }
     )";
 
@@ -150,13 +119,8 @@ DrawHandler::DrawHandler(DrawGridLayer* drawGridLayer) {
 
     glGenBuffers(1, &m_vbo);
 
-    GLint error = glGetError();
-    log::debug("error: {}", error);
-
     m_shader->link();
-
-    printShaderLog(m_shader->m_uVertShader, "Vertex");
-    printShaderLog(m_shader->m_uFragShader, "Fragment");
+    m_shader->updateUniforms();
 
     if (Loader::get()->isModLoaded("raydeeux.grandeditorextension") || Mod::get()->getSettingValue<bool>("extension-override")) {
         m_gridWidthMax = FLT_MAX;
@@ -168,10 +132,6 @@ DrawHandler::~DrawHandler() {
         glDeleteBuffers(1, &m_vbo);
         m_vbo = 0;
     }
-}
-
-CCGLProgram* DrawHandler::getProgram() {
-    return m_shader;
 }
 
 void DrawHandler::draw() {
@@ -229,7 +189,6 @@ void DrawHandler::draw() {
         }
     }
 
-    
     ccGLBindTexture2D(0);
 
     glEnableVertexAttribArray(kCCVertexAttrib_Position);
