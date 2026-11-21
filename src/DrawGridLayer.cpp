@@ -57,8 +57,6 @@ void DrawHandler::Batch::draw() const {
         reinterpret_cast<void*>(offsetof(Vertex, angle))
     );
 
-    GLint program = 0;
-    glGetIntegerv(GL_CURRENT_PROGRAM, &program);
     glDrawArrays(GL_TRIANGLES, 0, m_batch.size());
 }
 
@@ -189,16 +187,15 @@ void DrawHandler::draw() {
         }
     }
 
-    ccGLBindTexture2D(0);
+    m_shader->use();
+    m_shader->setUniformsForBuiltins();
 
     glEnableVertexAttribArray(kCCVertexAttrib_Position);
     glEnableVertexAttribArray(kCCVertexAttrib_Color);
     glEnableVertexAttribArray(2);
     glEnableVertexAttribArray(3);
 
-    m_shader->use();
-    m_shader->setUniformsForBuiltins();
-
+    ccGLBindTexture2D(0);
     glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
 
     for (const auto& batch : m_batches) {
