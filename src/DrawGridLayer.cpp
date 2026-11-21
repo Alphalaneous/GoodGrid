@@ -189,7 +189,7 @@ void DrawHandler::draw() {
     glEnableVertexAttribArray(2);
     glEnableVertexAttribArray(3);
 
-    glUseProgram(m_shader->getProgram());
+    ccGLUseProgram(m_shader->getProgram());
 
     GLint program;
     GLint framebuffer;
