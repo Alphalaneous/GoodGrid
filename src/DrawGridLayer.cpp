@@ -4,6 +4,7 @@
 #include "Geode/cocos/shaders/ccGLStateCache.h"
 #include "Geode/loader/Log.hpp"
 #include <cstddef>
+#include "Utils.hpp"
 
 namespace alpha::grid {
 
@@ -60,6 +61,16 @@ void DrawHandler::Batch::draw() const {
         stride,
         reinterpret_cast<void*>(offsetof(Vertex, angle))
     );
+
+    auto dgl = alpha::grid::utils::getDrawGridLayer();
+    if (!dgl) return;
+
+    GLint program = 0;
+    glGetIntegerv(GL_CURRENT_PROGRAM, &program);
+
+    log::debug("Expected program: {}", dgl->getCustom()->getProgram());
+    log::debug("Active program: {}", program);
+    log::debug("GL error: {}", glGetError());
 
     glDrawArrays(GL_TRIANGLES, 0, m_batch.size());
 }
@@ -157,6 +168,10 @@ DrawHandler::~DrawHandler() {
         glDeleteBuffers(1, &m_vbo);
         m_vbo = 0;
     }
+}
+
+CCGLProgram* DrawHandler::getProgram() {
+    return m_shader;
 }
 
 void DrawHandler::draw() {

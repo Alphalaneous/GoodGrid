@@ -46,6 +46,8 @@ public:
     float getSin();
     float getCos();
 
+    CCGLProgram* getProgram();
+
     static const Color& getColorA();
     static const Color& getColorB();
     static const Color& getColorC();
