@@ -8,6 +8,11 @@ DrawHandler::Batch::Batch(ccBlendFunc func) {
 }
 
 void DrawHandler::Batch::draw() const {
+    GLint oldArrayBuffer;
+    glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &oldArrayBuffer);
+
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
     ccGLBlendFunc(m_blendFunc.src, m_blendFunc.dst);
     
     glVertexAttribPointer(
@@ -47,6 +52,8 @@ void DrawHandler::Batch::draw() const {
     );
 
     glDrawArrays(GL_TRIANGLES, 0, m_batch.size());
+
+    glBindBuffer(GL_ARRAY_BUFFER, oldArrayBuffer);
 }
 
 DrawHandler::DrawHandler(DrawGridLayer* drawGridLayer) {
@@ -119,8 +126,8 @@ void DrawHandler::draw() {
     if (m_drawGridLayer->m_editorLayer->m_objectLayer->getScale() == 0.f) return;
 
     GLint oldSrc, oldDst;
-    glGetIntegerv(GL_BLEND_SRC_ALPHA, &oldSrc);
-    glGetIntegerv(GL_BLEND_DST_ALPHA, &oldDst);
+    glGetIntegerv(GL_BLEND_SRC, &oldSrc);
+    glGetIntegerv(GL_BLEND_DST, &oldDst);
 
     m_hideInvisible = GameManager::get()->getGameVariable(GameVar::HideInvisible);
 

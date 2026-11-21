@@ -1,3 +1,6 @@
+# 2.0.0-beta.3
+- Fix some rendering issues
+
 # 2.0.0-beta.2
 - Add back iOS support
 
