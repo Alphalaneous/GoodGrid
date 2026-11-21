@@ -8,7 +8,7 @@
 	},
 	"id": "alphalaneous.good_grid",
 	"name": "Good Grid",
-	"version": "v2.0.0-beta.1",
+	"version": "v2.0.0-beta.2",
 	"developer": "Alphalaneous",
 	"description": "Rewrites the drawing of DrawGridLayer",
 	"api": {
