@@ -196,9 +196,7 @@ void DrawHandler::draw() {
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-    glEnableVertexAttribArray(kCCVertexAttrib_Position);
-    glEnableVertexAttribArray(kCCVertexAttrib_Color);
-    glEnableVertexAttribArray(2);
+    ccGLEnableVertexAttribs(kCCVertexAttribFlag_PosColorTex);
     glEnableVertexAttribArray(3);
 
     m_shader->use();
@@ -224,7 +222,6 @@ void DrawHandler::draw() {
     m_activeBatch = nullptr;
 
     ccGLBlendFunc(oldSrc, oldDst);
-    glDisableVertexAttribArray(2);
     glDisableVertexAttribArray(3);
 }
 
