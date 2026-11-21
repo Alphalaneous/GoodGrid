@@ -60,7 +60,7 @@ DrawHandler::DrawHandler(DrawGridLayer* drawGridLayer) {
     m_drawGridLayer = drawGridLayer;
 
     auto vert = R"(
-        attribute vec4 a_position;
+        attribute vec2 a_position;
         attribute vec4 a_color;
         attribute vec2 a_uv;
         attribute float a_angle;
@@ -70,7 +70,7 @@ DrawHandler::DrawHandler(DrawGridLayer* drawGridLayer) {
         varying float v_angle;
 
         void main() {
-            gl_Position = CC_MVPMatrix * a_position;
+            gl_Position = CC_MVPMatrix * vec4(a_position, 0.0, 1.0);;
             v_color = a_color;
             v_uv = a_uv;
             v_angle = a_angle;
@@ -78,8 +78,10 @@ DrawHandler::DrawHandler(DrawGridLayer* drawGridLayer) {
     )";
 
     auto frag = R"(
+        #extension GL_OES_standard_derivatives : enable
+
         #ifdef GL_ES
-        precision mediump float;
+        precision highp float;
         #endif
 
         varying vec4 v_color;
@@ -129,10 +131,10 @@ void DrawHandler::draw() {
     glGetIntegerv(GL_BLEND_SRC_ALPHA, &oldSrc);
     glGetIntegerv(GL_BLEND_DST_ALPHA, &oldDst);
 
-    GLint prevFbo = 0;
-    glGetIntegerv(GL_FRAMEBUFFER_BINDING, &prevFbo);
+    //GLint prevFbo = 0;
+    //glGetIntegerv(GL_FRAMEBUFFER_BINDING, &prevFbo);
 
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    //glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
     m_hideInvisible = GameManager::get()->getGameVariable(GameVar::HideInvisible);
 
@@ -188,6 +190,20 @@ void DrawHandler::draw() {
     glEnableVertexAttribArray(3);
 
     m_shader->use();
+
+    GLint program;
+    GLint framebuffer;
+    GLint activeTexture;
+
+    glGetIntegerv(GL_CURRENT_PROGRAM, &program);
+    glGetIntegerv(GL_FRAMEBUFFER_BINDING, &framebuffer);
+    glGetIntegerv(GL_ACTIVE_TEXTURE, &activeTexture);
+
+    log::debug("Program: {}", program);
+    log::debug("Expected: {}", m_shader->getProgram());
+    log::debug("FBO: {}", framebuffer);
+    log::debug("Active texture: {}", activeTexture);
+
     m_shader->setUniformsForBuiltins();
 
     for (const auto& batch : m_batches) {
@@ -199,7 +215,7 @@ void DrawHandler::draw() {
 
     ccGLBlendFunc(oldSrc, oldDst);
 
-    glBindFramebuffer(GL_FRAMEBUFFER, prevFbo);
+    //glBindFramebuffer(GL_FRAMEBUFFER, prevFbo);
 }
 
 std::vector<alpha::grid::Vertex>& DrawHandler::batchForFunc(ccBlendFunc func) {
