@@ -52,6 +52,23 @@ void DrawHandler::Batch::draw() const {
     glDrawArrays(GL_TRIANGLES, 0, m_batch.size());
 }
 
+void printShaderLog(GLuint shader, const char* name) {
+    GLint length = 0;
+    glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &length);
+
+    if (length <= 1) {
+        log::info("{}: No shader log", name);
+        return;
+    }
+
+    std::vector<GLchar> buffer(length);
+    GLsizei written = 0;
+
+    glGetShaderInfoLog(shader, length, &written, buffer.data());
+
+    log::info("{} shader log: {}", name, buffer.data());
+}
+
 DrawHandler::DrawHandler(DrawGridLayer* drawGridLayer) {
     m_drawGridLayer = drawGridLayer;
 
@@ -113,6 +130,9 @@ DrawHandler::DrawHandler(DrawGridLayer* drawGridLayer) {
     GLint error = glGetError();
     log::debug("error: {}", error);
     
+    printShaderLog(m_shader->m_uVertShader, "Vertex");
+    printShaderLog(m_shader->m_uFragShader, "Fragment");
+
     if (Loader::get()->isModLoaded("raydeeux.grandeditorextension") || Mod::get()->getSettingValue<bool>("extension-override")) {
         m_gridWidthMax = FLT_MAX;
     }
