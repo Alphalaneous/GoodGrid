@@ -74,10 +74,6 @@ DrawHandler::DrawHandler(DrawGridLayer* drawGridLayer) {
     )";
 
     auto frag = R"(
-        #ifdef GL_ES
-        precision mediump float;
-        #endif
-
         varying vec4 v_color;
         varying vec2 v_uv;
         varying float v_angle;
