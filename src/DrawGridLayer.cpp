@@ -123,12 +123,12 @@ DrawHandler::DrawHandler(DrawGridLayer* drawGridLayer) {
     m_shader->addAttribute("a_color", kCCVertexAttrib_Color);
     m_shader->addAttribute("a_uv", 2);
     m_shader->addAttribute("a_angle", 3);
-    m_shader->link();
-    m_shader->updateUniforms();
 
     GLint error = glGetError();
     log::debug("error: {}", error);
-    
+
+    m_shader->link();
+
     printShaderLog(m_shader->m_uVertShader, "Vertex");
     printShaderLog(m_shader->m_uFragShader, "Fragment");
 
@@ -194,6 +194,7 @@ void DrawHandler::draw() {
 
     ccGLBindVAO(0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
     glEnableVertexAttribArray(kCCVertexAttrib_Position);
     glEnableVertexAttribArray(kCCVertexAttrib_Color);
@@ -223,6 +224,8 @@ void DrawHandler::draw() {
     m_activeBatch = nullptr;
 
     ccGLBlendFunc(oldSrc, oldDst);
+    glDisableVertexAttribArray(2);
+    glDisableVertexAttribArray(3);
 }
 
 std::vector<alpha::grid::Vertex>& DrawHandler::batchForFunc(ccBlendFunc func) {
