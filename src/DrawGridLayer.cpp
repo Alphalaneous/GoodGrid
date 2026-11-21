@@ -186,15 +186,15 @@ void DrawHandler::draw() {
     GLint current = 0;
     glGetIntegerv(GL_CURRENT_PROGRAM, &current);
 
-    log::debug("GL error: {}", error);
+    //log::debug("GL error: {}", error);
 
     GLint program;
     glGetIntegerv(GL_CURRENT_PROGRAM, &program);
 
-    log::debug("Program: {}", program);
+    /*log::debug("Program: {}", program);
     log::debug("Expected: {}", m_shader->getProgram());
 
-    log::debug("Offset: {}", offsetof(CCGLProgram, m_uProgram));
+    log::debug("Offset: {}", offsetof(CCGLProgram, m_uProgram));*/
 
     m_shader->setUniformsForBuiltins();
 
