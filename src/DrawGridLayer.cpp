@@ -179,14 +179,15 @@ void DrawHandler::draw() {
     glEnableVertexAttribArray(2);
     glEnableVertexAttribArray(3);
 
+    GLint errorPre = glGetError();
+    log::debug("errorPre: {}", errorPre);
+
     glUseProgram(m_shader->getProgram());
 
-    GLint error = glGetError();
+    GLint errorPost = glGetError();
+    log::debug("errorPost: {}", errorPost);
 
-    GLint current = 0;
-    glGetIntegerv(GL_CURRENT_PROGRAM, &current);
-
-    //log::debug("GL error: {}", error);
+    log::debug("Program log: {}", m_shader->programLog());
 
     GLint program;
     glGetIntegerv(GL_CURRENT_PROGRAM, &program);
