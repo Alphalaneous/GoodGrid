@@ -1,3 +1,6 @@
+# 2.0.0-beta.2
+- Add back iOS support
+
 # 2.0.0-beta.1
 - Rewrite the API to be more usable and future proof
 - 2.2091 support
