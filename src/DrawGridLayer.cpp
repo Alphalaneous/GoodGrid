@@ -129,6 +129,11 @@ void DrawHandler::draw() {
     glGetIntegerv(GL_BLEND_SRC_ALPHA, &oldSrc);
     glGetIntegerv(GL_BLEND_DST_ALPHA, &oldDst);
 
+    GLint prevFbo = 0;
+    glGetIntegerv(GL_FRAMEBUFFER_BINDING, &prevFbo);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
     m_hideInvisible = GameManager::get()->getGameVariable(GameVar::HideInvisible);
 
     auto& gameState = m_drawGridLayer->m_editorLayer->m_gameState;
@@ -193,6 +198,8 @@ void DrawHandler::draw() {
     m_activeBatch = nullptr;
 
     ccGLBlendFunc(oldSrc, oldDst);
+
+    glBindFramebuffer(GL_FRAMEBUFFER, prevFbo);
 }
 
 std::vector<alpha::grid::Vertex>& DrawHandler::batchForFunc(ccBlendFunc func) {
