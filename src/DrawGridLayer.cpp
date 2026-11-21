@@ -8,11 +8,6 @@ DrawHandler::Batch::Batch(ccBlendFunc func) {
 }
 
 void DrawHandler::Batch::draw() const {
-    GLint oldArrayBuffer;
-    glGetIntegerv(GL_ARRAY_BUFFER_BINDING, &oldArrayBuffer);
-
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-
     ccGLBlendFunc(m_blendFunc.src, m_blendFunc.dst);
     
     glVertexAttribPointer(
@@ -52,8 +47,6 @@ void DrawHandler::Batch::draw() const {
     );
 
     glDrawArrays(GL_TRIANGLES, 0, m_batch.size());
-
-    glBindBuffer(GL_ARRAY_BUFFER, oldArrayBuffer);
 }
 
 DrawHandler::DrawHandler(DrawGridLayer* drawGridLayer) {
@@ -78,10 +71,8 @@ DrawHandler::DrawHandler(DrawGridLayer* drawGridLayer) {
     )";
 
     auto frag = R"(
-        #extension GL_OES_standard_derivatives : enable
-
         #ifdef GL_ES
-        precision highp float;
+        precision mediump float;
         #endif
 
         varying vec4 v_color;
@@ -130,11 +121,6 @@ void DrawHandler::draw() {
     GLint oldSrc, oldDst;
     glGetIntegerv(GL_BLEND_SRC_ALPHA, &oldSrc);
     glGetIntegerv(GL_BLEND_DST_ALPHA, &oldDst);
-
-    //GLint prevFbo = 0;
-    //glGetIntegerv(GL_FRAMEBUFFER_BINDING, &prevFbo);
-
-    //glBindFramebuffer(GL_FRAMEBUFFER, 0);
 
     m_hideInvisible = GameManager::get()->getGameVariable(GameVar::HideInvisible);
 
@@ -189,20 +175,13 @@ void DrawHandler::draw() {
     glEnableVertexAttribArray(2);
     glEnableVertexAttribArray(3);
 
-    ccGLUseProgram(m_shader->getProgram());
+    glUseProgram(m_shader->getProgram());
 
     GLint program;
-    GLint framebuffer;
-    GLint activeTexture;
-
     glGetIntegerv(GL_CURRENT_PROGRAM, &program);
-    glGetIntegerv(GL_FRAMEBUFFER_BINDING, &framebuffer);
-    glGetIntegerv(GL_ACTIVE_TEXTURE, &activeTexture);
 
     log::debug("Program: {}", program);
     log::debug("Expected: {}", m_shader->getProgram());
-    log::debug("FBO: {}", framebuffer);
-    log::debug("Active texture: {}", activeTexture);
 
     m_shader->setUniformsForBuiltins();
 
@@ -214,8 +193,6 @@ void DrawHandler::draw() {
     m_activeBatch = nullptr;
 
     ccGLBlendFunc(oldSrc, oldDst);
-
-    //glBindFramebuffer(GL_FRAMEBUFFER, prevFbo);
 }
 
 std::vector<alpha::grid::Vertex>& DrawHandler::batchForFunc(ccBlendFunc func) {
