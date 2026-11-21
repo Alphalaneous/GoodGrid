@@ -126,8 +126,8 @@ void DrawHandler::draw() {
     if (m_drawGridLayer->m_editorLayer->m_objectLayer->getScale() == 0.f) return;
 
     GLint oldSrc, oldDst;
-    glGetIntegerv(GL_BLEND_SRC, &oldSrc);
-    glGetIntegerv(GL_BLEND_DST, &oldDst);
+    glGetIntegerv(GL_BLEND_SRC_ALPHA, &oldSrc);
+    glGetIntegerv(GL_BLEND_DST_ALPHA, &oldDst);
 
     m_hideInvisible = GameManager::get()->getGameVariable(GameVar::HideInvisible);
 
