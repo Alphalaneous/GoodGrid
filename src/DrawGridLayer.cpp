@@ -187,8 +187,6 @@ void DrawHandler::draw() {
     GLint errorPost = glGetError();
     log::debug("errorPost: {}", errorPost);
 
-    log::debug("Program log: {}", m_shader->programLog());
-
     GLint program;
     glGetIntegerv(GL_CURRENT_PROGRAM, &program);
 
