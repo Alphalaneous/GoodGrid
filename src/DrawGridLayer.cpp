@@ -1,5 +1,6 @@
 #include "DrawGridLayer.hpp"
 #include "../include/DrawLayers.hpp"
+#include "Geode/loader/Log.hpp"
 
 namespace alpha::grid {
 
@@ -109,7 +110,8 @@ DrawHandler::DrawHandler(DrawGridLayer* drawGridLayer) {
 
     m_shader = new CCGLProgram();
     m_shader->autorelease();
-    m_shader->initWithVertexShaderByteArray(vert, frag);
+    auto ret = m_shader->initWithVertexShaderByteArray(vert, frag);
+    log::info("init: {}", ret);
     m_shader->addAttribute("a_position", kCCVertexAttrib_Position);
     m_shader->addAttribute("a_color", kCCVertexAttrib_Color);
     m_shader->addAttribute("a_uv", 2);
@@ -142,9 +144,9 @@ DrawHandler::~DrawHandler() {
 void DrawHandler::draw() {
     if (m_drawGridLayer->m_editorLayer->m_objectLayer->getScale() == 0.f) return;
 
-    /*GLint oldSrc, oldDst;
+    GLint oldSrc, oldDst;
     glGetIntegerv(GL_BLEND_SRC_ALPHA, &oldSrc);
-    glGetIntegerv(GL_BLEND_DST_ALPHA, &oldDst);*/
+    glGetIntegerv(GL_BLEND_DST_ALPHA, &oldDst);
 
     m_hideInvisible = GameManager::get()->getGameVariable(GameVar::HideInvisible);
 
@@ -212,7 +214,7 @@ void DrawHandler::draw() {
     m_batches.clear();
     m_activeBatch = nullptr;
 
-    //ccGLBlendFunc(oldSrc, oldDst);
+    ccGLBlendFunc(oldSrc, oldDst);
     glDisableVertexAttribArray(3);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
