@@ -83,7 +83,7 @@ DrawHandler::DrawHandler(DrawGridLayer* drawGridLayer) {
     )";
 
     auto frag = R"(
-        #extension GL_OES_standard_derivatives : enable
+        //#extension GL_OES_standard_derivatives : enable
 
         varying vec4 v_color;
         varying vec2 v_uv;
