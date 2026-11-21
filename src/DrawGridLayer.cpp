@@ -117,8 +117,15 @@ DrawHandler::DrawHandler(DrawGridLayer* drawGridLayer) {
 
     glGenBuffers(1, &m_vbo);
 
+    log::debug("[glGenBuffers] GL error: {}", glGetError());
+
     m_shader->link();
+
+    log::debug("[link] GL error: {}", glGetError());
+
     m_shader->updateUniforms();
+
+    log::debug("[updateUniforms] GL error: {}", glGetError());
 
     if (Loader::get()->isModLoaded("raydeeux.grandeditorextension") || Mod::get()->getSettingValue<bool>("extension-override")) {
         m_gridWidthMax = FLT_MAX;
@@ -135,9 +142,9 @@ DrawHandler::~DrawHandler() {
 void DrawHandler::draw() {
     if (m_drawGridLayer->m_editorLayer->m_objectLayer->getScale() == 0.f) return;
 
-    GLint oldSrc, oldDst;
+    /*GLint oldSrc, oldDst;
     glGetIntegerv(GL_BLEND_SRC_ALPHA, &oldSrc);
-    glGetIntegerv(GL_BLEND_DST_ALPHA, &oldDst);
+    glGetIntegerv(GL_BLEND_DST_ALPHA, &oldDst);*/
 
     m_hideInvisible = GameManager::get()->getGameVariable(GameVar::HideInvisible);
 
@@ -195,7 +202,7 @@ void DrawHandler::draw() {
     glEnableVertexAttribArray(2);
     glEnableVertexAttribArray(3);
 
-    ccGLBindTexture2D(0);
+    glBindTexture(GL_TEXTURE_2D, 0);
     glBindBuffer(GL_ARRAY_BUFFER, m_vbo);
 
     for (const auto& batch : m_batches) {
@@ -205,7 +212,7 @@ void DrawHandler::draw() {
     m_batches.clear();
     m_activeBatch = nullptr;
 
-    ccGLBlendFunc(oldSrc, oldDst);
+    //ccGLBlendFunc(oldSrc, oldDst);
     glDisableVertexAttribArray(3);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
