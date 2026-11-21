@@ -55,7 +55,7 @@ bool CCGLProgramExt::compileShader(GLuint* shader, GLenum type, const GLchar* so
     
     const GLchar *sources[] = {
         "#extension GL_OES_standard_derivatives : enable\n", 
-#if GEODE_IS_MOBILE
+#ifdef GEODE_IS_MOBILE
         (type == GL_VERTEX_SHADER ? "precision highp float;\n" : "precision mediump float;\n"),
 #endif
         "uniform mat4 CC_PMatrix;\n"
