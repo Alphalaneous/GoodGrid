@@ -83,6 +83,8 @@ DrawHandler::DrawHandler(DrawGridLayer* drawGridLayer) {
     )";
 
     auto frag = R"(
+        #extension GL_OES_standard_derivatives : enable
+
         varying vec4 v_color;
         varying vec2 v_uv;
         varying float v_angle;
@@ -112,6 +114,32 @@ DrawHandler::DrawHandler(DrawGridLayer* drawGridLayer) {
     m_shader->autorelease();
     auto ret = m_shader->initWithVertexShaderByteArray(vert, frag);
     log::info("init: {}", ret);
+
+    auto printLog = [](GLuint shader) {
+        GLint length = 0;
+        glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &length);
+
+        if (length <= 1) return;
+
+        std::string log(length, '\0');
+        GLsizei written = 0;
+
+        glGetShaderInfoLog(shader, length, &written, log.data());
+        log.resize(written);
+
+        log::debug("Shader compilation log: {}", log);
+    };
+
+    GLint status = 0;
+
+    glGetShaderiv(m_shader->m_uVertShader, GL_COMPILE_STATUS, &status);
+    log::debug("Vertex compile: {}", status);
+    printLog(m_shader->m_uVertShader);
+
+    glGetShaderiv(m_shader->m_uFragShader, GL_COMPILE_STATUS, &status);
+    log::debug("Fragment compile: {}", status);
+    printLog(m_shader->m_uFragShader);
+
     m_shader->addAttribute("a_position", kCCVertexAttrib_Position);
     m_shader->addAttribute("a_color", kCCVertexAttrib_Color);
     m_shader->addAttribute("a_uv", 2);
