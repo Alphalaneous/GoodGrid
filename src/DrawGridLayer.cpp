@@ -1,6 +1,7 @@
 #include "DrawGridLayer.hpp"
 #include "../include/DrawLayers.hpp"
 #include "Geode/cocos/shaders/CCGLProgram.h"
+#include "Geode/cocos/shaders/ccGLStateCache.h"
 #include "Geode/loader/Log.hpp"
 #include <cstddef>
 
@@ -193,8 +194,7 @@ void DrawHandler::draw() {
     }
 
     ccGLBindVAO(0);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    ccGLBindTexture2D(0);
 
     ccGLEnableVertexAttribs(kCCVertexAttribFlag_PosColorTex);
     glEnableVertexAttribArray(3);
