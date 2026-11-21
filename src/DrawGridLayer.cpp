@@ -1,6 +1,7 @@
 #include "DrawGridLayer.hpp"
 #include "../include/DrawLayers.hpp"
 #include "Geode/cocos/shaders/CCGLProgram.h"
+#include "Geode/loader/Log.hpp"
 #include <cstddef>
 
 namespace alpha::grid {
@@ -109,7 +110,8 @@ DrawHandler::DrawHandler(DrawGridLayer* drawGridLayer) {
     m_shader->addAttribute("a_color", kCCVertexAttrib_Color);
     m_shader->addAttribute("a_uv", 2);
     m_shader->addAttribute("a_angle", 3);
-    m_shader->link();
+    auto ret = m_shader->link();
+    log::info("link: {}", ret);
     m_shader->updateUniforms();
     
     if (Loader::get()->isModLoaded("raydeeux.grandeditorextension") || Mod::get()->getSettingValue<bool>("extension-override")) {
