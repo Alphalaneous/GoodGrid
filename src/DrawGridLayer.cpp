@@ -177,6 +177,13 @@ void DrawHandler::draw() {
 
     glUseProgram(m_shader->getProgram());
 
+    GLint error = glGetError();
+
+    GLint current = 0;
+    glGetIntegerv(GL_CURRENT_PROGRAM, &current);
+
+    log::debug("GL error: {}", error);
+
     GLint program;
     glGetIntegerv(GL_CURRENT_PROGRAM, &program);
 
