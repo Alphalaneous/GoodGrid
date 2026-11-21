@@ -195,7 +195,9 @@ void DrawHandler::draw() {
 
     ccGLBindTexture2D(0);
 
-    ccGLEnableVertexAttribs(kCCVertexAttribFlag_PosColorTex);
+    glEnableVertexAttribArray(kCCVertexAttrib_Position);
+    glEnableVertexAttribArray(kCCVertexAttrib_Color);
+    glEnableVertexAttribArray(2);
     glEnableVertexAttribArray(3);
 
     m_shader->use();
