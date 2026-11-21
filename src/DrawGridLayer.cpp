@@ -193,7 +193,6 @@ void DrawHandler::draw() {
         }
     }
 
-    ccGLBindVAO(0);
     ccGLBindTexture2D(0);
 
     ccGLEnableVertexAttribs(kCCVertexAttribFlag_PosColorTex);
