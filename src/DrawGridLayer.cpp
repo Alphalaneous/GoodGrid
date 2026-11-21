@@ -4,6 +4,7 @@
 #include "Geode/cocos/shaders/ccGLStateCache.h"
 #include "Geode/loader/Log.hpp"
 #include <cstddef>
+#include <gl/GL.h>
 
 namespace alpha::grid {
 
@@ -216,6 +217,8 @@ void DrawHandler::draw() {
 
     
     ccGLBindTexture2D(0);
+    //glEnable(GL_BLEND);
+    glDisable(GL_BLEND);
 
     glEnableVertexAttribArray(kCCVertexAttrib_Position);
     glEnableVertexAttribArray(kCCVertexAttrib_Color);
