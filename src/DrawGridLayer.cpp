@@ -68,7 +68,7 @@ void DrawHandler::Batch::draw() const {
     GLint program = 0;
     glGetIntegerv(GL_CURRENT_PROGRAM, &program);
 
-    log::debug("Expected program: {}", dgl->getCustom()->getProgram());
+    log::debug("Expected program: {}", dgl->getCustom()->getProgram()->getProgram());
     log::debug("Active program: {}", program);
     log::debug("GL error: {}", glGetError());
 
