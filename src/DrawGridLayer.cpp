@@ -1,5 +1,7 @@
 #include "DrawGridLayer.hpp"
 #include "../include/DrawLayers.hpp"
+#include "Geode/cocos/shaders/CCGLProgram.h"
+#include <cstddef>
 
 namespace alpha::grid {
 
@@ -189,6 +191,8 @@ void DrawHandler::draw() {
 
     log::debug("Program: {}", program);
     log::debug("Expected: {}", m_shader->getProgram());
+
+    log::debug("Offset: {}", offsetof(CCGLProgram, m_uProgram));
 
     m_shader->setUniformsForBuiltins();
 
