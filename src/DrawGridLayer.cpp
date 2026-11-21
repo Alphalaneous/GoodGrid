@@ -96,8 +96,7 @@ DrawHandler::DrawHandler(DrawGridLayer* drawGridLayer) {
 
         void main() {
             gl_Position = CC_MVPMatrix * vec4(a_position, 0.0, 1.0);;
-            //v_color = a_color;
-            v_color = vec4(1.0, 0.0, 0.0, a_color.a);
+            v_color = a_color;
             v_uv = a_uv;
             v_angle = a_angle;
         }
@@ -125,7 +124,8 @@ DrawHandler::DrawHandler(DrawGridLayer* drawGridLayer) {
             float aa = smoothstep(0.0, 1e-6, deviation);
             float alpha = mix(1.0, smoothstep(0.0, 1.0, edgeDist), aa);
 
-            gl_FragColor = vec4(v_color.rgb * alpha, v_color.a * alpha);
+            //gl_FragColor = vec4(v_color.rgb * alpha, v_color.a * alpha);
+            gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0);
         }
     )";
 
@@ -216,8 +216,6 @@ void DrawHandler::draw() {
 
     
     ccGLBindTexture2D(0);
-    //glEnable(GL_BLEND);
-    glDisable(GL_BLEND);
 
     glEnableVertexAttribArray(kCCVertexAttrib_Position);
     glEnableVertexAttribArray(kCCVertexAttrib_Color);
