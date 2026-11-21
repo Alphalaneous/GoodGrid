@@ -4,7 +4,6 @@
 #include "Geode/cocos/shaders/ccGLStateCache.h"
 #include "Geode/loader/Log.hpp"
 #include <cstddef>
-#include <gl/GL.h>
 
 namespace alpha::grid {
 
